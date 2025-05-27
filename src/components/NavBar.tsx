@@ -115,7 +115,7 @@ const NavBar = () => {
                     <img
                       src={logo}
                       alt="KRD MICGO Logo"
-                      className="h-10 w-auto transition-all duration-300 group-hover:scale-105"
+                      className="h-7 sm:h-8 md:h-9 lg:h-10 w-auto transition-all duration-300 group-hover:scale-105"
                       style={{
                         filter: "brightness(1.1) contrast(1.1) saturate(1.2)",
                       }}
