@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom"; // 添加 React Router 導航 hook
 import Layout from "../components/Layout";
 import { airTable } from "../services/index";
 
@@ -17,6 +18,9 @@ interface Product {
 }
 
 const Home = () => {
+  // 使用 React Router 的導航 hook
+  const navigate = useNavigate();
+
   const [hotProduct1, setHotProduct1] = useState<Product[]>([]);
   const [hotProduct2, setHotProduct2] = useState<Product[]>([]);
   const [currentSlide1, setCurrentSlide1] = useState(0);
@@ -279,10 +283,16 @@ const Home = () => {
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <button className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white font-bold py-4 px-8 rounded-full transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-2xl">
+                <button
+                  onClick={() => navigate("/all-products")} // 點擊時導航到所有產品頁面
+                  className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white font-bold py-4 px-8 rounded-full transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-2xl"
+                >
                   探索產品
                 </button>
-                <button className="border-2 border-white/20 hover:border-white/40 text-white font-medium py-4 px-8 rounded-full transition-all duration-200 backdrop-blur-sm hover:bg-white/5">
+                <button
+                  onClick={() => navigate("/abouts")} // 點擊時導航到關於我們頁面
+                  className="border-2 border-white/20 hover:border-white/40 text-white font-medium py-4 px-8 rounded-full transition-all duration-200 backdrop-blur-sm hover:bg-white/5"
+                >
                   聯絡我們
                 </button>
               </div>
@@ -379,7 +389,10 @@ const Home = () => {
               </p>
 
               <div className="flex flex-col sm:flex-row gap-6 justify-center">
-                <button className="border-2 border-white/30 hover:border-white/50 text-white font-medium py-4 px-8 rounded-full transition-all duration-200 backdrop-blur-sm hover:bg-white/10">
+                <button
+                  onClick={() => navigate("/all-products")} // 點擊時導航到所有產品頁面
+                  className="border-2 border-white/30 hover:border-white/50 text-white font-medium py-4 px-8 rounded-full transition-all duration-200 backdrop-blur-sm hover:bg-white/10"
+                >
                   查看所有產品
                 </button>
               </div>
