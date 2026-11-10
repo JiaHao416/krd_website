@@ -13,6 +13,8 @@ import type {
 export interface ProductListResult {
   items: Product[];
   total: number;
+  /** 後端總數大於本次取得筆數（超過單次 limit），UI 應提示資料未完整顯示 */
+  truncated: boolean;
 }
 
 /**
@@ -49,10 +51,10 @@ function isPublicProduct(value: unknown): value is PublicProductApi {
  * 取得商品列表
  * 失敗一律拋出 ApiError，不吞成空陣列；查無商品是成功的空結果。
  * 資料層不自動重試，重試交給 UI 的按鈕。
+ * 格式不符的單筆商品會被略過並 console.warn，不讓一筆壞資料拖垮整頁。
  * @param params - 查詢參數
  * @param client - axios instance，預設為共用 apiClient，測試時可注入
- * 格式不符的單筆商品會被略過並 console.warn，不讓一筆壞資料拖垮整頁。
- * @returns 轉換後的商品與總數
+ * @returns 轉換後的商品、總數與是否被截斷
  * @throws {ApiError} 網路、限流、HTTP 錯誤或回應格式不符
  */
 export async function fetchProducts(
@@ -76,7 +78,9 @@ export async function fetchProducts(
   const total =
     typeof pagination?.total === "number" ? pagination.total : items.length;
 
-  if (total > items.length) {
+  // 以後端實際回傳筆數比較，被略過的格式不符商品不算截斷
+  const truncated = total > items.length;
+  if (truncated) {
     console.warn(
       `商品總數 ${total} 超過單次上限 ${items.length} 筆，需實作分頁`
     );
@@ -91,5 +95,5 @@ export async function fetchProducts(
     );
   }
 
-  return { items: validItems.map(toProduct), total };
+  return { items: validItems.map(toProduct), total, truncated };
 }

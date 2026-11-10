@@ -125,6 +125,7 @@ describe("fetchProducts", () => {
     await expect(fetchProducts({ limit: 100 }, client)).resolves.toEqual({
       items: [],
       total: 0,
+      truncated: false,
     });
   });
 
@@ -278,6 +279,25 @@ describe("fetchProducts", () => {
     });
     await fetchProducts({ limit: 100 }, client);
     expect(warn).toHaveBeenCalledTimes(1);
+  });
+
+  it("total 大於取得筆數時 truncated 為 true", async () => {
+    vi.spyOn(console, "warn").mockImplementation(() => undefined);
+    const { client } = setup({
+      ...sampleResponse,
+      data: {
+        ...sampleResponse.data,
+        pagination: { offset: 0, limit: 100, total: 150 },
+      },
+    });
+    const result = await fetchProducts({ limit: 100 }, client);
+    expect(result.truncated).toBe(true);
+  });
+
+  it("total 等於筆數時 truncated 為 false", async () => {
+    const { client } = setup(sampleResponse);
+    const result = await fetchProducts({ limit: 100 }, client);
+    expect(result.truncated).toBe(false);
   });
 
   it("total 等於筆數時不 console.warn", async () => {
