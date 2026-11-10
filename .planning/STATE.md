@@ -57,6 +57,10 @@ Progress: [██████████] 100%
 - 靜態內容須在撤銷 Airtable token 前，用現有 token 抓取完成（Phase 3）
 - 撤銷 token（REL-02）為最後一步，由 Owner 手動執行
 
+### Roadmap Evolution
+
+- Phase 5 added: 清理技術債：Vite 範本殘留、favicon、輪播無障礙（WR-06）、check:dist 接線（WR-01）、規劃文件補齊（來源：v1.0-MILESTONE-AUDIT.md 選項 B）
+
 ### Pending Todos
 
 None yet.
