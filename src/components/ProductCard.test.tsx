@@ -55,9 +55,9 @@ describe("ProductCard 價格顯示", () => {
     render(
       <ProductCard product={product} variant="grid" onImageClick={vi.fn()} />
     );
-    expect(
-      screen.getAllByText(formatPriceRange(120000, 150000))
-    ).toHaveLength(2);
+    expect(screen.getAllByText(formatPriceRange(120000, 150000))).toHaveLength(
+      2
+    );
   });
 
   it("grid 無價：顯示價格洽詢且沒有徽章", () => {
