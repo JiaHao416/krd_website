@@ -452,14 +452,16 @@ const featured2 = useProducts(HOME_FEATURED_QUERIES[1]);
 | A3 | `react-refresh/only-export-components` 對 `productPageViews.tsx` 會 warn（僅 warn 不擋 build） | Architecture | 低；lint 為 warn |
 | A4 | Cloudflare Pages 建置環境可安裝 jsdom 29（devDependency 會在 CI install；jsdom 29 engines `>=24` 或 `^22.13`/`^20.19`） | Standard Stack | 中；若 Pages 的 Node 版本為 18，`npm install` 會出 EBADENGINE 警告（預設不致命）。建議計畫中確認 Pages 的 Node 版本（預設已 ≥22，未驗證）；必要時加 `.nvmrc`/`NODE_VERSION` env |
 
-## Open Questions
+## Open Questions (RESOLVED)
 
 1. **Cloudflare Pages 建置 Node 版本**
    - 已知：專案無 `.nvmrc`、無 `engines`；本機 24.13.0；jsdom 29 要求 `^20.19||^22.13||>=24`。
    - 不明：Pages 目前預設 Node 版本。
    - 建議：把「確認或鎖定 Node 版本」列為 Phase 2 安裝依賴 task 的人工確認項；備案是 jsdom 26.1.0（engines `>=18`），但 26 較舊。部署前以 push 前 `npm ci` 驗證。
+   - RESOLVED: 02-01 Task 1（blocking-human checkpoint）由使用者確認 Node 版本策略，02-01 Task 2 新增 `.nvmrc`（`24`）；02-05 Task 2 於 push 後確認 Pages 建置記錄的 Node 版本與結果。
 2. **`fetchProducts` 簽名擴充方式**
    - 建議第三參數 `options`；若 planner 偏好把 signal 併入第二參數 client 之前，會影響 Phase 1 測試呼叫，不建議。
+   - RESOLVED: 02-01 Task 2 採第三參數 `options: FetchProductsOptions = {}`（`{ signal?: AbortSignal }`），前兩個參數不變，並以測試驗證 signal 傳遞與 canceled 分類。
 
 ## Environment Availability
 
