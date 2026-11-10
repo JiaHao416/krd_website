@@ -6,7 +6,7 @@
 
 ## Phases
 
-- [ ] **Phase 1: 測試與 API 資料層基礎** - 導入 Vitest、建立 API client／轉換邏輯與 Vite proxy，皆有單元測試
+- [x] **Phase 1: 測試與 API 資料層基礎** - 導入 Vitest、建立 API client／轉換邏輯與 Vite proxy，皆有單元測試 (completed 2026-11-10)
 - [ ] **Phase 2: 商品頁與首頁熱銷改讀後端 API** - 8 個分類頁與首頁輪播顯示後端資料，含載入／錯誤／空狀態
 - [ ] **Phase 3: 靜態內容固化與移除 Airtable** - Logo、導覽、關於我們改為 repo 靜態內容，移除 Airtable 程式與 token
 - [ ] **Phase 4: 上線驗證與撤銷 token** - production 實測全站正常後，由 Owner 撤銷 Airtable token
@@ -27,7 +27,7 @@
   4. 單元測試涵蓋：API 回應轉畫面資料（含價格 ÷100、`null` 價格）、分類頁到查詢參數對照（含中文 encode）、網路／非 2xx／`success:false` 錯誤轉換
   5. `npm run build` 成功，現有網站行為不變
 
-**Plans:** 3/4 plans executed
+**Plans:** 4/4 plans complete
 
 Plans:
 **Wave 1**
@@ -41,7 +41,7 @@ Plans:
 
 **Wave 3** *(blocked on Wave 2 completion)*
 
-- [ ] 01-04-PLAN.md — ApiError 錯誤分類與中文訊息，fetchProducts 完整化（驗證、轉換、不重試、筆數警告）（Wave 3）
+- [x] 01-04-PLAN.md — ApiError 錯誤分類與中文訊息，fetchProducts 完整化（驗證、轉換、不重試、筆數警告）（Wave 3）
 
 ### Phase 2: 商品頁與首頁熱銷改讀後端 API
 
@@ -95,7 +95,7 @@ Plans:
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. 測試與 API 資料層基礎 | 3/4 | In Progress|  |
+| 1. 測試與 API 資料層基礎 | 4/4 | Complete   | 2026-11-10 |
 | 2. 商品頁與首頁熱銷改讀後端 API | 0/TBD | Not started | - |
 | 3. 靜態內容固化與移除 Airtable | 0/TBD | Not started | - |
 | 4. 上線驗證與撤銷 token | 0/TBD | Not started | - |
