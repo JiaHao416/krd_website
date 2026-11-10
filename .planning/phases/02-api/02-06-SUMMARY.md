@@ -47,10 +47,14 @@ completed: 2026-11-10
 
 量測前 02-UAT 第 3 項 gap 不得標為 resolved。
 
-- 視窗寬／卡片寬：
-- 有描述卡片底部列距卡片底（px）：
-- 無描述卡片底部列距卡片底（px）：
-- 量測日期：
+- 視窗寬／卡片寬：1280px／192px（grid 4 欄）
+- 有描述卡片底部列距卡片底（px）：8（長名＋價＋描述、短名＋價＋描述、長名＋描述三種皆 8；修正前為 -24）
+- 無描述卡片底部列距卡片底（px）：17（長名＋價、長名、短名皆 17）
+- 描述 computed `-webkit-line-clamp: 1`、`.product-info` padding `16px 20px`
+- 375px 行動版（真實資料、無描述）：17px，`.product-info` padding 16px，無橫向溢出
+- 量測方式：Chrome DevTools MCP 對本機 dev server，以 XHR 改寫注入 6 種組合（名稱長短 × 有無價格 × 有無描述）
+- 量測日期：2026-11-10
+- 結論：全部 ≥ 4px，02-UAT 第 3 項 gap resolved
 
 ## Deviations from Plan
 

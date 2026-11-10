@@ -1,9 +1,9 @@
 ---
-status: diagnosed
+status: complete
 phase: 02-api
-source: [02-01-SUMMARY.md, 02-02-SUMMARY.md, 02-03-SUMMARY.md, 02-04-SUMMARY.md]
+source: [02-01-SUMMARY.md, 02-02-SUMMARY.md, 02-03-SUMMARY.md, 02-04-SUMMARY.md, 02-06-SUMMARY.md]
 started: 2026-11-10T05:06:00Z
-updated: 2026-11-10T05:20:00Z
+updated: 2026-11-10T05:26:00Z
 ---
 
 ## Current Test
@@ -32,6 +32,7 @@ expected: 名稱兩行、有價格、描述兩行截斷時內容不溢出、不�
 result: issue
 reported: "名稱兩行＋價格＋兩行描述時，grid 卡片（固定 h-96 = 384px）內容超出卡片底部，描述第二行與「點擊查看大圖」列被裁掉"
 severity: major
+resolution: "02-06 修正（commit dbaef99）：grid 描述 line-clamp-1、.product-info py-4 px-5、價格 mb-1；1280px 實測有描述 8px／無描述 17px，皆 ≥ 4px，重測通過"
 
 ### 4. 缺圖／破圖／鍵盤燈箱／列表檢視
 expected: 缺圖與破圖顯示「暫無圖片」且不可點；有圖卡片 Tab＋Enter 開燈箱；列表檢視正常
@@ -69,7 +70,7 @@ blocked: 1
 ## Gaps
 
 - truth: "grid 卡片在名稱兩行、有價格、描述兩行時內容不溢出，「點擊查看大圖」列完整可見"
-  status: failed
+  status: resolved
   reason: "User reported: 名稱兩行＋價格＋兩行描述時，grid 卡片內容超出 h-96 卡片底部，描述第二行與「點擊查看大圖」列被裁掉"
   severity: major
   test: 3
@@ -77,3 +78,4 @@ blocked: 1
   artifacts: ["src/components/ProductCard.tsx"]
   missing: ["grid 模式描述改為 line-clamp-1（list 模式維持 line-clamp-2）", "對應元件測試斷言 grid 描述 class"]
   debug_session: ""
+  resolved_by: "02-06（dbaef99）— 瀏覽器重測通過，見 02-06-SUMMARY「瀏覽器實測」"
