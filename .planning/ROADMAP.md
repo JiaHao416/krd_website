@@ -27,7 +27,7 @@
   4. 單元測試涵蓋：API 回應轉畫面資料（含價格 ÷100、`null` 價格）、分類頁到查詢參數對照（含中文 encode）、網路／非 2xx／`success:false` 錯誤轉換
   5. `npm run build` 成功，現有網站行為不變
 
-**Plans:** 1/4 plans executed
+**Plans:** 3/4 plans executed
 
 Plans:
 **Wave 1**
@@ -36,8 +36,8 @@ Plans:
 
 **Wave 2** *(blocked on Wave 1 completion)*
 
-- [ ] 01-02-PLAN.md — 價格格式與 API 商品 → 畫面 Product 轉換，含單元測試（Wave 2）
-- [ ] 01-03-PLAN.md — 商品頁／首頁熱銷查詢設定與 buildProductParams，斷言中文 encode 查詢字串（Wave 2）
+- [x] 01-02-PLAN.md — 價格格式與 API 商品 → 畫面 Product 轉換，含單元測試（Wave 2）
+- [x] 01-03-PLAN.md — 商品頁／首頁熱銷查詢設定與 buildProductParams，斷言中文 encode 查詢字串（Wave 2）
 
 **Wave 3** *(blocked on Wave 2 completion)*
 
@@ -95,7 +95,7 @@ Plans:
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. 測試與 API 資料層基礎 | 1/4 | In Progress|  |
+| 1. 測試與 API 資料層基礎 | 3/4 | In Progress|  |
 | 2. 商品頁與首頁熱銷改讀後端 API | 0/TBD | Not started | - |
 | 3. 靜態內容固化與移除 Airtable | 0/TBD | Not started | - |
 | 4. 上線驗證與撤銷 token | 0/TBD | Not started | - |
