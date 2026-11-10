@@ -77,6 +77,10 @@ Plans:
 **Wave 4** *(blocked on Wave 3 completion)*
 
 - [x] 02-05-PLAN.md — Phase gate 自動檢查與本機對 production API 目視驗收、Pages 建置確認（Wave 4，含 checkpoint）
+
+**Gap closure** *(02-UAT 第 3 項，於 02-05 之後執行)*
+- [x] 02-06-PLAN.md — grid 卡片資訊區內容溢出修正：描述 line-clamp-1、資訊區 py-4 px-5、價格行 mb-1（02-UAT 第 3 項 gap closure）
+
 **UI hint**: yes
 
 ### Phase 3: 靜態內容固化與移除 Airtable

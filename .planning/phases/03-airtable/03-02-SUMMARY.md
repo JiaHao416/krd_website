@@ -28,6 +28,7 @@ metrics:
   tasks: 2
   completed: 2026-11-10
 requirements: [STAT-03]
+requirements-completed: [STAT-03]
 ---
 
 # Phase 3 Plan 02: 關於我們靜態化 Summary
