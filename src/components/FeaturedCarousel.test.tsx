@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, afterEach } from "vitest";
-import { act, render, screen, within } from "@testing-library/react";
+import { act, fireEvent, render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import FeaturedCarousel from "./FeaturedCarousel";
 import type { UseProductsResult } from "../hooks/useProducts";
@@ -106,6 +106,15 @@ describe("FeaturedCarousel 操控", () => {
     }
     await userEvent.click(screen.getByRole("button", { name: "下一張" }));
     expect(screen.getByText("商品2")).toBeInTheDocument();
+  });
+});
+
+describe("FeaturedCarousel 圖片載入失敗", () => {
+  it("圖片載入失敗時改顯示佔位圖，不留破圖", () => {
+    renderCarousel(makeResult({ items: makeItems(1) }));
+    fireEvent.error(screen.getByRole("img", { name: "商品1" }));
+    expect(screen.queryByRole("img", { name: "商品1" })).not.toBeInTheDocument();
+    expect(screen.getByRole("img", { name: "暫無圖片" })).toBeInTheDocument();
   });
 });
 

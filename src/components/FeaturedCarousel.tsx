@@ -30,6 +30,8 @@ const FeaturedCarousel = ({
   intervalMs,
 }: FeaturedCarouselProps) => {
   const [currentSlide, setCurrentSlide] = useState(0);
+  // 記錄載入失敗的圖片網址；換成其他網址時自動重新嘗試（比照 ProductCard）
+  const [failedImageUrl, setFailedImageUrl] = useState<string | null>(null);
   const { items, status } = result;
 
   // 只有成功且多於一筆時才自動播放
@@ -128,10 +130,11 @@ const FeaturedCarousel = ({
       {/* 主要輪播區域 */}
       <div className="relative overflow-hidden rounded-3xl shadow-2xl">
         <div className="aspect-video relative">
-          {product.imageUrl ? (
+          {product.imageUrl && product.imageUrl !== failedImageUrl ? (
             <img
               src={product.imageUrl}
               alt={product.name}
+              onError={() => setFailedImageUrl(product.imageUrl)}
               className="w-full h-full object-cover transition-all duration-1000 scale-105 group-hover:scale-110"
             />
           ) : (
