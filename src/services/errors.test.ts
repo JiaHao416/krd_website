@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { AxiosError, AxiosHeaders } from "axios";
+import { AxiosError, AxiosHeaders, CanceledError } from "axios";
 import type { InternalAxiosRequestConfig } from "axios";
 import { ApiError, getErrorMessage, normalizeError } from "./errors";
 
@@ -25,6 +25,11 @@ describe("normalizeError", () => {
   it("無 response 的 timeout 歸類為 network", () => {
     const error = new AxiosError("timeout", AxiosError.ECONNABORTED, config);
     expect(normalizeError(error).kind).toBe("network");
+  });
+
+  it("被取消的請求歸類為 canceled 而非 network", () => {
+    const error = new CanceledError(undefined, undefined, config);
+    expect(normalizeError(error).kind).toBe("canceled");
   });
 
   it("429 歸類為 rate_limited", () => {

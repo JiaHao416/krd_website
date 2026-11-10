@@ -1,7 +1,15 @@
 import axios from "axios";
 
-/** 錯誤種類：網路（含 timeout）、限流（429）、其他 HTTP 錯誤、回應格式不符 */
-export type ApiErrorKind = "network" | "rate_limited" | "http" | "invalid_response";
+/**
+ * 錯誤種類：網路（含 timeout）、限流（429）、其他 HTTP 錯誤、回應格式不符、請求被取消
+ * canceled 來自 AbortController（例如元件 unmount 或 StrictMode 重跑 effect），UI 應直接忽略、不顯示錯誤
+ */
+export type ApiErrorKind =
+  | "network"
+  | "rate_limited"
+  | "http"
+  | "invalid_response"
+  | "canceled";
 
 /** 資料層統一錯誤；使用者看到的文字只能來自 getErrorMessage */
 export class ApiError extends Error {
@@ -37,7 +45,7 @@ function extractBackendMessage(data: unknown): string | undefined {
 
 /**
  * 將任意錯誤正規化為 ApiError
- * 判斷順序：已是 ApiError → 無 response（網路）→ 429 → 其他 HTTP → 其餘。
+ * 判斷順序：已是 ApiError → 被取消 → 無 response（網路）→ 429 → 其他 HTTP → 其餘。
  * 不自動重試：429 時重試只會更糟，重試交給 Phase 2 的按鈕。
  * @param error - 捕捉到的任意錯誤
  * @returns ApiError
@@ -45,6 +53,10 @@ function extractBackendMessage(data: unknown): string | undefined {
 export function normalizeError(error: unknown): ApiError {
   if (error instanceof ApiError) {
     return error;
+  }
+  // CanceledError 也算 AxiosError 且沒有 response，須在網路判斷之前攔下，避免誤報連線失敗
+  if (axios.isCancel(error)) {
+    return new ApiError("canceled", "請求已取消");
   }
   if (axios.isAxiosError(error)) {
     const response = error.response;
@@ -66,6 +78,7 @@ export function normalizeError(error: unknown): ApiError {
 /**
  * 取得可顯示給訪客的中文錯誤訊息
  * @param error - 捕捉到的任意錯誤
+ * canceled 不應顯示給訪客，呼叫端需先以 kind 判斷略過；此處退回通用文案
  * @returns ERROR_MESSAGES 中的固定文案，不含後端細節
  */
 export function getErrorMessage(error: unknown): string {

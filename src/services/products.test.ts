@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, afterEach } from "vitest";
-import { AxiosError } from "axios";
+import { AxiosError, CanceledError } from "axios";
 import type { AxiosAdapter, InternalAxiosRequestConfig } from "axios";
 import { createApiClient } from "./client";
 import { fetchProducts } from "./products";
@@ -180,6 +180,16 @@ describe("fetchProducts", () => {
     const client = createApiClient("/api/v1/public", createNetworkErrorAdapter());
     await expect(fetchProducts({ limit: 100 }, client)).rejects.toMatchObject({
       kind: "network",
+    });
+  });
+
+  it("請求被取消時拋出 canceled", async () => {
+    const adapter: AxiosAdapter = async (config) => {
+      throw new CanceledError(undefined, undefined, config);
+    };
+    const client = createApiClient("/api/v1/public", adapter);
+    await expect(fetchProducts({ limit: 100 }, client)).rejects.toMatchObject({
+      kind: "canceled",
     });
   });
 
