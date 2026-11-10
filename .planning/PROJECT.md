@@ -21,16 +21,16 @@ KRD 音響／麥克風盤商的品牌官網（`www.krd.com.tw`），給客戶瀏
 - ✓ Cloudflare Pages 自動部署；SPA 子路徑直接開啟回 200（2026-11-10 實測）— existing
 - ✓ API base URL 由 `VITE_API_BASE_URL` 設定；本機開發用 Vite proxy 繞過 CORS 白名單 — Validated in Phase 1: 測試與 API 資料層基礎
 - ✓ 導入 Vitest，API 層與資料轉換邏輯有單元測試（80 項）— Validated in Phase 1: 測試與 API 資料層基礎
+- ✓ 8 個分類頁與首頁熱銷改讀後端公開 API `https://api.krd.com.tw/api/v1/public/products`（對照表見 BRIEF.md） — Validated in Phase 2: 商品改讀後端 API
+- ✓ 欄位改用 API 格式（`image_url`、`name`…）；價格為含稅「分」整數，顯示時 ÷100，`null` 時顯示「洽詢」類文字 — Validated in Phase 2: 商品改讀後端 API
+- ✓ 資料載入中與載入失敗（含被限流）有明確畫面，不再靜默顯示空白 — Validated in Phase 2: 商品改讀後端 API
+- ✓ Logo 改用 `public/` 內圖片 — Validated in Phase 3: 靜態內容固化與移除 Airtable
+- ✓ 導覽列（NavBar、SideMenu）改用程式內定義的選單清單，與 `App.tsx` 路由同一份來源 — Validated in Phase 3: 靜態內容固化與移除 Airtable
+- ✓ 關於我們改用 repo 內內容檔（文字＋圖片下載進 repo） — Validated in Phase 3: 靜態內容固化與移除 Airtable
+- ✓ 移除 Airtable service 與寫死的 token — Validated in Phase 3: 靜態內容固化與移除 Airtable
 
 ### Active
 
-- [ ] 8 個分類頁與首頁熱銷改讀後端公開 API `https://api.krd.com.tw/api/v1/public/products`（對照表見 BRIEF.md）
-- [ ] 欄位改用 API 格式（`image_url`、`name`…）；價格為含稅「分」整數，顯示時 ÷100，`null` 時顯示「洽詢」類文字
-- [ ] Logo 改用 `public/` 內圖片
-- [ ] 導覽列（NavBar、SideMenu）改用程式內定義的選單清單，與 `App.tsx` 路由同一份來源
-- [ ] 關於我們改用 repo 內內容檔（文字＋圖片下載進 repo）
-- [ ] 移除 Airtable service 與寫死的 token
-- [ ] 資料載入中與載入失敗（含被限流）有明確畫面，不再靜默顯示空白
 - [ ] 上線驗證後由 Owner 撤銷 Airtable token
 
 ### Out of Scope
@@ -88,4 +88,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-11-10 after Phase 1 完成*
+*Last updated: 2026-11-10 after Phase 3 完成（前端已不含 Airtable 憑證；待 Phase 4 上線驗證並撤銷 token）*
