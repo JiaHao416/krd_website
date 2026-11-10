@@ -4,6 +4,7 @@ import Layout from "../components/Layout";
 import ImageModal from "../components/ImageModal";
 import ProductCard from "../components/ProductCard";
 import { useProducts } from "../hooks/useProducts";
+import { PRODUCT_LIMIT } from "../services/catalog";
 import type { ProductPageQuery } from "../services/catalog";
 import type { ProductSort } from "../services/apiTypes";
 import { getErrorMessage } from "../services/errors";
@@ -273,7 +274,7 @@ const ProductPageTemplate = ({
 
           {status === "success" && truncated && (
             <p className="text-sm text-gray-500 text-center mt-8">
-              僅顯示前 100 項商品
+              {`僅顯示前 ${PRODUCT_LIMIT} 項商品`}
             </p>
           )}
         </div>

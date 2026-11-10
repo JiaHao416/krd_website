@@ -306,6 +306,8 @@ describe("fetchProducts", () => {
     });
     await fetchProducts({ limit: 100 }, client);
     expect(warn).toHaveBeenCalledTimes(1);
+    // 訊息需同時含總數與實際取得筆數
+    expect(warn.mock.calls[0][0]).toContain("總數 150，僅取得 2 筆");
   });
 
   it("total 大於取得筆數時 truncated 為 true", async () => {

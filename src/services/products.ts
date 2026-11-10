@@ -112,7 +112,7 @@ export async function fetchProducts(
   const truncated = total > items.length;
   if (truncated) {
     console.warn(
-      `商品總數 ${total} 超過單次上限 ${items.length} 筆，需實作分頁`
+      `商品總數 ${total}，僅取得 ${items.length} 筆，需實作分頁`
     );
   }
 
