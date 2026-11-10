@@ -2,7 +2,19 @@
 
 ## What This Is
 
-KRD 音響／麥克風盤商的品牌官網（`www.krd.com.tw`），給客戶瀏覽品牌、商品分類與熱銷商品。Vite + React 19 單頁應用，部署在 Cloudflare Pages（push 到 GitHub `main` 自動部署）。目前內容全部來自 Airtable；本輪要把它改成「商品讀後端公開 API、其餘內容為 repo 內靜態檔」，完全停用 Airtable。
+KRD 音響／麥克風盤商的品牌官網（`www.krd.com.tw`），給客戶瀏覽品牌、商品分類與熱銷商品。Vite + React 19 單頁應用，部署在 Cloudflare Pages（push 到 GitHub `main` 自動部署）。v1.0 起商品讀 KRD 後端公開 API，Logo／導覽／關於我們為 repo 內靜態檔，已完全停用 Airtable、前端不含任何憑證。
+
+## Current State
+
+- **Shipped:** v1.0 API 遷移與停用 Airtable（2026-11-10，5 phases／22 plans，詳見 `.planning/MILESTONES.md`）
+- 測試：Vitest 215 項；`npm run build` 內含 `tsc -b` 與 dist 憑證掃描
+- 舊 Airtable token 已撤銷並確認失效
+
+## Next Milestone Goals
+
+- UI 版面整體重新設計（技術棧不變），在 `redesign` 分支開發、完成後再合併回 `main`，避免半成品上線
+- 一併處理 WR-04（1024px 桌機導覽文字擠壓）
+- 開工前需決定預覽方式：`*.pages.dev` 不在後端 CORS 白名單，分支預覽抓不到商品
 
 ## Core Value
 
@@ -30,10 +42,12 @@ KRD 音響／麥克風盤商的品牌官網（`www.krd.com.tw`），給客戶瀏
 - ✓ 移除 Airtable service 與寫死的 token — Validated in Phase 3: 靜態內容固化與移除 Airtable
 - ✓ 新版官網在 www.krd.com.tw production 實測正常（商品、熱銷、Logo、導覽、關於我們） — Validated in Phase 4: 上線驗證與撤銷 token
 - ✓ Owner 已撤銷舊官網 Airtable token，舊 token 經 whoami 確認失效，網站不受影響 — Validated in Phase 4: 上線驗證與撤銷 token
+- ✓ 熱銷輪播符合 WCAG 2.2.2（hover／鍵盤焦點暫停、尊重減少動態；滑鼠與觸控點擊後不會停住）— v1.0（Phase 5）
+- ✓ `npm run build` 自動擋下 dist 內的 Airtable 痕跡 — v1.0（Phase 5）
 
 ### Active
 
-（本 milestone 無剩餘項目）
+（待 `/gsd-new-milestone` 定義 UI 重新設計需求）
 
 ### Out of Scope
 
@@ -49,8 +63,8 @@ KRD 音響／麥克風盤商的品牌官網（`www.krd.com.tw`），給客戶瀏
 - Production（2026-11-10）：20 筆商品，喇叭 7、有線麥克風 5、無線麥克風 5、配件 3；全部 `show_price=false`（價格皆 `null`）；圖片在 `https://img.krd.com.tw`（Cloudflare R2）。
 - 分類值是中文，query string 需 `encodeURIComponent`。
 - 交接背景：`.planning/BRIEF.md`（後端 session 已與 Owner 定案的項目）。
-- 既有程式碼分析：`.planning/codebase/`。重點：每個元件在 `useEffect` 自行抓資料；Airtable 錯誤被吞成 `[]`；`ProductView.tsx` 未被引用；無測試框架。
-- Airtable 的 `logo`、`navigation`、`abouts` 內容由執行階段用現有 token 抓取轉成靜態檔（在撤銷 token 前完成）。
+- 既有程式碼分析：`.planning/codebase/`（已於 Phase 5 後同步為 v1.0 現況）。
+- v1.0 已知技術債：WR-04 桌機導覽擠壓（併入重設計）、Tailwind v3/v4 混裝與過時型別、少數未使用 export、輪播滑鼠拖出邊角情境。
 
 ## Constraints
 
@@ -71,6 +85,10 @@ KRD 音響／麥克風盤商的品牌官網（`www.krd.com.tw`），給客戶瀏
 | 導覽清單與路由共用同一份定義 | 避免選單與路由不同步 | ✓ Good — NAV_ITEMS 衍生自 PRODUCT_PAGES |
 | 導入 Vitest | 使用者規則要求測試先行；與 Vite 原生整合 | ✓ Good — npm test 持續把關（含 noAirtable 掃描） |
 | 本輪不做詳情頁、不清依賴 | 控制範圍，專注停用 Airtable | ✓ Good — 範圍維持在停用 Airtable，詳情頁與依賴整理留待下一輪 |
+| 加開 Phase 5 清理稽核技術債 | v1.0 稽核為 tech_debt，趁重設計前先清乾淨 | ✓ Good — WR-06、WR-01 與範本殘留皆修正 |
+| check:dist 接進 `npm run build` | 讓 Cloudflare 建置時自動擋下憑證殘留 | ✓ Good — 反向測試確認會失敗 |
+| 輪播以指標事件序列判斷點擊焦點，不用 `:focus-visible` | jsdom 無法區分 `:focus-visible`，無法測試 | ✓ Good — 滑鼠／觸控／鍵盤三路徑 UAT 通過 |
+| UI 重設計排在 v1.0 之後、另開分支 | `main` push 即上線，半成品不能上線 | — Pending（下一個 milestone） |
 
 ## Evolution
 
@@ -90,4 +108,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-11-10 after Phase 4 完成（production 驗收通過，舊 Airtable token 已撤銷並確認失效）*
+*Last updated: 2026-11-10 after v1.0 milestone*

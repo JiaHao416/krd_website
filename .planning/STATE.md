@@ -1,11 +1,11 @@
 ---
 gsd_state_version: 1.0
 milestone: v1.0
-milestone_name: milestone
-status: verified
-stopped_at: Phase 5 UAT 全數通過（含 05-05 gap closure）
-last_updated: "2026-11-10T08:18:20.978Z"
-last_activity: 2026-11-10
+milestone_name: API 遷移與停用 Airtable
+status: Awaiting next milestone
+stopped_at: v1.0 milestone 已歸檔
+last_updated: "2026-11-10T08:28:19.609Z"
+last_activity: 2026-11-10 — Milestone v1.0 completed and archived
 progress:
   total_phases: 5
   completed_phases: 5
@@ -21,16 +21,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-11-10)
 
 **Core value:** 官網顯示的商品必須與家人在 KRD-Inventory App 維護的後端資料一致，且前端程式中不再含任何憑證。
-**Current focus:** Phase 05 — vite-favicon-wr-06-check-dist-wr-01
+**Current focus:** 規劃下一個 milestone（UI 重新設計）
 
 ## Current Position
 
-Phase: 05 (vite-favicon-wr-06-check-dist-wr-01) — COMPLETE
-Plan: 5 of 5
-Status: Phase 5 UAT 6/6 通過，待 push 與 milestone 收尾
-Last activity: 2026-11-10
-
-Progress: [██████████] 100%
+Phase: Milestone v1.0 complete
+Plan: —
+Status: Awaiting next milestone
+Last activity: 2026-11-10 — Milestone v1.0 completed and archived
 
 ## Performance Metrics
 
@@ -78,3 +76,7 @@ None yet.
 Last session: 2026-11-10T08:18:20.972Z
 Stopped at: Phase 5 context gathered
 Resume file: None
+
+## Operator Next Steps
+
+- Start the next milestone with /gsd-new-milestone
