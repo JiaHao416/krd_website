@@ -44,7 +44,7 @@ created: 2026-11-10
 
 例外：
 - 空狀態／錯誤卡片外圈圓形容器維持既有 `w-32 h-32`（128px）與 `py-20`（80px）[既有，D-02 要求沿用]。
-- 按鈕最小觸控高度 44px：「重新載入」按鈕使用 `px-6 py-3`（高度約 48px）。
+- 按鈕最小觸控高度 44px：「重新載入」按鈕使用 `px-6 py-2 min-h-[44px]`（`py-2` 為 8px，在刻度內；高度由 `min-h-[44px]` 保證，44px 為觸控目標例外）。
 - 首頁輪播導覽箭頭維持既有 `w-16 h-16` / 手機 `w-12 h-12`（48px）[既有]。
 - 圖片佔位框使用 `aspect-video` 與卡片圖片容器同尺寸，不另設固定數值。
 
@@ -56,13 +56,14 @@ created: 2026-11-10
 
 | 角色 | 大小 | 字重 | 行高 | 本 phase 用途 |
 |------|------|------|------|----------------|
-| Body | 16px（`text-base`）| 400 | 1.5 | 錯誤卡片說明文字、空狀態說明、list 卡片描述改用 14px 見 Label |
-| Label | 14px（`text-sm`）| 400（價格洽詢為 400；有價為 600）| 1.5 | 價格文字、排序標籤、list 卡片描述、「重新載入」按鈕文字（600）、截斷提示 |
+| Body | 16px（`text-base`）| 400 | 1.5 | 錯誤卡片說明文字、空狀態說明、首頁輪播錯誤／空狀態文字 |
+| Label | 14px（`text-sm`）| 400（有價格的價格文字與按鈕文字為 600）| 1.5 | 價格文字、排序標籤、grid／list 卡片描述、「暫無圖片」佔位文字、「重新載入」按鈕文字、截斷提示 |
 | Heading | 20px（`text-xl`）| 600 | 1.2 | 錯誤／空狀態標題在窄版；商品名稱（list 卡片，沿用 `text-xl font-semibold`）|
-| Display | 30px（`text-3xl`）| 600 | 1.2 | 空狀態／錯誤卡片標題（沿用既有 `text-3xl`，字重由 `font-bold` 改為 `font-semibold`）|
+| Display | 30px（`text-3xl`）| 600 | 1.2 | 空狀態／錯誤卡片標題（沿用既有 `text-3xl`，字重由 `font-bold` 改為 `font-semibold`；手機版不縮小，同樣 30px）|
 
 補充：
-- 微字級 12px（`text-xs`）僅限：缺圖佔位文字「暫無圖片」、grid 卡片描述、價格徽章 [既有 `product-badge`]。屬既有元素的延續，新程式不再新增其他 12px 用途。
+- 本 phase 新增或修改的元素，全文只使用上表 16／14／20／30px，不得出現其他字級。
+- 例外（既有未修改元素，不屬本 phase 宣告）：`product-badge` 的 12px 由 `src/index.css` 既有 class 提供，本 phase 不修改其樣式，只決定是否渲染。
 - 字重只宣告 400 與 600。既有 `font-bold`/`font-black` 的未修改元素不動；新增元素一律用 `font-normal` 或 `font-semibold`。
 - 繁中內文行高 1.5（`leading-normal`），標題 1.2（`leading-tight` 約 1.25，可接受）。
 
@@ -112,10 +113,10 @@ Accent 保留給（明確清單，不得擴張）：
 - 圓形圖示容器 `w-32 h-32 rounded-full bg-red-500/10 mx-auto mb-8 flex items-center justify-center`，內含警告三角形 SVG `w-16 h-16 text-red-400`
 - 標題 `h3`：`text-3xl font-semibold text-gray-300 mb-4`，文字「無法載入商品」
 - 說明 `p`：`text-gray-400 text-base`，內容**只能**來自 `getErrorMessage(error)`，不得顯示後端原始訊息
-- 按鈕（mt-8）：「重新載入」，`bg-blue-500 hover:bg-blue-600 text-white text-sm font-semibold px-6 py-3 rounded-full transition-colors`，`focus-visible:ring-2 ring-blue-400 ring-offset-2 ring-offset-slate-900`；點擊後回到載入狀態（已有舊資料時走「排序切換中」淡化；無資料時走首次載入畫面）
+- 按鈕（mt-8）：「重新載入」，`bg-blue-500 hover:bg-blue-600 text-white text-sm font-semibold px-6 py-2 min-h-[44px] rounded-full transition-colors`，`focus-visible:ring-2 ring-blue-400 ring-offset-2 ring-offset-slate-900`；點擊後回到載入狀態（已有舊資料時走「排序切換中」淡化；無資料時走首次載入畫面）
 - 容器加 `role="alert"`，方便螢幕閱讀器與測試以 `getByRole("alert")` 查詢
 
-空狀態區塊：沿用既有圓形圖示（`bg-white/5`、灰色 inbox 圖示），標題「目前沒有商品」（`text-3xl font-semibold text-gray-300`），說明「此分類目前沒有上架的商品」（`text-gray-500 text-lg`）。
+空狀態區塊：沿用既有圓形圖示（`bg-white/5`、灰色 inbox 圖示），標題「目前沒有商品」（`text-3xl font-semibold text-gray-300`），說明「此分類目前沒有上架的商品」（`text-gray-500 text-base`）。
 
 控制列：
 - 排序下拉選項「依名稱」（`name`）與「最新優先」（`newest`）[既有文案]。
@@ -132,7 +133,7 @@ Accent 保留給（明確清單，不得擴張）：
 
 缺圖佔位圖（D-08，共用元件 `ImagePlaceholder`，首頁輪播亦使用）：
 - 與圖片容器同尺寸（`w-full h-full`），底 `bg-gradient-to-br from-slate-700 to-slate-800`
-- 置中垂直排列：麥克風 SVG（`w-12 h-12 text-gray-500`，list 卡片 `w-8 h-8`）+ 文字「暫無圖片」`text-xs text-gray-500 mt-2`
+- 置中垂直排列：麥克風 SVG（`w-12 h-12 text-gray-500`，list 卡片 `w-8 h-8`）+ 文字「暫無圖片」`text-sm text-gray-500 mt-2`
 - 外層 `role="img"`、`aria-label="暫無圖片"`
 - 缺圖商品：卡片**不顯示** hover 放大鏡遮罩、「點擊查看大圖」改為不顯示、`cursor-default`、點擊不開 ImageModal；`group-hover` 的標題色變化保留。list 卡片同樣隱藏「查看大圖」提示。
 - 有圖卡片：行為不變（點擊開燈箱）。圖片 `alt` 為商品名稱；有圖卡片外層加 `role="button"`、`tabIndex={0}`、Enter/Space 觸發（鍵盤可達性，[預設]）。
@@ -156,6 +157,16 @@ Accent 保留給（明確清單，不得擴張）：
 - 修正既有 bug：`from-${accentColor}-500` 動態 class 會被 Tailwind purge 掉。executor 必須改為完整靜態 class 字串（例如用物件對照 `blue`/`purple` → 完整 class），或在 `tailwind.config.js` 加 `safelist`。
 
 ---
+
+## 視覺焦點與層級
+
+| 畫面 | 焦點（第一眼）| 視覺層級（由強到弱）|
+|------|----------------|----------------------|
+| 商品頁成功 | 商品圖片（grid 圖片區 `h-64`）| 圖片 → 商品名稱（白色 20px 600）→ 價格（有價為 blue-400 600；洽詢為 gray-500）→ 描述（gray-400）→ 「點擊查看大圖」提示 |
+| 商品頁失敗 | 紅色警告圖示圓形容器 | 圖示 → 標題「無法載入商品」→ 說明文字 → 「重新載入」藍色實心按鈕（頁面唯一的 accent 實心按鈕，為主要行動）|
+| 商品頁空 | 灰色 inbox 圖示圓形容器 | 圖示 → 標題「目前沒有商品」→ 說明；無按鈕，不誘導操作 |
+| 首頁輪播成功 | 當前投影片圖片與疊在底部的商品名稱 | 圖片 → 名稱（白色）→ 描述 → 導覽箭頭與指示點 |
+| 首頁輪播失敗／空／載入 | 佔位框中央的圖示 | 圖示 → 文字 → （僅失敗）「重新載入」按鈕；框尺寸與成功狀態一致，避免兩組輪播左右失衡 |
 
 ## Copywriting Contract
 
@@ -183,7 +194,7 @@ Accent 保留給（明確清單，不得擴張）：
 ## Responsive 與 Motion
 
 - 斷點沿用既有：grid `grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4`；控制列 `flex-col sm:flex-row`。
-- 錯誤卡片、空狀態在手機版：圖示容器縮為 `w-24 h-24`（`w-32 sm:w-32` 以下用 `max-sm:w-24 max-sm:h-24`），標題 `text-2xl sm:text-3xl`；按鈕不全寬，置中。
+- 錯誤卡片、空狀態在手機版：圖示容器縮為 `max-sm:w-24 max-sm:h-24`（sm 以上維持 `w-32 h-32`），標題不縮小，維持 `text-3xl`；按鈕不全寬，置中。
 - 動畫：排序淡化 200ms；其餘沿用既有 `transition-all duration-300/500`。`prefers-reduced-motion` 下停用 spinner 以外的位移動畫非本 phase 範圍（不新增）。
 - 缺圖與錯誤狀態不得造成 layout shift：佔位框尺寸與正常狀態一致。
 
