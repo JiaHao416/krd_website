@@ -28,10 +28,12 @@ KRD 音響／麥克風盤商的品牌官網（`www.krd.com.tw`），給客戶瀏
 - ✓ 導覽列（NavBar、SideMenu）改用程式內定義的選單清單，與 `App.tsx` 路由同一份來源 — Validated in Phase 3: 靜態內容固化與移除 Airtable
 - ✓ 關於我們改用 repo 內內容檔（文字＋圖片下載進 repo） — Validated in Phase 3: 靜態內容固化與移除 Airtable
 - ✓ 移除 Airtable service 與寫死的 token — Validated in Phase 3: 靜態內容固化與移除 Airtable
+- ✓ 新版官網在 www.krd.com.tw production 實測正常（商品、熱銷、Logo、導覽、關於我們） — Validated in Phase 4: 上線驗證與撤銷 token
+- ✓ Owner 已撤銷舊官網 Airtable token，舊 token 經 whoami 確認失效，網站不受影響 — Validated in Phase 4: 上線驗證與撤銷 token
 
 ### Active
 
-- [ ] 上線驗證後由 Owner 撤銷 Airtable token
+（本 milestone 無剩餘項目）
 
 ### Out of Scope
 
@@ -63,12 +65,12 @@ KRD 音響／麥克風盤商的品牌官網（`www.krd.com.tw`），給客戶瀏
 
 | Decision | Rationale | Outcome |
 |----------|-----------|---------|
-| 商品資料改接後端公開 API | 後端已是商品唯一來源；Airtable 不再更新 | — Pending |
-| Logo／導覽列／關於我們改為 repo 靜態檔（依 BRIEF，取代先前「暫留 Airtable」） | 完全停用 Airtable 才能撤銷公開的 token；這些內容很少變動 | — Pending |
-| 靜態內容由執行階段用現有 token 抓取 | 省去 Owner 手動匯出 | — Pending |
-| 導覽清單與路由共用同一份定義 | 避免選單與路由不同步 | — Pending |
-| 導入 Vitest | 使用者規則要求測試先行；與 Vite 原生整合 | — Pending |
-| 本輪不做詳情頁、不清依賴 | 控制範圍，專注停用 Airtable | — Pending |
+| 商品資料改接後端公開 API | 後端已是商品唯一來源；Airtable 不再更新 | ✓ Good — Phase 2 上線；Phase 4 production 商品數與 API 一致 |
+| Logo／導覽列／關於我們改為 repo 靜態檔（依 BRIEF，取代先前「暫留 Airtable」） | 完全停用 Airtable 才能撤銷公開的 token；這些內容很少變動 | ✓ Good — Phase 3 完成；Phase 4 撤銷 token 後網站正常 |
+| 靜態內容由執行階段用現有 token 抓取 | 省去 Owner 手動匯出 | ✓ Good — Phase 3 抓取完成，token 已於 Phase 4 撤銷 |
+| 導覽清單與路由共用同一份定義 | 避免選單與路由不同步 | ✓ Good — NAV_ITEMS 衍生自 PRODUCT_PAGES |
+| 導入 Vitest | 使用者規則要求測試先行；與 Vite 原生整合 | ✓ Good — npm test 持續把關（含 noAirtable 掃描） |
+| 本輪不做詳情頁、不清依賴 | 控制範圍，專注停用 Airtable | ✓ Good — 範圍維持在停用 Airtable，詳情頁與依賴整理留待下一輪 |
 
 ## Evolution
 
@@ -88,4 +90,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-11-10 after Phase 3 完成（前端已不含 Airtable 憑證；待 Phase 4 上線驗證並撤銷 token）*
+*Last updated: 2026-11-10 after Phase 4 完成（production 驗收通過，舊 Airtable token 已撤銷並確認失效）*

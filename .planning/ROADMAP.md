@@ -122,7 +122,7 @@ Plans:
   2. Owner 手動撤銷 Airtable token（本流程最後一步，須在 REL-01 通過後）
   3. 撤銷後重新整理 production 網站，所有頁面仍正常運作
 
-**Plans:** 1/3 plans executed
+**Plans:** 2/3 plans executed
 
 Plans:
 **Wave 1**
@@ -131,7 +131,7 @@ Plans:
 
 **Wave 2** *(blocked on Wave 1 completion)*
 
-- [ ] 04-02-PLAN.md — 撤銷前 whoami 200 基準與 D-09 依賴清單、Owner 手動刪除 token、撤銷後 401/403 與 shell 再驗證（Wave 2）
+- [x] 04-02-PLAN.md — 撤銷前 whoami 200 基準與 D-09 依賴清單、Owner 手動刪除 token、撤銷後 401/403 與 shell 再驗證（Wave 2）
 
 **Wave 3** *(blocked on Wave 2 completion)*
 
@@ -144,4 +144,4 @@ Plans:
 | 1. 測試與 API 資料層基礎 | 4/4 | Complete   | 2026-11-10 |
 | 2. 商品頁與首頁熱銷改讀後端 API | 6/6 | Complete   | 2026-11-10 |
 | 3. 靜態內容固化與移除 Airtable | 4/4 | Complete    | 2026-11-10 |
-| 4. 上線驗證與撤銷 token | 1/3 | In Progress|  |
+| 4. 上線驗證與撤銷 token | 2/3 | In Progress|  |

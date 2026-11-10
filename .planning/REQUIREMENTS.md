@@ -43,8 +43,8 @@
 
 ### 上線（REL）
 
-- [ ] **REL-01**: 部署到 `www.krd.com.tw` 後，所有頁面在 production 實測正常（商品、熱銷、Logo、導覽、關於我們）
-- [ ] **REL-02**: 上線確認後，Owner 撤銷 Airtable token，網站仍正常運作
+- [x] **REL-01**: 部署到 `www.krd.com.tw` 後，所有頁面在 production 實測正常（商品、熱銷、Logo、導覽、關於我們）
+- [x] **REL-02**: 上線確認後，Owner 撤銷 Airtable token，網站仍正常運作
 
 ## v2 Requirements
 
@@ -96,8 +96,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 | STAT-01 | Phase 3 | Complete |
 | STAT-02 | Phase 3 | Complete |
 | STAT-03 | Phase 3 | Complete |
-| REL-01 | Phase 4 | Pending |
-| REL-02 | Phase 4 | Pending |
+| REL-01 | Phase 4 | Complete |
+| REL-02 | Phase 4 | Complete |
 
 **Coverage:**
 - v1 requirements: 23 total

@@ -56,6 +56,8 @@ created: 2026-11-10
 |-------------|----------|----------|----------|
 | TR-03-01 | T-03-12、T-03-17 | Phase 4 REL-02（Owner 撤銷 Airtable token） | 03-04-PLAN threat_model；03-VERIFICATION 註明撤銷屬 Phase 4 |
 
+**TR-03-01 已關閉（Phase 4）：** 2026-11-10 刪除舊官網 token（Owner 授權 Claude 透過 Owner 已登入的瀏覽器操作）；同一支 D-14 指令撤銷前回 200、撤銷後回 401（證據：`.planning/phases/04-token/04-02-SUMMARY.md`）。Cloudflare Pages 舊部署 bundle 仍含舊值，但已藉由撤銷消除風險，不刪除舊部署（Phase 4 D-15）。
+
 ## 未登記旗標
 
 無（SUMMARY 無未對應威脅之 Threat Flags）。
@@ -65,6 +67,7 @@ created: 2026-11-10
 | 稽核日期 | 威脅總數 | 已關閉 | 未關閉 | 執行者 |
 |----------|----------|--------|--------|--------|
 | 2026-11-10 | 17 | 17 | 0 | gsd-security-auditor |
+| 2026-11-10 | 17 | 17 | 0 | Phase 4 收尾（TR-03-01 關閉） |
 
 ## 簽核
 
