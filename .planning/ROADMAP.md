@@ -27,12 +27,12 @@
   4. 單元測試涵蓋：API 回應轉畫面資料（含價格 ÷100、`null` 價格）、分類頁到查詢參數對照（含中文 encode）、網路／非 2xx／`success:false` 錯誤轉換
   5. `npm run build` 成功，現有網站行為不變
 
-**Plans:** 4 plans
+**Plans:** 1/4 plans executed
 
 Plans:
 **Wave 1**
 
-- [ ] 01-01-PLAN.md — 導入 Vitest、VITE_API_BASE_URL、Vite dev proxy，並建立 client 與 fetchProducts 最薄端到端切片（Wave 1）
+- [x] 01-01-PLAN.md — 導入 Vitest、VITE_API_BASE_URL、Vite dev proxy，並建立 client 與 fetchProducts 最薄端到端切片（Wave 1）
 
 **Wave 2** *(blocked on Wave 1 completion)*
 
@@ -95,7 +95,7 @@ Plans:
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. 測試與 API 資料層基礎 | 0/4 | Not started | - |
+| 1. 測試與 API 資料層基礎 | 1/4 | In Progress|  |
 | 2. 商品頁與首頁熱銷改讀後端 API | 0/TBD | Not started | - |
 | 3. 靜態內容固化與移除 Airtable | 0/TBD | Not started | - |
 | 4. 上線驗證與撤銷 token | 0/TBD | Not started | - |
