@@ -103,11 +103,11 @@ describe("ProductPageTemplate 基本載入與卡片", () => {
     );
     renderPage();
     await user.click(await screen.findByText("甲商品"));
-    const imgs = screen
-      .getAllByRole("img")
-      .filter(
-        (el) => el.getAttribute("src") === "https://img.krd.com.tw/x.jpg"
-      );
+    // role=button 內的 img 屬 presentational，改以 alt 文字查詢（卡片與燈箱 alt 不同）
+    const imgs = [
+      ...screen.getAllByAltText("甲商品"),
+      ...screen.getAllByAltText("產品詳細圖片"),
+    ].filter((el) => el.getAttribute("src") === "https://img.krd.com.tw/x.jpg");
     // 卡片一張、燈箱一張
     expect(imgs.length).toBeGreaterThanOrEqual(2);
   });
@@ -222,5 +222,69 @@ describe("ProductPageTemplate 錯誤、空、淡化與截斷狀態", () => {
     expect(
       await screen.findByText("無法連線，請檢查網路後重試")
     ).toBeInTheDocument();
+  });
+});
+
+describe("ProductPageTemplate 價格、檢視切換與鍵盤", () => {
+  it("同時顯示有價商品的 priceText 與無價商品的「價格洽詢」", async () => {
+    mockFetch.mockResolvedValue(
+      makeResult([
+        makeProduct({
+          id: "a",
+          name: "有價商品",
+          priceMin: 120000,
+          priceMax: 120000,
+          priceText: "NT$1,200",
+        }),
+        makeProduct({ id: "b", name: "無價商品", priceText: "價格洽詢" }),
+      ])
+    );
+    renderPage();
+    await screen.findByText("有價商品");
+    expect(screen.getAllByText("NT$1,200").length).toBeGreaterThanOrEqual(1);
+    expect(screen.getByText("價格洽詢")).toBeInTheDocument();
+  });
+
+  it("切換列表檢視後 aria-pressed 更新，且仍顯示價格行", async () => {
+    const user = userEvent.setup();
+    mockFetch.mockResolvedValue(
+      makeResult([
+        makeProduct({
+          priceMin: 120000,
+          priceMax: 120000,
+          priceText: "NT$1,200",
+        }),
+      ])
+    );
+    renderPage();
+    await screen.findByText("商品一");
+    const gridButton = screen.getByRole("button", { name: "格狀檢視" });
+    const listButton = screen.getByRole("button", { name: "列表檢視" });
+    expect(gridButton).toHaveAttribute("aria-pressed", "true");
+    await user.click(listButton);
+    expect(listButton).toHaveAttribute("aria-pressed", "true");
+    expect(gridButton).toHaveAttribute("aria-pressed", "false");
+    expect(screen.getByText("NT$1,200")).toBeInTheDocument();
+  });
+
+  it("有圖卡片以 Enter 開啟燈箱", async () => {
+    const user = userEvent.setup();
+    mockFetch.mockResolvedValue(
+      makeResult([
+        makeProduct({
+          name: "甲商品",
+          imageUrl: "https://img.krd.com.tw/x.jpg",
+        }),
+      ])
+    );
+    renderPage();
+    const card = await screen.findByRole("button", { name: /查看 甲商品/ });
+    card.focus();
+    await user.keyboard("{Enter}");
+    // 燈箱開啟後出現該圖片
+    expect(screen.getByAltText("產品詳細圖片")).toHaveAttribute(
+      "src",
+      "https://img.krd.com.tw/x.jpg"
+    );
   });
 });

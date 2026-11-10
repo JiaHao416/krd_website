@@ -2,7 +2,7 @@ import { useState } from "react";
 import type { ReactNode } from "react";
 import Layout from "../components/Layout";
 import ImageModal from "../components/ImageModal";
-import ImagePlaceholder from "../components/ImagePlaceholder";
+import ProductCard from "../components/ProductCard";
 import { useProducts } from "../hooks/useProducts";
 import type { ProductPageQuery } from "../services/catalog";
 import type { ProductSort } from "../services/apiTypes";
@@ -169,6 +169,8 @@ const ProductPageTemplate = ({
                 <button
                   type="button"
                   onClick={() => setViewMode("grid")}
+                  aria-label="格狀檢視"
+                  aria-pressed={viewMode === "grid"}
                   className={`p-2 rounded-md transition-all ${
                     viewMode === "grid"
                       ? "bg-blue-500 text-white"
@@ -192,6 +194,8 @@ const ProductPageTemplate = ({
                 <button
                   type="button"
                   onClick={() => setViewMode("list")}
+                  aria-label="列表檢視"
+                  aria-pressed={viewMode === "list"}
                   className={`p-2 rounded-md transition-all ${
                     viewMode === "list"
                       ? "bg-blue-500 text-white"
@@ -256,157 +260,14 @@ const ProductPageTemplate = ({
                   : "space-y-6"
               }`}
             >
-              {items.map((product, index) => {
-                const productName = product.name;
-                const hasImage = product.imageUrl !== null;
-
-                if (viewMode === "list") {
-                  return (
-                    <div
-                      key={product.id}
-                      className={`glass-card p-6 hover:border-blue-500/50 transition-all duration-300 group ${
-                        hasImage ? "cursor-pointer" : "cursor-default"
-                      }`}
-                      style={{ animationDelay: `${index * 0.1}s` }}
-                      onClick={
-                        hasImage
-                          ? () => handleImageClick(product.imageUrl as string)
-                          : undefined
-                      }
-                    >
-                      <div className="flex items-center space-x-6">
-                        <div className="w-24 h-24 rounded-xl overflow-hidden bg-gradient-to-br from-blue-500/10 to-purple-500/10 flex-shrink-0">
-                          {product.imageUrl ? (
-                            <img
-                              src={product.imageUrl}
-                              alt={productName}
-                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                              draggable={false}
-                            />
-                          ) : (
-                            <ImagePlaceholder size="sm" />
-                          )}
-                        </div>
-                        <div className="flex-1">
-                          <h3 className="text-xl font-semibold text-white mb-2 group-hover:text-blue-400 transition-colors">
-                            {productName}
-                          </h3>
-                          {product.description && (
-                            <p className="text-gray-400 text-sm mb-3 line-clamp-2">
-                              {product.description}
-                            </p>
-                          )}
-                        </div>
-                        {hasImage && (
-                          <div className="flex items-center space-x-2 text-gray-500 opacity-0 group-hover:opacity-100 transition-opacity">
-                            <svg
-                              className="w-5 h-5"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                              />
-                            </svg>
-                            <span className="text-sm">查看大圖</span>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  );
-                }
-
-                return (
-                  <div
-                    key={product.id}
-                    className={`group ${
-                      hasImage ? "cursor-pointer" : "cursor-default"
-                    }`}
-                    style={{ animationDelay: `${index * 0.1}s` }}
-                    onClick={
-                      hasImage
-                        ? () => handleImageClick(product.imageUrl as string)
-                        : undefined
-                    }
-                  >
-                    {/* 固定高度的產品卡片 */}
-                    <div className="product-card-new h-96 flex flex-col">
-                      {/* 產品圖片 - 固定高度 */}
-                      <div className="product-image-container flex-shrink-0 h-64">
-                        {product.imageUrl ? (
-                          <img
-                            src={product.imageUrl}
-                            alt={productName}
-                            className="product-image"
-                            draggable={false}
-                          />
-                        ) : (
-                          <ImagePlaceholder />
-                        )}
-
-                        {/* 懸停遮罩和放大鏡（缺圖時不顯示） */}
-                        {hasImage && (
-                          <div className="product-overlay">
-                            <div className="zoom-icon">
-                              <svg
-                                className="w-6 h-6 text-white"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                              >
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  strokeWidth={2}
-                                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7"
-                                />
-                              </svg>
-                            </div>
-                          </div>
-                        )}
-                      </div>
-
-                      {/* 產品信息 - 剩餘空間 */}
-                      <div className="product-info flex-1 flex flex-col justify-between">
-                        <div>
-                          <h3 className="product-title text-base leading-tight mb-2 line-clamp-2 min-h-[2.5rem]">
-                            {productName}
-                          </h3>
-
-                          {product.description && (
-                            <p className="text-gray-400 text-xs mb-3 line-clamp-2 leading-relaxed">
-                              {product.description}
-                            </p>
-                          )}
-                        </div>
-
-                        <div className="flex items-center justify-between mt-auto">
-                          <div className="text-xs text-gray-500">
-                            {hasImage ? "點擊查看大圖" : ""}
-                          </div>
-                          <svg
-                            className="w-4 h-4 text-blue-400 group-hover:translate-x-1 transition-transform flex-shrink-0"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M9 5l7 7-7 7"
-                            />
-                          </svg>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
+              {items.map((product) => (
+                <ProductCard
+                  key={product.id}
+                  product={product}
+                  variant={viewMode}
+                  onImageClick={handleImageClick}
+                />
+              ))}
             </div>
           )}
 
