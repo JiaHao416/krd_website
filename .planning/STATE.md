@@ -4,7 +4,7 @@ milestone: v1.0
 milestone_name: milestone
 status: executing
 stopped_at: Phase 5 context gathered
-last_updated: "2026-11-10T07:58:32.590Z"
+last_updated: "2026-11-10T07:58:57.194Z"
 last_activity: 2026-11-10
 progress:
   total_phases: 5
@@ -58,6 +58,7 @@ Progress: [██████████] 95%
 - 商品改接後端公開 API；Logo／導覽／關於我們改為 repo 靜態檔
 - 靜態內容須在撤銷 Airtable token 前，用現有 token 抓取完成（Phase 3）
 - 撤銷 token（REL-02）為最後一步，由 Owner 手動執行
+- [Phase 05]: D-01：npm run build 串接 check:dist（推翻 Phase 3 D-15），Cloudflare 建置時若 bundle 含 Airtable 字樣即失敗
 
 ### Roadmap Evolution
 
