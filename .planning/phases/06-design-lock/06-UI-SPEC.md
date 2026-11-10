@@ -30,6 +30,18 @@ created: 2026-11-10
 
 ---
 
+## 主視覺錨點（每頁一個視線落點）
+
+| 頁面 | 主視覺錨點 |
+|------|-----------|
+| 首頁 | h1 Display +店面照片預留位（傾斜 2deg、營業中戳章）+ 主要 CTA（「逛逛商品 →」與頂列/固定列的「打電話問問」）|
+| 列表頁 | h1 Display + 分類 chip 列（選中 chip 為 `accent` 實心，是頁面上唯一的 accent 色塊）|
+| 詳情頁 | 主圖（白底、琥珀膠帶、傾斜 -1.2deg）+ h1 Display + 價格區塊（`block-2` 底，緊接 CTA）|
+| 關於我們 | h1 Display（「關於我們」）+ 聯絡資訊區塊（沿用首頁聯絡區樣式：`block-2` 底、地址、營業時間、電話按鈕）|
+| NotFound / 找不到商品 | 標題 Heading + 主按鈕（回到首頁／回到所有商品）|
+
+---
+
 ## Design System
 
 | Property | Value |
@@ -48,7 +60,7 @@ font-sans: "PingFang TC", "Microsoft JhengHei", "微軟正黑體", "Noto Sans TC
 
 - `tailwind.config.js` 的 `fontFamily.sans` 與 `src/index.css` 的 `body font-family` 必須同步；index.css 改為只繼承 token（`font-family: theme("fontFamily.sans")`）。
 - 型號等拉丁字串用 `overflow-wrap: anywhere`。
-- 行高：內文 1.6；標題（Title 以上）1.2；卡片名稱 1.35；手機 h1 1.25。
+- 行高：Body/Label 1.6；Heading 1.25；Display 1.15；卡片名稱（Body 600，≤ 2 行）覆寫為 1.35。
 
 ---
 
@@ -63,11 +75,11 @@ font-sans: "PingFang TC", "Microsoft JhengHei", "微軟正黑體", "Noto Sans TC
 | 底部固定列 | 有（首頁/列表/關於：全寬「打電話問問」；詳情：「複製詢價」+「打電話問問」雙鈕）| 無 | 無 |
 | 首頁 hero | 單欄，照片預留位在文字下方（高 200）| 單欄，照片預留位在下（高 320）| 兩欄 6fr / 5fr，gap 64px，照片預留位高 420 |
 | 首頁分類貼紙卡 | 2 欄 | 2 欄 | 4 欄（gap 32）|
-| 首頁「這陣子大家都在問」 | 橫向捲動條（卡寬 260）| 3 張並排 | 3 張並排（gap 40）|
+| 首頁「這陣子大家都在問」 | 橫向捲動條（卡寬 260）| 3 張並排 | 3 張並排（gap 32）|
 | 首頁聯絡區 | 單欄堆疊（地圖預留位高 140，無電話按鈕，由底部固定列承擔）| 單欄堆疊 | 兩欄 5fr / 4fr，地圖預留位高 220 |
 | 列表頁分類 chip | 單列橫向捲動（出血到畫面邊，`overflow-x:auto`）| 可換行 | 可換行 |
 | 列表 grid | 2 欄（gap 16）| 3 欄（gap 24）| 4 欄（gap 32）|
-| 詳情頁 | 單欄 | 單欄，主圖 `max-w-[520px]` 置中，按鈕列行內（非固定）| 兩欄 5fr / 6fr，gap 56px |
+| 詳情頁 | 單欄 | 單欄，主圖 `max-w-[520px]` 置中，按鈕列行內（非固定）| 兩欄 5fr / 6fr，gap 48px |
 
 - 1024px 落在 `md`，頂列僅 2 個連結 + 1 個按鈕，不會擠壓或折行（WR-04 因導覽縮減而根除，不再需要把水平選單提高到 `xl`）。
 - 觸控目標最小 44×44px。
@@ -76,45 +88,48 @@ font-sans: "PingFang TC", "Microsoft JhengHei", "微軟正黑體", "Noto Sans TC
 
 ## Spacing Scale
 
-宣告值皆為 4 的倍數。
+只使用 7 個標準值，皆為 4 的倍數。
 
 | Token | Value | Usage |
 |-------|-------|-------|
-| xs | 4px | 圖示與文字間距、tag 垂直 padding（2px 者一律取 4px）|
-| sm | 8px | 緊湊元素間距、手機 chip gap |
-| 12 | 12px | chip gap（桌機）、卡內元素間距 |
-| md | 16px | 預設間距、base 頁面 padding、手機 grid gap |
-| 20 | 20px | 卡片內距、區塊 padding（手機聯絡區 24）|
-| lg | 24px | 區塊內距、`md` grid gap |
-| xl | 32px | `md` 頁面 padding、桌機 grid gap |
-| 40 | 40px | 便條卡 gap |
-| 2xl | 48px | 聯絡區 padding、區塊間距 |
-| 3xl | 64px | `xl` 頁面 padding、桌機首頁區塊間距 |
+| xs | 4px | 圖示與文字間距、tag 垂直 padding、手機頂列內距 |
+| sm | 8px | 緊湊元素間距、chip gap（桌機與手機）、卡內元素間距、手機商品卡內距 |
+| md | 16px | 預設間距、卡片內距、chip 水平內距、tag 水平內距、base 頁面 padding、手機 grid gap |
+| lg | 24px | 區塊內距、`md` grid gap、詳情單欄 gap、手機聯絡區內距 |
+| xl | 32px | `md` 頁面 padding、`xl` grid gap、便條卡 gap、NotFound 面板內距、列表結尾區塊內距 |
+| 2xl | 48px | 聯絡區內距、詳情雙欄 gap、主要區塊間距 |
+| 3xl | 64px | `xl` 頁面 padding、桌機首頁區塊間距、NotFound 垂直 padding |
 
-Exceptions: 互動元素最小高度 44px；按鈕高 48/56/60px（頂列按鈕 48、主 CTA 56、手機撥號列 60/52）；焦點環 2px、offset 3px。
+Exceptions（非間距 token）：
+- 觸控／按鈕元件高度：**44px（一般按鈕、chip、頂列連結、選單鈕、圓形輪播鈕、燈箱關閉鈕）與 56px（主 CTA、手機固定列、詳情 CTA）兩種**。
+- 元件尺寸：分類圖示圓 64×64、列表圖 80/96px、頂列 Logo 高 30/26px、營業中戳章直徑 148px、膠帶 96×28 與 120×32、「放大看」pill 高 36px（純裝飾、`aria-hidden`）、地圖/照片預留位高度。
+- 邊框 1/2/3px、焦點環 2px + offset 3px。
+- 版面內留白 ≥ 8px 以避免傾斜/焦點環被裁（見傾斜規則）。
 
 ### 示意稿正規化（以本文為準）
-示意稿的 6px、10px 間距分別改為 4px、8px；1px chip 邊框、2px/3px 虛線邊框、膠帶尺寸（96×28、120×32）為裝飾尺寸，照示意稿。
+示意稿的 6px→4px、10px→8px、12px→8px（chip gap、卡內間距）或 16px、20px→16px（卡片內距）或 24px、28px→24px、40px→32px（便條卡 gap）、56px→48px（詳情雙欄 gap）；頂列內距手機 6/6/6/20 → 4/4/4/16、桌機 8/8/8/24 不變；「放大看」pill 內距 14→16；按鈕高 48→44、60/52→56；結尾區塊內距 28/40 → 24/32。
 
 ---
 
 ## Typography
 
-2 個字重（400、600）；禁用 `font-bold` / `font-medium`。字型堆疊同上。
+**4 個字級、2 個字重（400、600）**。禁用 `font-bold` / `font-medium`。字型堆疊同上。
 
 | Role | Size | Weight | Line Height | Tailwind token | 用途 |
 |------|------|--------|-------------|----------------|------|
-| Label | 15px | 400（強調 600）| 1.6 | `text-label` | 品牌/型號、tag、麵包屑、規格表、輔助說明、版權列、現貨標籤 |
-| Body | 17px | 400 | 1.6 | `text-body` | 內文、導覽、按鈕（600）、價格（有價）、chip |
-| Body-strong | 18px（手機 16px）| 600 | 1.35 | `text-body-strong` | 商品卡名稱（列表卡 grid；手機 16）、手機分類貼紙卡名稱 18 |
-| Title | 22px | 600 | 1.2 | `text-title` | 桌機分類貼紙卡名稱、便條卡商品名稱、聯絡區/「找不到想要的？」按鈕與標題、空/錯誤狀態標題 |
-| Heading | 32px（手機 24px）| 600 | 1.2 | `text-heading` | h2、詳情頁價格區標題（「價格請來電」）|
-| Display | 56px / 48px / 44px（手機 34 / 32 / 30）| 600 | 1.2（手機 1.25）| `text-display`（首頁 h1 56；列表 h1 48；詳情 h1 44）| 各頁 h1；手機依序 34 / 32 / 30 |
+| Label | 15px | 400（強調 600）| 1.6 | `text-label` | 品牌/型號、tag、麵包屑、規格表、輔助說明、版權列、現貨標籤、`看看 →` |
+| Body | 17px | 400（卡片名稱、按鈕、chip 選中、小標用 600）| 1.6（卡片名稱 1.35）| `text-body` | 內文、導覽、按鈕、商品卡名稱、便條卡名稱、價格（有價用 600）、詳情品牌/型號、導言 |
+| Heading | 28px（**base 24px**）| 600 | 1.25 | `text-heading` | h2、分類貼紙卡名稱、詳情價格區標題（「價格請來電」「NT$ 12,345」）、「營業中」戳章標題、「找不到想要的？」標題、空/錯誤/NotFound 狀態標題 |
+| Display | 48px（**base 32px**）| 600 | 1.15 | `text-display` | 所有頁面 h1（首頁、列表、詳情、關於、NotFound 一律同一級）|
+
+**響應式例外（僅此兩處）：** Heading 在 base 為 24px、Display 在 base 為 32px，視為同一 token 的響應式值，不另計字級。`md` 與 `xl` 皆用 Heading 28 / Display 48。除此之外**不得再新增字級或響應式字級**。
+
+- 卡片名稱（商品卡、便條卡）一律 Body 17px/600，手機同為 17px。
+- 按鈕文字（含頂列、固定列、CTA）一律 Body 17px/600。
+- 不使用 12px/14px/18px/20px/22px/32px/56px 等其他值。
 
 ### 示意稿正規化（以本文為準）
-- 示意稿出現的 14px → Label 15px；19px 首頁導言 → Body 17px；20px（便條卡名稱、電話按鈕）→ Title 22px；詳情價格標題 28px → Heading 32px（手機 24px）。
-- 卡片名稱桌機 18px、手機 16px 視為 Body-strong 的響應式值，不另算字級。
-- 字級總數：Label、Body、Body-strong、Title、Heading、Display 六個語意 token。
+示意稿 14px→Label 15px；18px（卡片名稱、手機固定列）→Body 17px；19px（導言）→Body 17px；20px（便條卡名稱、按鈕、戳章標題）→Body 17px（名稱、按鈕）或 Heading 28px（戳章標題）；22px（分類卡名稱、聯絡區標題）→Heading 28px（base 24px）；28px（詳情價格）→Heading 28px；32px（h2）→Heading 28px（base 24px）；h1 56/48/44（手機 34/32/30）→ Display 48（base 32）。各頁 h1 不再分級。
 
 ---
 
@@ -137,7 +152,7 @@ Exceptions: 互動元素最小高度 44px；按鈕高 48/56/60px（頂列按鈕 
 | `block-3` | `#5A4A1E` | 色塊（琥珀棕）| 「洽詢交期」tag、「營業中」戳章、貼紙分類卡（擴大機/喇叭）、手機選單鈕底 |
 | `sand` | `#3A4553` | 色塊 | 規格表 `<dl>`、頂列實色陰影、店面照片預留位底、便條卡實色陰影 |
 | `dash` | `#5A6676` | 邊框 | 虛線預留框、未選中 chip / 次要按鈕 1px 邊框 |
-| `tape` | `#F0B43C` | 僅裝飾 | 膠帶（80% 透明，`#F0B43CCC`）、標題下螢光筆底線。**不承載資訊、不作文字色** |
+| `tape` | `#F0B43C` | 僅裝飾 | 膠帶（`tape` 加 80% 不透明度，即 `bg-tape/80`）、標題下螢光筆底線。**不承載資訊、不作文字色** |
 | `success` | `#7ED6A0` | 語意 | 僅「有現貨」文字與小圓點 |
 | `danger` | `#FF8A7A` | 語意 | 僅錯誤圖示、錯誤標題、複製失敗文字 |
 | `white` | `#FFFFFF` | 商品圖 | 商品圖容器底（卡片、便條卡、詳情主圖、燈箱）；`object-contain` |
@@ -190,17 +205,18 @@ Exceptions: 互動元素最小高度 44px；按鈕高 48/56/60px（頂列按鈕 
 | Token | 值 | 用途 |
 |-------|----|------|
 | `rounded-pill` | 9999px | 按鈕、chip、頂列、tag、營業中戳章（圓形）、輪播按鈕 |
-| `rounded-image` | 14px | 商品圖容器 |
-| `rounded-card` | 20px | 商品卡（手機 16）、便條卡、規格表 `<dl>` |
-| `rounded-block` | 24px | 價格區塊、手機分類貼紙卡 |
-| `rounded-sticker` | 28px | 桌機分類貼紙卡、詳情主圖、店面照片預留位（手機）、地圖預留位 |
-| `rounded-panel` | 40px（手機 32px）| 首頁聯絡區、桌機店面照片預留位 |
+| `rounded-image` | 16px | 商品圖容器 |
+| `rounded-card` | 20px（手機商品卡 16px）| 商品卡、便條卡、規格表 `<dl>` |
+| `rounded-block` | 24px | 價格區塊、分類貼紙卡（全斷點）、詳情主圖、地圖預留位、店面照片預留位（手機）、「找不到想要的？」、NotFound 面板、手機聯絡區 |
+| `rounded-panel` | 32px | 桌機首頁聯絡區、桌機店面照片預留位 |
+
+收斂說明：示意稿 14→16、28→24、40→32（手機聯絡區 32→24）。
 
 ### 陰影（實色位移，無模糊）
 
 | Token | 值 | 用途 |
 |-------|----|------|
-| `shadow-card` | `0 6px 0 rgba(0,0,0,0.3)`（手機頂列 4px）| 商品卡、貼紙分類卡、詳情主圖（8px）|
+| `shadow-card` | `0 6px 0 rgba(0,0,0,0.3)`（手機 4px）| 商品卡、貼紙分類卡、詳情主圖（8px）|
 | `shadow-note` | `0 6px 0 {sand}` | 便條卡（手機 4px）|
 | `shadow-bar` | `0 6px 0 {sand}` | 頂列（手機 4px）|
 | `shadow-btn` | `0 6px 0 {accent-shadow}` | 主按鈕（桌機）；手機固定撥號列用 `0 6px 0 {accent-hover}`（示意稿）|
@@ -239,16 +255,16 @@ Exceptions: 互動元素最小高度 44px；按鈕高 48/56/60px（頂列按鈕 
 
 ### 膠囊浮動頂列 `NavBar`（Phase 8）
 
-- 取代舊 NavBar：`surface-raised`、`rounded-pill`、`shadow-bar`（`sand` 實色陰影）、無 blur。內距 8px 8px 8px 24px（手機 6px 6px 6px 20px）。頂列為文件流中的第一個區塊（不 sticky；頁面頂端 padding 24px / 手機 16px）。
-- `md`+：Logo（`public/brand-logo.png`，高 30px）→ `<nav aria-label="主選單">`：「逛商品」（`/all-products`）、「關於我們」（`/abouts`），高 44px、`rounded-pill`、內距 16px；目前頁用 `aria-current="page"`：底 `block-2` + 600。右側主按鈕「打電話問問」（高 48px、內距 24px、phone 圖示 + 文字，`tel:` 連結 `contact.phoneHref`）。
+- 取代舊 NavBar：`surface-raised`、`rounded-pill`、`shadow-bar`（`sand` 實色陰影）、無 blur。內距 8px 8px 8px 24px（手機 4px 4px 4px 16px）。頂列為文件流中的第一個區塊（不 sticky；頁面頂端 padding 24px / 手機 16px）。
+- `md`+：Logo（`public/brand-logo.png`，高 30px）→ `<nav aria-label="主選單">`：「逛商品」（`/all-products`）、「關於我們」（`/abouts`），高 44px、`rounded-pill`、內距 16px；目前頁用 `aria-current="page"`：底 `block-2` + 600。右側主按鈕「打電話問問」（高 44px、內距 24px、phone 圖示 + 文字，`tel:` 連結 `contact.phoneHref`）。
 - 「逛商品」選中判定：目前路徑為 `NAV_ITEMS` 任一或 `/products/:id`。
 - base：Logo（高 26px）+ 44×44 選單鈕（`aria-label="開啟選單"`、`aria-expanded`、`aria-controls`；底 `block-3`）；展開為頂列下方膠囊面板（`surface-raised`、`rounded-block`、`shadow-float`），項目：逛商品、關於我們（皆高 44px）；Esc 與點外側關閉（沿用現有行為）；展開時鈕的 `aria-label` 為「關閉選單」。
 - Skip link「跳到主要內容」為第一個 tab stop，`sr-only`，focus 時顯示於左上（主按鈕樣式），指向 `<main id="main">`。
 
 ### 手機底部固定列（base only，Phase 8；詳情 Phase 9）
 
-- **首頁 / 列表 / 關於 / NotFound：** `position: fixed`，left/right/bottom 16px，高 60px，全寬「打電話問問」主按鈕（phone 圖示 + 文字，Body-strong 18px，600），`shadow-btn` 手機版。頁面底部須留 ≥ 96px padding，避免遮住內容。
-- **詳情頁：** 固定列貼齊底部（left/right/bottom 0），`surface-raised`、padding 12px 16px 16px、`shadow-float`，grid 2fr / 3fr、gap 8px：左「複製詢價」（描邊 2px `ink`、高 52px）、右「打電話問問」（主按鈕、高 52px）。取代同頁的行內 CTA（`md`+ 才顯示行內 CTA）。頁面底部留 ≥ 96px。
+- **首頁 / 列表 / 關於 / NotFound：** `position: fixed`，left/right/bottom 16px，高 56px，全寬「打電話問問」主按鈕（phone 圖示 + 文字，Body 17px/600），`shadow-btn` 手機版。頁面底部須留 ≥ 96px padding，避免遮住內容。
+- **詳情頁：** 固定列貼齊底部（left/right/bottom 0），`surface-raised`、padding 16px、`shadow-float`，grid 2fr / 3fr、gap 8px：左「複製詢價」（描邊 2px `ink`、高 56px）、右「打電話問問」（主按鈕、高 56px）。取代同頁的行內 CTA（`md`+ 才顯示行內 CTA）。頁面底部留 ≥ 96px。
 - 鍵盤或虛擬鍵盤彈出時固定列不應遮住聚焦元素（頁面無輸入欄位，風險低；變體 chip 在上方捲動區）。
 
 ### 頁尾（一行）
@@ -260,21 +276,21 @@ Exceptions: 互動元素最小高度 44px；按鈕高 48/56/60px（頂列按鈕 
 
 ### 首頁（Phase 8）
 
-由上而下：頂列 → hero → 分類貼紙卡 → 這陣子大家都在問 → 聯絡區 → 頁尾 → （base）底部固定列。區塊垂直間距 `xl` 64px / base 40px。
+由上而下：頂列 → hero → 分類貼紙卡 → 這陣子大家都在問 → 聯絡區 → 頁尾 → （base）底部固定列。區塊垂直間距 `xl` 64px / base 32px。
 
 1. **hero：** 小 tag「台中太平・實體門市」（`block-1` 底、`rounded-pill`、Label 600）→ h1「找麥克風、喇叭？來問我們就對了。」（Display；「來問我們」下方 SVG 琥珀螢光筆底線 `tape` 7px，手機改為 `border-bottom: 4px solid tape`）→ 導言（Body、`ink-muted`、`max-w-[520px]`）→ 按鈕列：「逛逛商品 →」（`ink` 底、`surface-raised` 字、高 56px、`rounded-pill`，連 `/all-products`）+ 電話連結（`accent` 文字 + 2px 虛線 `accent` 底線，顯示 `contact.phone`）。手機版 hero 不放按鈕列（由底部固定列與頂列承擔，詳示意稿 home-mobile）。
 2. **店面照片預留位：** 見「素材預留位」。
-3. **營業中戳章：** 直徑 148px 圓形、`block-3` 底、-10deg、`0 6px 0` 深琥珀實色陰影（`#3A300F`）、標題「營業中」Title 22px、副行 Label 兩行「週一至週六／09:00–17:30」。僅 `xl` 顯示，位於照片預留位左下（left -32px）。戳章文字取自 `contact.businessHours`（解析不易時整句顯示於 Label，不拆時段）。
-4. **分類貼紙卡（h2「想找什麼？」）：** 4 張整張為 `<Link>`：有線麥克風 `/wired-micphone`（`block-1`）、無線麥克風 `/wireless-micphone`（`block-2`）、擴大機 / 喇叭 `/trumpet`（`block-3`）、配件 `/accessories`（`surface-raised`）。結構：左上 64×64 圓形（`surface-raised` 底；配件卡因卡色同底，圓形改 `block-1`）內放手繪風圖示（34px，`ink` 線）→ 底部一行名稱（Title 22px 600）+ 右側「看看 →」（Label）。min-height 180（手機 120）、padding 24（手機 16）、`rounded-sticker`（手機 `rounded-block`）、`shadow-card`、傾斜如上。名稱取自 `PRODUCT_PAGE_VIEWS[path].title`，不另寫死。
+3. **營業中戳章：** 直徑 148px 圓形、`block-3` 底、-10deg、`0 6px 0` 實色陰影（`shadow-card`，`0 6px 0 rgba(0,0,0,0.3)`）、標題「營業中」Heading、副行 Label 兩行「週一至週六／09:00–17:30」。僅 `xl` 顯示，位於照片預留位左下（left -32px）。戳章文字取自 `contact.businessHours`（解析不易時整句顯示於 Label，不拆時段）。
+4. **分類貼紙卡（h2「想找什麼？」）：** 4 張整張為 `<Link>`：有線麥克風 `/wired-micphone`（`block-1`）、無線麥克風 `/wireless-micphone`（`block-2`）、擴大機 / 喇叭 `/trumpet`（`block-3`）、配件 `/accessories`（`surface-raised`）。結構：左上 64×64 圓形（`surface-raised` 底；配件卡因卡色同底，圓形改 `block-1`）內放手繪風圖示（34px，`ink` 線）→ 底部一行名稱（Heading）+ 右側「看看 →」（Label）。min-height 180（手機 136，容納兩行 Heading 名稱）、padding 24（手機 16）、`rounded-block`、`shadow-card`、傾斜如上。名稱取自 `PRODUCT_PAGE_VIEWS[path].title`，不另寫死。
 5. **「這陣子大家都在問」：** 見「熱銷便條卡」。
-6. **聯絡區（`block-2` 底、`rounded-panel`、padding 48、手機 24/`rounded-32`）：** h2「有空來店裡坐坐」→ 地址（Body）→ 營業時間（`businessHours` + 括號 `closedNote`；手機 `closedNote` 換行 Label `ink-muted`）→ 主按鈕（`contact.phone` 文字、高 56px、Title 22px；手機不放，由固定列承擔）→ 地圖預留位（見素材預留位）。`lineUrl`／`email` 有值時，在地址下方多一列連結（Body；文字 `ink`，連結以底線區分，**不用 accent，因 accent 在 block-2 上不達 AA**）。
+6. **聯絡區（`block-2` 底、`rounded-panel`、padding 48、手機 24、手機圓角 `rounded-block`）：** h2「有空來店裡坐坐」→ 地址（Body）→ 營業時間（`businessHours` + 括號 `closedNote`；手機 `closedNote` 換行 Label `ink-muted`）→ 主按鈕（`contact.phone` 文字、高 56px、Body 17px/600；手機不放，由固定列承擔）→ 地圖預留位（見素材預留位）。`lineUrl`／`email` 有值時，在地址下方多一列連結（Body；文字 `ink`，連結以底線區分，**不用 accent，因 accent 在 block-2 上不達 AA**）。
 
 ### 列表頁（Phase 8；連結接線 Phase 10）
 
 - h1（Display 48px / 手機 32px）= 該頁 `title` + 副行（Label→Body、`ink-muted`）「共 {n} 項。看到喜歡的，直接打電話問最快。」。副行與 grid/list 切換、排序控制排在同一標題區（保留現有 grid/list 切換與名稱排序功能；控制項為 44px 高的 `rounded-pill` 描邊切換鈕，選中為 `block-2` 底 + 600，見 UX-05）。
-- **分類 chip 列（`<nav aria-label="商品分類">`）：** 8 個 chip 取自 `NAV_ITEMS`（順序不變）。`md`+ 可換行、gap 12；base 單列橫向捲動（`overflow-x:auto`、左右出血至畫面邊、`white-space:nowrap`、gap 8、底部留 4px 避免捲軸遮擋）。chip 高 44px、`rounded-pill`、padding 20px（base 16）。選中（`aria-current="page"`）：`accent` 底 + `accent-ink` 600；未選中：`surface-raised` 底、1px `dash` 邊框、`ink`。chip 為 `<Link>`。取代舊 SideMenu。
+- **分類 chip 列（`<nav aria-label="商品分類">`）：** 8 個 chip 取自 `NAV_ITEMS`（順序不變）。`md`+ 可換行、gap 8；base 單列橫向捲動（`overflow-x:auto`、左右出血至畫面邊、`white-space:nowrap`、gap 8、底部留 4px 避免捲軸遮擋）。chip 高 44px、`rounded-pill`、padding 16px。選中（`aria-current="page"`）：`accent` 底 + `accent-ink` 600；未選中：`surface-raised` 底、1px `dash` 邊框、`ink`。chip 為 `<Link>`。取代舊 SideMenu。
 - grid：2/3/4 欄（見斷點表）；list 版型保留（單欄）。
-- 結尾「找不到想要的？」區塊（`block-2` 底、`rounded-block`/32、padding 28 40）：標題（Title）「找不到想要的？」+ 副行「我們店裡還有很多沒放上來，打個電話問最快。」+ 主按鈕（電話號碼文字）；base 隱藏按鈕（固定列承擔），保留文字。
+- 結尾「找不到想要的？」區塊（`block-2` 底、`rounded-block`、padding 24 32）：標題（Heading）「找不到想要的？」+ 副行「我們店裡還有很多沒放上來，打個電話問最快。」+ 主按鈕（電話號碼文字）；base 隱藏按鈕（固定列承擔），保留文字。
 - 頁尾：「© KRD・謝謝你逛到這裡」。
 
 ### 商品卡 `ProductCard`（Phase 8 外觀、Phase 10 接線）
@@ -283,8 +299,8 @@ Exceptions: 互動元素最小高度 44px；按鈕高 48/56/60px（頂列按鈕 
 
 - 根元素：`<Link to="/products/{id}">`（`block`）；移除 `role="button"`、`tabIndex`、`onClick`、`onKeyDown`、`onImageClick` prop。卡內不得再嵌其他連結或按鈕。
 - Accessible name：由卡內文字組成（商品名稱、價格文字）；不再有「查看 … 大圖」。`href` = `/products/{id}`。
-- **grid 卡：** `surface-raised`、`rounded-card`（手機 16）、padding 16（手機 8→12）、`shadow-card`、列表傾斜。由上而下：圖片容器（`aspect-square`、`white`、`rounded-image`、`object-contain`、`loading="lazy"`、`decoding="async"`）→ 品牌（Label、`ink-muted`）→ 商品名稱（Body-strong、`line-clamp-2`、保留 2 行高度 min-h 48px / 手機 44px）→ 標籤列（flex-wrap gap 8）：價格 tag 或價格文字、「洽詢交期」tag（僅 `in_stock=false`）。取消固定 `h-96`；同列卡片靠 grid `items-stretch` 對齊。
-- **list 卡：** 同樣整張連結；橫排：圖 80px（base）/96px（`md`+）正方形 `rounded-image` → 名稱（Body-strong 600）、品牌、標籤列、說明（Label、`ink-muted`、`line-clamp-2`、`data-testid="product-description"` 保留）→ 右側 chevron-right（`ink-muted`、`aria-hidden`）。
+- **grid 卡：** `surface-raised`、`rounded-card`（手機 16）、padding 16（手機 8）、`shadow-card`、列表傾斜。由上而下：圖片容器（`aspect-square`、`white`、`rounded-image`、`object-contain`、`loading="lazy"`、`decoding="async"`）→ 品牌（Label、`ink-muted`）→ 商品名稱（Body 600、`line-clamp-2`、保留 2 行高度 min-h 48px / 手機 44px）→ 標籤列（flex-wrap gap 8）：價格 tag 或價格文字、「洽詢交期」tag（僅 `in_stock=false`）。取消固定 `h-96`；同列卡片靠 grid `items-stretch` 對齊。
+- **list 卡：** 同樣整張連結；橫排：圖 80px（base）/96px（`md`+）正方形 `rounded-image` → 名稱（Body 600）、品牌、標籤列、說明（Label、`ink-muted`、`line-clamp-2`、`data-testid="product-description"` 保留）→ 右側 chevron-right（`ink-muted`、`aria-hidden`）。
 - **價格行：** 無價（`PRICE_ON_REQUEST`）→ tag「價格請來電」（`block-2` 底、`rounded-pill`、Label、`ink`）；有價 → 價格文字（Body 600 `ink`，沿用 `product.priceText`）。**無價格徽章（右上）、無 hover 遮罩/放大鏡、無「點擊查看大圖」。**
 - **「洽詢交期」tag：** `block-3` 底、`rounded-pill`、Label、`ink`（不用 muted）；與價格 tag 並排。
 - **狀態：**
@@ -300,10 +316,10 @@ Exceptions: 互動元素最小高度 44px；按鈕高 48/56/60px（頂列按鈕 
 
 ### 熱銷便條卡「這陣子大家都在問」`FeaturedCarousel`（Phase 8 外觀、Phase 10 連結）
 
-**取代原「單張大圖輪播」外觀。** 標題列（h2「這陣子大家都在問」）右側為兩顆 48×48 圓形按鈕（`aria-label` 見下）。
+**取代原「單張大圖輪播」外觀。** 標題列（h2「這陣子大家都在問」）右側為兩顆 44×44 圓形按鈕（`aria-label` 見下）。
 
-- **便條卡：** 整張為 `<Link to="/products/{id}">`（`aria-label="查看 {商品名稱} 詳情"`）；`surface-raised`、`rounded-card`、padding 20（手機 16）、`shadow-note`、傾斜 -1.5/1/-0.5deg 循環；頂端琥珀膠帶（`tape` 80% 透明，96×28，`aria-hidden`，-4deg，置中、top -14px）。結構：圖片容器（高 200 / 手機 170、`white`、`rounded-image`、`object-contain`）→ 品牌（Label、`ink-muted`）→ 名稱（Title 22px；手機 Body-strong 18、`line-height 1.3`）→ 底列：左 tag「價格請來電」（`block-2`）或價格、右 `查看詳情 →`（`accent`、600；手機「詳情 →」）。**`accent` 文字在 `surface-raised` 上 5.24:1，符合；但不得放在 block-2 / sand 上。**
-- **版面：** `md`+ 一次 3 張並排（grid 3 欄，gap 40，外層留 padding-top 16px 給膠帶）；base 為橫向捲動條（卡寬 260、gap 16，`scroll-snap-type: x mandatory`、卡 `scroll-snap-align: start`，左側 padding 20px，出血到畫面邊）。條下方 Label 提示「← 左右滑動看更多 →」（`ink-muted`）。
+- **便條卡：** 整張為 `<Link to="/products/{id}">`（`aria-label="查看 {商品名稱} 詳情"`）；`surface-raised`、`rounded-card`、padding 16、`shadow-note`、傾斜 -1.5/1/-0.5deg 循環；頂端琥珀膠帶（`tape` 80% 透明，96×28，`aria-hidden`，-4deg，置中、top -14px）。結構：圖片容器（高 200 / 手機 170、`white`、`rounded-image`、`object-contain`）→ 品牌（Label、`ink-muted`）→ 名稱（Body 17px/600，行高 1.35）→ 底列：左 tag「價格請來電」（`block-2`）或價格、右 `查看詳情 →`（`accent`、600；手機「詳情 →」）。**`accent` 文字在 `surface-raised` 上 5.24:1，符合；但不得放在 block-2 / sand 上。**
+- **版面：** `md`+ 一次 3 張並排（grid 3 欄，gap 32，外層留 padding-top 16px 給膠帶）；base 為橫向捲動條（卡寬 260、gap 16，`scroll-snap-type: x mandatory`、卡 `scroll-snap-align: start`，左側 padding 16px，出血到畫面邊）。條下方 Label 提示「← 左右滑動看更多 →」（`ink-muted`）。
 - **按鈕：** 「上一張」「下一張」（`aria-label` 沿用現有字串 `上一張`／`下一張`，每按一次移動 1 張，不改成「組」以免連動測試改寫）；左鈕描邊（2px `ink`、透明底）、右鈕實心（`ink` 底、`surface-raised` 圖示）。只有 ≥ 2 筆才顯示。指示點（`aria-label="第 N 張"`）保留，置於卡列下方置中，視覺 8px、點擊區 44px；示意稿未畫，為保留既有契約而保留（`md`+ 與 base 皆顯示；base 僅在 ≥ 2 筆）。
 - **狀態：** loading（3 張 skeleton，文字「載入產品中...」保留於 `aria-live` 區）、空（「目前沒有精選商品」）、錯誤（`role="alert"`、`danger` 圖示、「重新載入」主按鈕）— 文案沿用既有。
 
@@ -343,7 +359,7 @@ Exceptions: 互動元素最小高度 44px；按鈕高 48/56/60px（頂列按鈕 
 目前 20 筆皆如此，此為預設版面，非例外。
 
 - 卡片 / 便條卡 / 列表：tag「價格請來電」（見上）。不顯示 `NT$`、不顯示 0 或「—」。
-- 詳情頁價格區塊（`block-2` 底、`rounded-block`、padding 20 24、gap 4）：標題「價格請來電」（Heading）→ 說明（Label、`ink-muted`）「這個商品沒有標價，打個電話問，我們直接報給你。」
+- 詳情頁價格區塊（`block-2` 底、`rounded-block`、padding 16 24、gap 4）：標題「價格請來電」（Heading）→ 說明（Label、`ink-muted`）「這個商品沒有標價，打個電話問，我們直接報給你。」
 - 有價：「NT$ 12,345」（Heading）+「含稅」（Label、`ink-muted`）；選中變體時價格跟著變體（`price_incl_tax` 為分，轉元）。變體價 null 時該變體顯示「價格請來電」。禁止 `NT$NaN`。
 - 兩種狀態下 CTA 一律保留、區塊高度大致相同，避免跳動。
 
@@ -352,17 +368,17 @@ Exceptions: 互動元素最小高度 44px；按鈕高 48/56/60px（頂列按鈕 
 Layout：頂列、頁尾（地址版）；無 SideMenu、無分類 chip 列；不加入 NAV_ITEMS。
 
 1. **麵包屑 + 返回列：** 左：`<nav aria-label="麵包屑">`「首頁 › {分類名稱} › {商品名稱}」（Label、`ink-muted`；前兩項為 `accent` 連結、無底線；末項 `aria-current="page"`、可 `truncate`）。右：描邊 pill 按鈕「← 回上一頁」（高 44px、1px `dash`、`ink`；`navigate(-1)`；無站內歷史時改為 `Link` 到分類頁，保證直接開網址仍可用）。base：`column-reverse`——按鈕在上、麵包屑在下，gap 8px。
-2. **主區（`xl` 兩欄 5fr/6fr gap 56；其他單欄 gap 28）：**
-   - **圖：** 外層 `relative`、padding-top 16；琥珀膠帶（120×32，置中、-4deg、`aria-hidden`、z-index 1）。主圖為整個 `<button>`（`aria-label="放大查看 {商品名稱} 圖片"`、`aspect-square`、`white` 底、`object-contain`、邊框 12px `surface-raised`（base 8px）、`rounded-sticker`、傾斜 -1.2deg、`shadow-card` 8px、`cursor: zoom-in`）；右下角「放大看」小 pill（高 36、內距 14、`surface` 底、`ink` 字、Label、`aria-hidden`）。無圖 → `ImagePlaceholder`，不是按鈕。變體有 `image_url` 時切換即換主圖。
+2. **主區（`xl` 兩欄 5fr/6fr gap 48；其他單欄 gap 24）：**
+   - **圖：** 外層 `relative`、padding-top 16；琥珀膠帶（120×32，置中、-4deg、`aria-hidden`、z-index 1）。主圖為整個 `<button>`（`aria-label="放大查看 {商品名稱} 圖片"`、`aspect-square`、`white` 底、`object-contain`、邊框 16px `surface-raised`（base 8px）、`rounded-block`、傾斜 -1.2deg、`shadow-card` 8px、`cursor: zoom-in`）；右下角「放大看」小 pill（高 36、內距 16、`surface` 底、`ink` 字、Label、`aria-hidden`）。無圖 → `ImagePlaceholder`，不是按鈕。變體有 `image_url` 時切換即換主圖。
    - **資訊欄（gap 24，文字區不傾斜）：**
      1. 品牌 · 型號（Body、`ink-muted`；任一為空則省略；型號 `overflow-wrap:anywhere`）
-     2. `<h1>` 商品名稱（Display 44px；base 30px）
+     2. `<h1>` 商品名稱（Display）
      3. 分類 tag（`block-1` 底、`rounded-pill`、Label、`ink`；為連結到分類頁）
      4. 價格區塊（見上）
-     5. 變體選擇（≥ 2 個變體才顯示；0 或 1 個顯示單一規格資訊）：標題「選規格」（Body 600）；`role="radiogroup"` `aria-label="選擇規格"`；每個 chip `role="radio"` `aria-checked`，高 44px、`rounded-pill`、padding 20；選中：2px `accent` 邊框、`surface-raised` 底、`accent` 600 文字；未選：1px `dash` 邊框、`surface-raised` 底、`ink`。文字 = `Object.entries(attributes)` 的 value 以「 / 」串接，否則 `sku`。預設選中 `is_default`；方向鍵切換。`in_stock=false` 變體仍可選，chip 內附「洽詢交期」（`block-3` 小 tag）。
+     5. 變體選擇（≥ 2 個變體才顯示；0 或 1 個顯示單一規格資訊）：標題「選規格」（Body 600）；`role="radiogroup"` `aria-label="選擇規格"`；每個 chip `role="radio"` `aria-checked`，高 44px、`rounded-pill`、padding 16；選中：2px `accent` 邊框、`surface-raised` 底、`accent` 600 文字；未選：1px `dash` 邊框、`surface-raised` 底、`ink`。文字 = `Object.entries(attributes)` 的 value 以「 / 」串接，否則 `sku`。預設選中 `is_default`；方向鍵切換。`in_stock=false` 變體仍可選，chip 內附「洽詢交期」（`block-3` 小 tag）。
      6. 現貨標籤：有現貨 → `success` 小圓點（10px）+「有現貨」（Label、`success`）；否 → 「洽詢交期」tag（`block-3`）。只有二元標籤。
-     7. CTA 列（`md`+：行內，gap 12；base：被底部固定列取代）：主按鈕「打電話問 {contact.phone}」（高 56、內距 28、18px 600、`shadow-btn`，`tel:` 連結）；描邊按鈕「複製詢價訊息」（高 56、2px `ink`）。若有 `lineUrl`，多一顆次要描邊「LINE 問問」（`target="_blank" rel="noopener noreferrer"`）。複製內容：「{商品名稱}｜型號 {model}｜{完整網址}」（無型號省略該段）；成功 → 按鈕文字 2 秒內變「已複製」+ check 圖示，外層 `aria-live="polite"`；失敗（clipboard 不可用）→ Label `danger`「複製失敗，請手動選取網址」。base 固定列的「複製詢價」行為相同。
-     8. 說明：標題「商品說明」（Body 600）+ 純文字 `whitespace-pre-line`（`#DDE2E8`、對比 8.58:1）；空說明整區隱藏；禁用 `dangerouslySetInnerHTML`。
+     7. CTA 列（`md`+：行內，gap 8；base：被底部固定列取代）：主按鈕「打電話問 {contact.phone}」（高 56、內距 24、Body 17px/600、`shadow-btn`，`tel:` 連結）；描邊按鈕「複製詢價訊息」（高 56、2px `ink`）。若有 `lineUrl`，多一顆次要描邊「LINE 問問」（`target="_blank" rel="noopener noreferrer"`）。複製內容：「{商品名稱}｜型號 {model}｜{完整網址}」（無型號省略該段）；成功 → 按鈕文字 2 秒內變「已複製」+ check 圖示，外層 `aria-live="polite"`；失敗（clipboard 不可用）→ Label `danger`「複製失敗，請手動選取網址」。base 固定列的「複製詢價」行為相同。
+     8. 說明：標題「商品說明」（Body 600）+ 純文字 `whitespace-pre-line`（`ink`，對比 9.87:1）；空說明整區隱藏；禁用 `dangerouslySetInnerHTML`。
      9. 規格表 `<dl>`：`sand` 底、`rounded-card`、padding 16 24、grid `96px minmax(0,1fr)`、row-gap 8、Label；`<dt>` `ink-muted`（5.41:1）、`<dd>` `ink`。列：SKU、`attributes`（`Object.entries`）、保固（0 或空值整列隱藏）。無任何列時整區隱藏。
 3. **頁尾：** 「© KRD・{address}・{businessHours}」。
 4. base 底部固定雙鈕列（見上）。
@@ -380,11 +396,11 @@ Layout：頂列、頁尾（地址版）；無 SideMenu、無分類 chip 列；�
 
 ### 燈箱 `ImageModal`
 
-沿用現有元件與行為（Esc、點背景關閉、焦點管理、防止背景捲動），改為只在詳情主圖使用。外觀：遮罩 `surface` 90%；圖片白底容器 `rounded-sticker`、`object-contain`；關閉鈕 48×48 `rounded-pill`、`ink` 底、右上、`aria-label="關閉圖片"`；無傾斜、無模糊陰影。
+沿用現有元件與行為（Esc、點背景關閉、焦點管理、防止背景捲動），改為只在詳情主圖使用。外觀：遮罩 `surface` 90%；圖片白底容器 `rounded-block`、`object-contain`；關閉鈕 44×44 `rounded-pill`、`ink` 底、右上、`aria-label="關閉圖片"`；無傾斜、無模糊陰影。
 
 ### NotFound 頁與 `NotFoundState`
 
-全域 `*` 與詳情 404 共用：置中、垂直 padding 64px；`surface-raised` 面板 `rounded-block`、padding 32；圖示（`ink-muted`、48）→ 標題（Title）→ 說明（Body、`ink-muted`）→ 主按鈕。頁面標題「找不到頁面 | KRD」。有頂列與（base）底部固定列、頁尾（地址版）。
+全域 `*` 與詳情 404 共用：置中、垂直 padding 64px；`surface-raised` 面板 `rounded-block`、padding 32；圖示（`ink-muted`、48）→ 標題（Heading）→ 說明（Body、`ink-muted`）→ 主按鈕。頁面標題「找不到頁面 | KRD」。有頂列與（base）底部固定列、頁尾（地址版）。
 
 ---
 
@@ -394,8 +410,8 @@ Layout：頂列、頁尾（地址版）；無 SideMenu、無分類 chip 列；�
 
 | 預留位 | 位置 | 無素材呈現 | 有素材時 |
 |--------|------|-----------|----------|
-| 店面照片 | 首頁 hero | `sand` 底、3px 虛線 `dash` 框、`rounded-panel`（手機 `rounded-sticker`）、置中 Label「店面照片（待提供）」、傾斜 2deg（手機 1.5deg）；`aria-label="店面照片（待提供）"` | 換成 `<img>`（白底不適用；`object-cover`、同圓角、同傾斜、`alt="KRD 店面"`），`aria-label` 移除；素材路徑為 `public/` 靜態檔 |
-| 地圖 | 首頁聯絡區 | `surface-raised` 底、3px 虛線 `dash` 框、`rounded-sticker`、Label「地圖（待嵌入）」、傾斜 -1.5deg；`aria-label="地圖（待嵌入）"` | 以連結到 Google 地圖的靜態圖或「用地圖開啟」連結取代（不嵌 iframe，避免第三方腳本）；此細節於提供素材時再補 |
+| 店面照片 | 首頁 hero | `sand` 底、3px 虛線 `dash` 框、`rounded-panel`（手機 `rounded-block`）、置中 Label「店面照片（待提供）」、傾斜 2deg（手機 1.5deg）；`aria-label="店面照片（待提供）"` | 換成 `<img>`（白底不適用；`object-cover`、同圓角、同傾斜、`alt="KRD 店面"`），`aria-label` 移除；素材路徑為 `public/` 靜態檔 |
+| 地圖 | 首頁聯絡區 | `surface-raised` 底、3px 虛線 `dash` 框、`rounded-block`、Label「地圖（待嵌入）」、傾斜 -1.5deg；`aria-label="地圖（待嵌入）"` | 以連結到 Google 地圖的靜態圖或「用地圖開啟」連結取代（不嵌 iframe，避免第三方腳本）；此細節於提供素材時再補 |
 
 虛線框對比 `dash`/`surface-raised` 1.92:1 屬裝飾，文字（`ink-muted`，6.21:1 於 `surface-raised`；於 `sand` 5.41:1）達標。
 
@@ -508,7 +524,7 @@ export interface ContactInfo {
 | 3 | RWD | 要。沿用 base / md / xl 三段斷點，可依示意稿調整（本文已據此調整）|
 | 4 | 配色 | 原 C 太少女 → 要深色、再淺一階 → **C5a 溫暖在地小店 × 深石板藍**（取代先前「深色 slate」「專業器材型錄淺色 + 訊號橘」兩個方向）|
 | 5 | `in_stock=false` | 已確認：照常顯示並加「洽詢交期」tag |
-| 6 | 熱銷輪播 | 改為「這陣子大家都在問」便條卡：桌機 3 張並排、手機橫向滑動；每張卡整張連到詳情（取代原單張輪播外觀；行為契約與測試影響見上）；前後按鈕翻組（本文以步進 1 張、維持既有 aria-label 實作，見「輪播」章節）|
+| 6 | 熱銷輪播 | 改為「這陣子大家都在問」便條卡：桌機 3 張並排、手機橫向滑動；每張卡整張連到詳情（取代原單張輪播外觀；行為契約與測試影響見上）。**待使用者認可（偏離）：前後按鈕步進 1 張、沿用既有 aria-label「上一張／下一張」**（使用者原要求為「翻組」；orchestrator 將於最終確認時詢問）|
 | 7 | 營業時間與 LINE／Email | 已確認：採 AboutPage 版本；LINE／Email 有值才顯示 |
 | 8 | 分類 | 首頁 4 張微傾斜貼紙分類卡（有線麥克風、無線麥克風、擴大機/喇叭、配件，手繪風線條圖示）；列表頁桌機/平板為可換行膠囊 chip、手機為橫向捲動 chip；**不再有固定側欄 SideMenu**，NAV_ITEMS 仍為單一來源 |
 | 9 | 素材 | 「店面照片」「地圖」待提供，先以預留位呈現 |
