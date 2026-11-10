@@ -1,47 +1,7 @@
-import { useEffect, useState } from "react";
 import Layout from "../components/Layout";
-import { airTable } from "../services/index";
-
-// 定義服務項目的類型
-interface ServiceItem {
-  fields: {
-    img_url: string;
-    icon_name: string;
-  };
-  id?: string;
-}
+import { ABOUT_SERVICES } from "../content/abouts";
 
 const Abouts = () => {
-  const [services, setServices] = useState<ServiceItem[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    async function getServices() {
-      try {
-        setIsLoading(true);
-        const response = await airTable("abouts", "data");
-        // 類型轉換，確保 fields 有必要屬性
-        const serviceData = response
-          .filter((item) => item.fields?.img_url && item.fields?.icon_name)
-          .map((item) => ({
-            ...item,
-            fields: {
-              ...item.fields,
-              img_url: item.fields.img_url as string,
-              icon_name: item.fields.icon_name as string,
-            },
-          })) as ServiceItem[];
-
-        setServices(serviceData);
-      } catch (error) {
-        console.error("Error fetching services:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    }
-
-    getServices();
-  }, []);
 
   return (
     <Layout>
@@ -280,56 +240,45 @@ const Abouts = () => {
           </div>
 
           {/* Services Grid - 改進版 */}
-          {isLoading ? (
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
-              {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
-                <div key={i} className="glass-card p-6 animate-pulse">
-                  <div className="aspect-square bg-gray-700 rounded-xl mb-4"></div>
-                  <div className="h-4 bg-gray-700 rounded"></div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
-              {services.map((service, index) => (
-                <div
-                  key={service.id || index}
-                  className="group glass-card p-6 hover:border-blue-500/30 transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:shadow-blue-500/10 animate-fade-in"
-                  style={{ animationDelay: `${index * 0.1}s` }}
-                >
-                  {/* 明亮的圖標容器 */}
-                  <div className="aspect-square mb-6 overflow-hidden rounded-2xl relative">
-                    {/* 白色背景讓圖標更明顯 */}
-                    <div className="absolute inset-0 bg-gradient-to-br from-white via-gray-50 to-white group-hover:from-blue-50 group-hover:to-purple-50 transition-all duration-500"></div>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+            {ABOUT_SERVICES.map((service, index) => (
+              <div
+                key={service.image}
+                className="group glass-card p-6 hover:border-blue-500/30 transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:shadow-blue-500/10 animate-fade-in"
+                style={{ animationDelay: `${index * 0.1}s` }}
+              >
+                {/* 明亮的圖標容器 */}
+                <div className="aspect-square mb-6 overflow-hidden rounded-2xl relative">
+                  {/* 白色背景讓圖標更明顯 */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-white via-gray-50 to-white group-hover:from-blue-50 group-hover:to-purple-50 transition-all duration-500"></div>
 
-                    {/* 圖標容器 */}
-                    <div className="relative w-full h-full flex items-center justify-center p-8">
-                      <img
-                        src={service.fields.img_url}
-                        alt={service.fields.icon_name}
-                        className="w-full h-full object-contain transition-all duration-500 group-hover:scale-110"
-                        style={{
-                          filter: "brightness(0.2) contrast(1.5) saturate(1.2)",
-                          maxWidth: "80%",
-                          maxHeight: "80%",
-                        }}
-                      />
-                    </div>
-
-                    {/* 懸停時的彩色邊框 */}
-                    <div className="absolute inset-0 rounded-2xl border-2 border-transparent group-hover:border-blue-400/50 transition-all duration-300"></div>
-
-                    {/* 懸停時的光暈效果 */}
-                    <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 via-purple-500/10 to-pink-500/10 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  {/* 圖標容器 */}
+                  <div className="relative w-full h-full flex items-center justify-center p-8">
+                    <img
+                      src={service.image}
+                      alt={service.name}
+                      className="w-full h-full object-contain transition-all duration-500 group-hover:scale-110"
+                      style={{
+                        filter: "brightness(0.2) contrast(1.5) saturate(1.2)",
+                        maxWidth: "80%",
+                        maxHeight: "80%",
+                      }}
+                    />
                   </div>
 
-                  <h4 className="text-white font-semibold text-center text-lg group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-blue-400 group-hover:to-purple-400 transition-all duration-300">
-                    {service.fields.icon_name}
-                  </h4>
+                  {/* 懸停時的彩色邊框 */}
+                  <div className="absolute inset-0 rounded-2xl border-2 border-transparent group-hover:border-blue-400/50 transition-all duration-300"></div>
+
+                  {/* 懸停時的光暈效果 */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 via-purple-500/10 to-pink-500/10 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                 </div>
-              ))}
-            </div>
-          )}
+
+                <h4 className="text-white font-semibold text-center text-lg group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-blue-400 group-hover:to-purple-400 transition-all duration-300">
+                  {service.name}
+                </h4>
+              </div>
+            ))}
+          </div>
 
           {/* CTA Section */}
           <div className="mt-32">
