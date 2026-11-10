@@ -4,9 +4,11 @@ import { defineConfig } from "vitest/config";
 
 // https://vite.dev/config/
 export default defineConfig(({ mode }) => {
-  // 只載入 VITE_ 前綴的變數；VITE_PROXY_TARGET 僅在此檔（node 端）使用，不會進入前端 bundle
-  const env = loadEnv(mode, ".");
-  const proxyTarget = env.VITE_PROXY_TARGET || "https://api.krd.com.tw";
+  // 第三參數 "" 載入所有變數，結果只存在於此檔（node 端）。
+  // proxy 設定刻意不用 VITE_ 前綴：Vite 會把所有 VITE_ 變數放進前端 import.meta.env，
+  // 改用 KRD_ 前綴才能確保它不會進入瀏覽器或 bundle
+  const env = loadEnv(mode, ".", "");
+  const proxyTarget = env.KRD_PROXY_TARGET || "https://api.krd.com.tw";
 
   return {
     plugins: [react()],
