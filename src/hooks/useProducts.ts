@@ -12,7 +12,11 @@ export type ProductsStatus = "loading" | "error" | "success";
 /** useProducts 的回傳值 */
 export interface UseProductsResult {
   status: ProductsStatus;
-  /** 重新抓取或失敗時會保留上一次成功的結果（供畫面淡化顯示） */
+  /**
+   * 重新抓取或失敗時會保留上一次成功的結果（供畫面淡化顯示）。
+   * 注意：status 為 error 時 items 可能已過期（與目前排序或查詢不符），
+   * 消費端不應在錯誤狀態下同時渲染 items。
+   */
   items: Product[];
   /** 後端總數大於本次取得筆數 */
   truncated: boolean;
