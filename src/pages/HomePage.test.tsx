@@ -7,6 +7,7 @@ import { fetchProducts } from "../services/products";
 import type { ProductListResult } from "../services/products";
 import type { Product } from "../services/transform";
 import { buildProductParams } from "../services/catalog";
+import { ApiError } from "../services/errors";
 
 // Layout 內的 NavBar／SideMenu 仍會呼叫 Airtable，測試一律以假元件取代
 vi.mock("../components/Layout", () => ({
@@ -104,5 +105,40 @@ describe("HomePage 熱銷輪播資料來源", () => {
       name: "暫無圖片",
     });
     expect(placeholders.length).toBeGreaterThan(0);
+  });
+});
+
+describe("HomePage 兩組輪播互相獨立", () => {
+  it("一組失敗時另一組仍顯示商品", async () => {
+    mockFetch.mockImplementation(async (params) => {
+      if (params.featured === "1") {
+        throw new ApiError("http", "後端內部錯誤", 500);
+      }
+      return makeResult([makeProduct({ name: "頂級商品" })]);
+    });
+    renderPage();
+    const hot = getSection("熱門推薦系列");
+    const top = getSection("頂級精選系列");
+    expect(await within(hot).findByRole("alert")).toBeInTheDocument();
+    expect(await within(top).findByText("頂級商品")).toBeInTheDocument();
+    expect(within(top).queryByRole("alert")).toBeNull();
+  });
+
+  it("兩組同時 429 時各自在自己的區塊顯示錯誤", async () => {
+    mockFetch.mockRejectedValue(new ApiError("rate_limited", "太快", 429));
+    renderPage();
+    const hot = getSection("熱門推薦系列");
+    const top = getSection("頂級精選系列");
+    expect(await within(hot).findByRole("alert")).toBeInTheDocument();
+    expect(await within(top).findByRole("alert")).toBeInTheDocument();
+    expect(screen.getAllByRole("alert")).toHaveLength(2);
+  });
+
+  it("兩組都沒有商品時各自顯示空狀態", async () => {
+    mockFetch.mockResolvedValue(makeResult([]));
+    renderPage();
+    expect(await screen.findAllByText("目前沒有精選商品")).toHaveLength(2);
+    expect(screen.getByText("熱門推薦系列")).toBeInTheDocument();
+    expect(screen.getByText("頂級精選系列")).toBeInTheDocument();
   });
 });
