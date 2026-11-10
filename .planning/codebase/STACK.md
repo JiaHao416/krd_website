@@ -55,7 +55,7 @@
 **Build:**
 - `tsconfig.json` -> `tsconfig.app.json`（target ES2020、strict、noUnusedLocals/Parameters、`verbatimModuleSyntax`、`erasableSyntaxOnly`、bundler resolution、`jsx: react-jsx`）與 `tsconfig.node.json`
 - `vite.config.ts`、`tailwind.config.js`、`postcss.config.js`、`eslint.config.js`
-- npm scripts（`package.json`）：`dev`（vite）、`build`（`tsc -b && vite build`）、`lint`（`eslint .`）、`preview`（`vite preview`）
+- npm scripts（`package.json`）：`dev`（vite）、`build`（`tsc -b && vite build && node scripts/check-dist.mjs`）、`lint`（`eslint .`）、`preview`（`vite preview`）
 - 入口：`index.html` -> `src/main.tsx`
 
 ## Platform Requirements

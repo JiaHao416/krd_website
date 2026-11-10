@@ -21,7 +21,6 @@ krd_website/
     ├── App.tsx             # 路由表
     ├── App.css, index.css  # 全域樣式（Tailwind）
     ├── vite-env.d.ts
-    ├── assets/             # 打包資源（react.svg）
     ├── components/         # 共用 UI
     ├── config/             # navigation.ts（NAV_ITEMS）、productPageViews
     ├── content/            # abouts.ts（關於我們靜態內容）

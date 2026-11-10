@@ -31,7 +31,7 @@
 ## CI/CD & Deployment
 
 - Cloudflare Pages，專案 `krd-website`，正式網域 `www.krd.com.tw`；GitHub 整合自動建置部署（`npm run build`），repo 內無 `.github/` workflows。
-- 防回歸：`npm test` 內含 `src/noAirtable.test.ts`；build 後可手動執行 `npm run check:dist` 掃描 `dist/`（不加進 build）。
+- 防回歸：`npm test` 內含 `src/noAirtable.test.ts`；`npm run build` 最後一步執行 `scripts/check-dist.mjs` 掃描 `dist/`，命中即建置失敗、不會部署。
 
 ## Environment Configuration
 

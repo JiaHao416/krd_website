@@ -11,7 +11,7 @@
 
 **其他:**
 - `package.json` 同時有 `tailwindcss ^3.4.0` 與 `@tailwindcss/postcss ^4.1.7`（版本混用），且 `@types/react-router-dom ^5` 與 react-router-dom v6 不符（v6 自帶型別）。
-- `index.html` 設 `lang="en"` 但內容為繁體中文；title 僅 "KRD"，無 meta description。
+- `index.html` title 僅 "KRD"，無 meta description。
 - `README.md` 可能仍為 Vite 範本內容；`package.json` version `0.0.0`。
 
 ## Known Bugs
@@ -26,9 +26,6 @@
 - Symptoms: 未定義路徑渲染空白頁，無 404 頁面。
 - Files: `src/App.tsx`
 - Fix: 新增 `<Route path="*" element={<NotFound/>} />`。
-
-**favicon 型別不符:**
-- `index.html` 的 `<link rel="icon" type="image/svg+xml" href="/logo.png" />` type 與實際 PNG 不符；`public/vite.svg` 為殘留範本資源。
 
 ## Security Considerations
 
@@ -78,7 +75,7 @@
 ## Missing Critical Features
 
 **CI/CD 與 lint gate:**
-- 無 GitHub Actions；部署僅靠 Cloudflare Pages 建置（`tsc -b && vite build`），lint 未被強制。
+- 無 GitHub Actions；部署僅靠 Cloudflare Pages 建置（`npm run build`，含 `tsc -b` 與 dist 憑證掃描），lint 未被強制。
 
 **SEO / 可及性:**
 - 純 CSR SPA，無 SSR/預渲染，搜尋引擎與社群預覽（OG tags）支援弱；無 `robots.txt`、`sitemap.xml`、404 頁、錯誤邊界（Error Boundary）。

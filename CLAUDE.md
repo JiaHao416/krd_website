@@ -13,7 +13,7 @@ KRD 音響／麥克風盤商的品牌官網（`www.krd.com.tw`），給客戶瀏
 - **Compatibility**: 維持現有網址路徑（`/all-products`、`/wired-micphone`、`/trumpet`…）— 避免舊連結失效
 - **Security**: 前端不得含任何憑證 — repo 公開，打包後也公開
 - **Dependencies**: 依賴後端公開 API 的 CORS 白名單與限流；預覽網址 `*.pages.dev` 不在白名單內
-- **Deployment**: push `main` 即上線 — 每次提交都必須 `npm run build` 成功（含 `tsc -b`）
+- **Deployment**: push `main` 即上線 — 每次提交都必須 `npm run build` 成功（含 `tsc -b` 與 dist 憑證掃描）
 - **Sequencing**: 必須在撤銷 Airtable token 前抓好靜態內容
 <!-- GSD:project-end -->
 
@@ -47,7 +47,7 @@ KRD 音響／麥克風盤商的品牌官網（`www.krd.com.tw`），給客戶瀏
 - 前端不含任何憑證；API base URL 由 `VITE_API_BASE_URL` 設定（見 `INTEGRATIONS.md`）
 - `tsconfig.json` -> `tsconfig.app.json`（target ES2020、strict、noUnusedLocals/Parameters、`verbatimModuleSyntax`、`erasableSyntaxOnly`、bundler resolution、`jsx: react-jsx`）與 `tsconfig.node.json`
 - `vite.config.ts`、`tailwind.config.js`、`postcss.config.js`、`eslint.config.js`
-- npm scripts（`package.json`）：`dev`（vite）、`build`（`tsc -b && vite build`）、`lint`（`eslint .`）、`preview`（`vite preview`）
+- npm scripts（`package.json`）：`dev`（vite）、`build`（`tsc -b && vite build && node scripts/check-dist.mjs`）、`lint`（`eslint .`）、`preview`（`vite preview`）
 - 入口：`index.html` -> `src/main.tsx`
 ## Platform Requirements
 - Node.js + npm；`npm install`、`npm run dev`
@@ -147,7 +147,7 @@ KRD 音響／麥克風盤商的品牌官網（`www.krd.com.tw`），給客戶瀏
 **Key Characteristics:**
 - 商品頁以「單一 Template + `PRODUCT_PAGES` 設定」複用，新增分類在設定加一筆即可。
 - 導覽只有一個來源（`NAV_ITEMS`），首屏即顯示，不需等待網路。
-- Airtable service 與未使用的商品卡片元件已於 Phase 3 刪除；`src/noAirtable.test.ts`（`npm test`）與 `npm run check:dist`（build 後）防止回歸。
+- Airtable service 與未使用的商品卡片元件已於 Phase 3 刪除；`src/noAirtable.test.ts`（`npm test`）與 `npm run build` 內建的 dist 掃描（`scripts/check-dist.mjs`，亦可 `npm run check:dist` 單獨執行）防止回歸。
 - 樣式以 Tailwind utility class 為主（深色 slate 漸層主題）。
 
 ## Layers
@@ -185,7 +185,7 @@ KRD 音響／麥克風盤商的品牌官網（`www.krd.com.tw`），給客戶瀏
 
 - **Threading:** 瀏覽器單執行緒，資料抓取為 client-side async。
 - **Global state:** 無模組級可變狀態；`src/services/client.ts` 匯出共用 `apiClient` 單例。
-- **前端不得含憑證：** repo 與 bundle 皆公開；以 `src/noAirtable.test.ts` 與 `npm run check:dist` 檢查。
+- **前端不得含憑證：** repo 與 bundle 皆公開；以 `src/noAirtable.test.ts` 與 build 內建的 dist 掃描檢查。
 - **SPA 路由：** 使用 BrowserRouter，部署時需 fallback 到 `index.html`。
 - **測試：** Vitest（unit 為 node、component 為 jsdom），見 `TESTING.md`。
 
