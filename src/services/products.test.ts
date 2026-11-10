@@ -1,13 +1,29 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, vi, afterEach } from "vitest";
+import { AxiosError } from "axios";
 import type { AxiosAdapter, InternalAxiosRequestConfig } from "axios";
 import { createApiClient } from "./client";
 import { fetchProducts } from "./products";
+import { ApiError } from "./errors";
+import { HOME_FEATURED_QUERIES, PRODUCT_PAGES, buildProductParams } from "./catalog";
 
 /** 建立測試用 adapter，並把收到的請求設定存到 captured.config */
 function createMockAdapter(data: unknown, status = 200) {
-  const captured: { config?: InternalAxiosRequestConfig } = {};
+  const captured: { config?: InternalAxiosRequestConfig; calls: number } = {
+    calls: 0,
+  };
   const adapter: AxiosAdapter = async (config) => {
     captured.config = config;
+    captured.calls += 1;
+    if (status >= 400) {
+      // 自訂 adapter 不經 validateStatus，非 2xx 需自行拋出 AxiosError
+      throw new AxiosError(
+        `Request failed with status code ${status}`,
+        AxiosError.ERR_BAD_RESPONSE,
+        config,
+        null,
+        { data, status, statusText: "", headers: {}, config }
+      );
+    }
     return { data, status, statusText: "", headers: {}, config };
   };
   return { adapter, captured };
@@ -53,27 +69,167 @@ const sampleResponse = {
   },
 };
 
+/** 建立一律拋出網路錯誤的 adapter */
+function createNetworkErrorAdapter(): AxiosAdapter {
+  return async (config) => {
+    throw new AxiosError("Network Error", AxiosError.ERR_NETWORK, config);
+  };
+}
+
+/** 以指定回應建立 client 與 adapter 記錄 */
+function setup(data: unknown, status = 200) {
+  const { adapter, captured } = createMockAdapter(data, status);
+  return { client: createApiClient("/api/v1/public", adapter), captured };
+}
+
+afterEach(() => {
+  vi.restoreAllMocks();
+});
+
 describe("fetchProducts", () => {
-  it("回傳後端的商品列表", async () => {
-    const { adapter } = createMockAdapter(sampleResponse);
-    const client = createApiClient("/api/v1/public", adapter);
+  it("回傳轉換後的商品列表", async () => {
+    const { client } = setup(sampleResponse);
     const result = await fetchProducts({ limit: 100 }, client);
     expect(result.items).toHaveLength(2);
   });
 
   it("回傳後端的商品總數", async () => {
-    const { adapter } = createMockAdapter(sampleResponse);
-    const client = createApiClient("/api/v1/public", adapter);
+    const { client } = setup(sampleResponse);
     const result = await fetchProducts({ limit: 100 }, client);
     expect(result.total).toBe(2);
   });
 
+  it("價格皆為 null 的商品顯示價格洽詢", async () => {
+    const { client } = setup(sampleResponse);
+    const result = await fetchProducts({ limit: 100 }, client);
+    expect(result.items[1].priceText).toBe("價格洽詢");
+  });
+
+  it("商品已轉成 camelCase 的 Product", async () => {
+    const { client } = setup(sampleResponse);
+    const result = await fetchProducts({ limit: 100 }, client);
+    expect(result.items[0].priceText).toBe("NT$1,000 – NT$1,200");
+  });
+
+  it("缺圖商品的 imageUrl 為 null", async () => {
+    const { client } = setup(sampleResponse);
+    const result = await fetchProducts({ limit: 100 }, client);
+    expect(result.items[0].imageUrl).toBeNull();
+  });
+
+  it("查無商品時回傳空結果而不拋錯", async () => {
+    const { client } = setup({
+      success: true,
+      data: { items: [], pagination: { offset: 0, limit: 100, total: 0 } },
+    });
+    await expect(fetchProducts({ limit: 100 }, client)).resolves.toEqual({
+      items: [],
+      total: 0,
+    });
+  });
+
   it("請求打到 /products 並帶上查詢參數", async () => {
-    const { adapter, captured } = createMockAdapter(sampleResponse);
-    const client = createApiClient("/api/v1/public", adapter);
+    const { client, captured } = setup(sampleResponse);
     await fetchProducts({ limit: 100 }, client);
     expect(client.getUri(captured.config)).toBe(
       "/api/v1/public/products?limit=100"
     );
+  });
+
+  it("串接 buildProductParams 後中文分類正確 encode", async () => {
+    const page = PRODUCT_PAGES.find((p) => p.path === "/wired-micphone");
+    if (!page) throw new Error("找不到 /wired-micphone 頁面設定");
+    const { client, captured } = setup(sampleResponse);
+    await fetchProducts(buildProductParams(page.query), client);
+    expect(client.getUri(captured.config)).toBe(
+      "/api/v1/public/products?category=%E6%9C%89%E7%B7%9A%E9%BA%A5%E5%85%8B%E9%A2%A8&limit=100"
+    );
+  });
+
+  it("串接首頁熱銷查詢帶上 featured=2", async () => {
+    const { client, captured } = setup(sampleResponse);
+    await fetchProducts(buildProductParams(HOME_FEATURED_QUERIES[1]), client);
+    expect(client.getUri(captured.config)).toBe(
+      "/api/v1/public/products?featured=2&limit=100"
+    );
+  });
+
+  it("HTTP 429 拋出 rate_limited", async () => {
+    const { client } = setup({ success: false }, 429);
+    await expect(fetchProducts({ limit: 100 }, client)).rejects.toMatchObject({
+      kind: "rate_limited",
+    });
+  });
+
+  it("HTTP 500 拋出 http 並帶 status", async () => {
+    const { client } = setup({ success: false }, 500);
+    await expect(fetchProducts({ limit: 100 }, client)).rejects.toMatchObject({
+      kind: "http",
+      status: 500,
+    });
+  });
+
+  it("失敗時拋出 ApiError 實例", async () => {
+    const { client } = setup({ success: false }, 500);
+    await expect(fetchProducts({ limit: 100 }, client)).rejects.toBeInstanceOf(
+      ApiError
+    );
+  });
+
+  it("網路錯誤拋出 network", async () => {
+    const client = createApiClient("/api/v1/public", createNetworkErrorAdapter());
+    await expect(fetchProducts({ limit: 100 }, client)).rejects.toMatchObject({
+      kind: "network",
+    });
+  });
+
+  it("200 但 success:false 拋出 invalid_response", async () => {
+    const { client } = setup({
+      success: false,
+      error: { code: "X", message: "y" },
+    });
+    await expect(fetchProducts({ limit: 100 }, client)).rejects.toMatchObject({
+      kind: "invalid_response",
+    });
+  });
+
+  it("200 但回傳 HTML（SPA fallback）拋出 invalid_response", async () => {
+    const { client } = setup("<!doctype html><html></html>");
+    await expect(fetchProducts({ limit: 100 }, client)).rejects.toMatchObject({
+      kind: "invalid_response",
+    });
+  });
+
+  it("200 但 items 不是陣列拋出 invalid_response", async () => {
+    const { client } = setup({ success: true, data: { items: "oops" } });
+    await expect(fetchProducts({ limit: 100 }, client)).rejects.toMatchObject({
+      kind: "invalid_response",
+    });
+  });
+
+  it("HTTP 500 時只發出一次請求（不自動重試）", async () => {
+    const { client, captured } = setup({ success: false }, 500);
+    await fetchProducts({ limit: 100 }, client).catch(() => undefined);
+    expect(captured.calls).toBe(1);
+  });
+
+  it("total 大於取得筆數時 console.warn 一次", async () => {
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => undefined);
+    const { client } = setup({
+      ...sampleResponse,
+      data: {
+        ...sampleResponse.data,
+        pagination: { offset: 0, limit: 100, total: 150 },
+      },
+    });
+    await fetchProducts({ limit: 100 }, client);
+    expect(warn).toHaveBeenCalledTimes(1);
+  });
+
+  it("total 等於筆數時不 console.warn", async () => {
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => undefined);
+    const { client } = setup(sampleResponse);
+    await fetchProducts({ limit: 100 }, client);
+    expect(warn).not.toHaveBeenCalled();
   });
 });
