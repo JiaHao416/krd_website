@@ -30,16 +30,16 @@
 ### 設定與安全（SEC）
 
 - [ ] **SEC-01**: 打包後的前端程式（`dist/`）不含任何 Airtable 網址、token 或 Base ID
-- [ ] **SEC-02**: API base URL 由 `VITE_` 環境變數設定，未設定時預設為 production `https://api.krd.com.tw/api/v1/public`
-- [ ] **SEC-03**: 開發者在本機 `npm run dev` 時能透過 Vite proxy 讀到商品資料（不被 CORS 白名單擋下）
+- [x] **SEC-02**: API base URL 由 `VITE_` 環境變數設定，未設定時預設為 production `https://api.krd.com.tw/api/v1/public`
+- [x] **SEC-03**: 開發者在本機 `npm run dev` 時能透過 Vite proxy 讀到商品資料（不被 CORS 白名單擋下）
 - [ ] **SEC-04**: Airtable service、相關型別與未使用的 `ProductView.tsx` 自 repo 移除
 
 ### 測試（TEST）
 
-- [ ] **TEST-01**: 專案可用 `npm test` 執行 Vitest
-- [ ] **TEST-02**: API 回應 → 畫面資料的轉換（欄位對應、價格換算、`null` 價格）有單元測試
-- [ ] **TEST-03**: 分類頁 → API 查詢參數的對照（含中文分類 encode）有單元測試
-- [ ] **TEST-04**: API 錯誤（網路、非 2xx、`success:false`）會被轉成可辨識的錯誤，有單元測試
+- [x] **TEST-01**: 專案可用 `npm test` 執行 Vitest
+- [x] **TEST-02**: API 回應 → 畫面資料的轉換（欄位對應、價格換算、`null` 價格）有單元測試
+- [x] **TEST-03**: 分類頁 → API 查詢參數的對照（含中文分類 encode）有單元測試
+- [x] **TEST-04**: API 錯誤（網路、非 2xx、`success:false`）會被轉成可辨識的錯誤，有單元測試
 
 ### 上線（REL）
 
@@ -75,12 +75,12 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| SEC-02 | Phase 1 | Pending |
-| SEC-03 | Phase 1 | Pending |
-| TEST-01 | Phase 1 | Pending |
-| TEST-02 | Phase 1 | Pending |
-| TEST-03 | Phase 1 | Pending |
-| TEST-04 | Phase 1 | Pending |
+| SEC-02 | Phase 1 | Complete |
+| SEC-03 | Phase 1 | Complete |
+| TEST-01 | Phase 1 | Complete |
+| TEST-02 | Phase 1 | Complete |
+| TEST-03 | Phase 1 | Complete |
+| TEST-04 | Phase 1 | Complete |
 | PROD-01 | Phase 2 | Pending |
 | PROD-02 | Phase 2 | Pending |
 | PROD-03 | Phase 2 | Pending |
