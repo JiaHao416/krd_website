@@ -213,6 +213,25 @@ describe("FeaturedCarousel 暫停自動播放", () => {
     expect(screen.getByText("商品2")).toBeInTheDocument();
   });
 
+  it("用滑鼠點擊按鈕取得焦點時不暫停，仍會自動切換", () => {
+    vi.useFakeTimers();
+    renderCarousel(makeResult({ items: makeItems(3) }), 5000);
+    const next = screen.getByRole("button", { name: "下一張" });
+    // 模擬瀏覽器點擊順序：pointerdown -> focus -> pointerup -> click
+    fireEvent.pointerDown(next);
+    act(() => {
+      next.focus();
+    });
+    fireEvent.pointerUp(next);
+    fireEvent.click(next);
+    expect(screen.getByText("商品2")).toBeInTheDocument();
+    expect(next).toHaveFocus();
+    act(() => {
+      vi.advanceTimersByTime(5000);
+    });
+    expect(screen.getByText("商品3")).toBeInTheDocument();
+  });
+
   it("手動切換後重新計時，不會在原排程時間被切走", () => {
     vi.useFakeTimers();
     renderCarousel(makeResult({ items: makeItems(3) }), 5000);

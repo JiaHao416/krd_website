@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { UseProductsResult } from "../hooks/useProducts";
 import { usePrefersReducedMotion } from "../hooks/usePrefersReducedMotion";
 import ImagePlaceholder from "./ImagePlaceholder";
@@ -37,6 +37,9 @@ const FeaturedCarousel = ({
 
   const [isHovered, setIsHovered] = useState(false);
   const [hasFocusWithin, setHasFocusWithin] = useState(false);
+  // 記錄指標（滑鼠／觸控）按下中；此期間的 focus 來自點擊而非鍵盤，不應暫停，
+  // 否則點完箭頭後焦點留在按鈕上，自動播放會一直停住
+  const isPointerDownRef = useRef(false);
   const prefersReducedMotion = usePrefersReducedMotion();
   // 減少動態偏好、滑鼠停留、焦點在輪播內時都不自動切換（WCAG 2.2.2）
   const isPaused = prefersReducedMotion || isHovered || hasFocusWithin;
@@ -138,7 +141,17 @@ const FeaturedCarousel = ({
       className="relative group"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      onFocus={() => setHasFocusWithin(true)}
+      onPointerDown={() => {
+        isPointerDownRef.current = true;
+      }}
+      onPointerUp={() => {
+        isPointerDownRef.current = false;
+      }}
+      onFocus={() => {
+        // 只有鍵盤等非指標操作帶來的焦點才暫停
+        if (!isPointerDownRef.current) setHasFocusWithin(true);
+        isPointerDownRef.current = false;
+      }}
       onBlur={(event) => {
         // 焦點在輪播內部移動時不算離開
         if (!event.currentTarget.contains(event.relatedTarget as Node | null)) {
