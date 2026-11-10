@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import type { PublicProductApi } from "./apiTypes";
-import { toProduct } from "./transform";
+import { UNNAMED_PRODUCT, toProduct } from "./transform";
 import { PRICE_ON_REQUEST } from "./format";
 
 // 預設值為後端實際回應樣本
@@ -109,5 +109,19 @@ describe("toProduct 缺圖與名稱 fallback", () => {
 
   it("有名稱時不使用 fallback", () => {
     expect(toProduct(makeApiProduct({ name: "BB1" })).name).toBe("BB1");
+  });
+
+  it("name 前後有空白時回傳 trim 後的名稱", () => {
+    expect(toProduct(makeApiProduct({ name: "  BB1  " })).name).toBe("BB1");
+  });
+
+  it("name 空白且 brand 與 model 皆為 null 時使用保底文案", () => {
+    const p = toProduct(makeApiProduct({ name: " ", brand: null, model: null }));
+    expect(p.name).toBe(UNNAMED_PRODUCT);
+  });
+
+  it("name 空白且 brand 與 model 只有空白時使用保底文案", () => {
+    const p = toProduct(makeApiProduct({ name: "", brand: " ", model: "  " }));
+    expect(p.name).toBe(UNNAMED_PRODUCT);
   });
 });
