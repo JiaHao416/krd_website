@@ -39,7 +39,7 @@
 ## Key Dependencies
 
 **Critical:**
-- axios ^1.9.0 - HTTP client，`src/services/index.ts` 建立共用 instance（timeout 10000ms、response interceptor）
+- axios ^1.9.0 - HTTP client，`src/services/client.ts` 建立共用 `apiClient`（timeout 10000ms，不帶任何憑證）
 - react-router-dom ^6.30.1 - 頁面導覽
 
 **Infrastructure:**
@@ -50,7 +50,7 @@
 
 **Environment:**
 - 未使用環境變數（`import.meta.env` 無任何引用，無 `.env*` 檔）
-- Airtable token 與 Base ID 直接寫死於 `src/services/index.ts`、`src/services/AirTable.ts`（見 `INTEGRATIONS.md`）
+- 前端不含任何憑證；API base URL 由 `VITE_API_BASE_URL` 設定（見 `INTEGRATIONS.md`）
 
 **Build:**
 - `tsconfig.json` -> `tsconfig.app.json`（target ES2020、strict、noUnusedLocals/Parameters、`verbatimModuleSyntax`、`erasableSyntaxOnly`、bundler resolution、`jsx: react-jsx`）與 `tsconfig.node.json`

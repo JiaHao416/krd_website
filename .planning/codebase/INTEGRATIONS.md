@@ -1,71 +1,49 @@
 # External Integrations
 
-**Analysis Date:** 2026-11-10
+**Analysis Date:** 2026-11-10（Phase 3 更新：已停用 Airtable）
 
 ## APIs & External Services
 
-**Headless CMS / 內容資料來源:**
-- Airtable REST API（`https://api.airtable.com/v0/{BASE_ID}/{table}?view=data`）- 提供產品、導覽、Logo、服務項目內容
-  - SDK/Client: axios instance（`src/services/index.ts`，baseURL `https://api.airtable.com`、timeout 10000ms）
-  - 資料存取層：`src/services/AirTable.ts`，函式 `airTable()`、`getProducts(tableName)`、`getNavigation()`、`getLogo()`、`getServices()`
-  - 使用的 table：`navigation`、`logo`、`abouts`，以及由呼叫端傳入名稱的產品表；view 固定為 `data`
-  - Auth: Bearer token，寫死的 Airtable PAT 位於 `src/services/index.ts`（非環境變數）
-  - Base ID 同樣寫死於 `src/services/AirTable.ts`
-  - 錯誤處理：失敗時 `console.error` 後回傳空陣列，UI 顯示空狀態
+**KRD 後端公開唯讀 API:**
+- `https://api.krd.com.tw/api/v1/public`（dev 由 `.env.development` 覆寫為 `/api/v1/public` 經 Vite proxy）
+  - Client: `src/services/client.ts` 的 `apiClient`（axios，timeout 10000ms，不帶任何 headers 或憑證）
+  - 資料存取：`src/services/products.ts`（`fetchProducts`）、`catalog.ts`（商品頁查詢設定）、`transform.ts`
+  - 錯誤處理：`src/services/errors.ts` 的 `ApiError`，向上拋出由頁面顯示
+  - 依賴後端 CORS 白名單與限流；`*.pages.dev` 預覽網址不在白名單內
 
-**KRD 後端（尚未接入）:**
-- KRD-Inventory-Backend 公開唯讀型錄 API：`https://api.krd.com.tw/api/v1/public`
-  - 目前本站程式碼未引用；未來可取代 Airtable 作為產品資料來源
+**已停用:** Airtable。service（`src/services/` 舊入口檔）與未使用的商品卡片元件已於 Phase 3 刪除，內容改為 repo 內靜態檔。
 
 ## Data Storage
 
-**Databases:**
-- 無自有資料庫；內容全存於 Airtable
+- 無自有資料庫；商品資料在後端，由家人於 KRD-Inventory App 維護。
+- 靜態內容：導覽 `src/config/navigation.ts`、關於我們 `src/content/abouts.ts` 與 `public/abouts/`、Logo `public/brand-logo.png`。
 
-**File Storage:**
-- 圖片以 URL 形式來自 Airtable 欄位（`img_url`、`img`）；本機僅 `public/logo.png`、`public/vite.svg`、`src/assets/react.svg`
-
-**Caching:**
-- None（無 client 端快取層，每次載入皆打 Airtable）
+**Caching:** None（無 client 端快取層）。
 
 ## Authentication & Identity
 
-**Auth Provider:**
-- 無使用者驗證；網站為公開瀏覽
-- 僅有對 Airtable 的 service-level token（見上）
+- 無使用者驗證；網站為公開瀏覽，前端不含任何憑證。
 
 ## Monitoring & Observability
 
-**Error Tracking:**
-- None
-
-**Logs:**
-- 僅 `console.warn` / `console.error`（`src/services/AirTable.ts`）
+- Error Tracking: None；Logs: 僅 `console.warn` / `console.error`。
 
 ## CI/CD & Deployment
 
-**Hosting:**
-- Cloudflare Pages，專案 `krd-website`，正式網域 `www.krd.com.tw`
-
-**CI Pipeline:**
-- Cloudflare Pages 的 GitHub 整合自動建置部署；repo 內無 `.github/` workflows
+- Cloudflare Pages，專案 `krd-website`，正式網域 `www.krd.com.tw`；GitHub 整合自動建置部署（`npm run build`），repo 內無 `.github/` workflows。
+- 防回歸：`npm test` 內含 `src/noAirtable.test.ts`；build 後可手動執行 `npm run check:dist` 掃描 `dist/`（不加進 build）。
 
 ## Environment Configuration
 
-**Required env vars:**
-- 無（所有設定寫死於原始碼）
+- `VITE_API_BASE_URL`（選用）：公開 API base URL，未設定時使用 production 預設。
+- `KRD_PROXY_TARGET`（選用，僅 dev proxy，不帶 VITE_ 前綴以免進入 bundle）。
 
-**Secrets location:**
-- 寫死的 Airtable PAT 位於 `src/services/index.ts`，會被打包進前端 bundle 並公開暴露、且已進入 git 歷史；應撤銷輪替並改由後端代理或改用 `https://api.krd.com.tw/api/v1/public`
+**Secrets location:** 前端無任何 secrets。舊 token 程式碼已移除，但 git 歷史仍含，待 Phase 4 由 Owner 撤銷。
 
 ## Webhooks & Callbacks
 
-**Incoming:**
-- None
-
-**Outgoing:**
-- None
+- Incoming: None；Outgoing: None
 
 ---
 
-*Integration audit: 2026-11-10*
+*Integration audit: 2026-11-10（Phase 3 更新）*
