@@ -2,7 +2,7 @@
 phase: 3
 slug: airtable
 status: draft
-nyquist_compliant: false
+nyquist_compliant: true
 wave_0_complete: false
 created: 2026-11-10
 ---
@@ -36,15 +36,19 @@ created: 2026-11-10
 
 ## 逐 Task 驗證對照（Per-Task Verification Map）
 
-> Task ID 由 planner 產生計畫後填入；下表先以需求為單位列出。
+> Task ID 格式：`{plan}-T{n}`。
 
 | Task ID | Plan | Wave | Requirement | Threat Ref | Secure Behavior | Test Type | Automated Command | File Exists | Status |
 |---------|------|------|-------------|------------|-----------------|-----------|-------------------|-------------|--------|
-| TBD | TBD | TBD | STAT-01 | — | N/A | component + 檔案檢查 | `npx vitest run src/components/NavBar.test.tsx`；`file public/brand-logo.png` | ❌ W0 | ⬜ pending |
-| TBD | TBD | TBD | STAT-02 | — | N/A | unit + component | `npx vitest run src/config/navigation.test.ts src/components/NavBar.test.tsx src/components/SideMenu.test.tsx` | ❌ W0 | ⬜ pending |
-| TBD | TBD | TBD | STAT-03 | — | N/A | component | `npx vitest run src/pages/AboutPage.test.tsx` | ❌ W0 | ⬜ pending |
-| TBD | TBD | TBD | SEC-04 | 憑證殘留 | `src/` 無 Airtable 網址／Base ID／token 格式，測試只輸出檔名與規則名 | unit（原始碼掃描） | `npx vitest run src/noAirtable.test.ts` | ❌ W0 | ⬜ pending |
-| TBD | TBD | TBD | SEC-01 | 憑證殘留於 bundle | `dist/` 零命中，腳本不輸出匹配內容 | build 後腳本 | `npm run build && npm run check:dist` | ❌ W0 | ⬜ pending |
+| 03-01-T1 | 03-01 | 1 | STAT-02 | T-03-03 | SideMenu 不再 import Airtable service | unit + component | `npx vitest run src/config/navigation.test.ts src/components/SideMenu.test.tsx src/services/catalog.test.ts src/App.test.tsx && npm run build` | ❌ W0（task 內建立） | ⬜ pending |
+| 03-01-T2 | 03-01 | 1 | STAT-01、STAT-02 | T-03-01、T-03-02、T-03-03 | Logo 為已驗證 PNG 800×235；NavBar 不再 import Airtable service | component + 檔案檢查 | `file public/brand-logo.png \| grep -q "PNG image data, 800 x 235" && npx vitest run src/components/NavBar.test.tsx && npm test && npm run build` | ❌ W0（task 內建立） | ⬜ pending |
+| 03-02-T1 | 03-02 | 1 | STAT-03 | T-03-05、T-03-06 | 6 張圖皆為 PNG 250×250 且互不相同；內容檔無憑證 | 檔案檢查 + build | `file public/abouts/*.png`（6 行 250 x 250）`&& npm run build` | ❌ W0（task 內建立） | ⬜ pending |
+| 03-02-T2 | 03-02 | 1 | STAT-03 | T-03-07 | AboutPage 不再 import Airtable service | component | `npx vitest run src/pages/AboutPage.test.tsx && npm test && npm run build` | ❌ W0（task 內建立） | ⬜ pending |
+| 03-03-T1 | 03-03 | 2 | SEC-04 | T-03-08、T-03-11、T-03-13 | `src/` 無 Airtable 網址／Base ID／token 格式，測試只輸出檔名 | unit（原始碼掃描） | `npx vitest run src/noAirtable.test.ts && npm test && npm run lint && npm run build` | ❌ W0（task 內建立） | ⬜ pending |
+| 03-03-T2 | 03-03 | 2 | SEC-01 | T-03-09、T-03-10 | `dist/` 零命中；命中時只輸出檔名與規則名（probe 驗證） | build 後腳本 | `npm run build && npm run check:dist` | ❌ W0（task 內建立） | ⬜ pending |
+| 03-03-T3 | 03-03 | 2 | SEC-04 | T-03-11 | 文件不含憑證格式、不描述已刪檔案為現存 | grep | 見 03-03-PLAN Task 3 `<automated>` | ✅ | ⬜ pending |
+| 03-04-T1 | 03-04 | 3 | 全部 | T-03-15、T-03-16 | Full suite + 資產 + 殘留檢查 | full | `npm test && npm run lint && rm -rf dist && npm run build && npm run check:dist` | ✅（前序 plan 建立） | ⬜ pending |
+| 03-04-T2 | 03-04 | 3 | STAT-01～03 | T-03-15 | Network 無 Airtable／imgur 請求 | 手動目視 | checkpoint:human-verify | — | ⬜ pending |
 
 *Status: ⬜ pending · ✅ green · ❌ red · ⚠️ flaky*
 
