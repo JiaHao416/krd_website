@@ -122,12 +122,12 @@ Plans:
   2. Owner 手動撤銷 Airtable token（本流程最後一步，須在 REL-01 通過後）
   3. 撤銷後重新整理 production 網站，所有頁面仍正常運作
 
-**Plans:** 3 plans
+**Plans:** 1/3 plans executed
 
 Plans:
 **Wave 1**
 
-- [ ] 04-01-PLAN.md — 經同意 push 並確認 Cloudflare 部署、位元組比對、線上 bundle 掃描、深層連結、API 預期數量，DevTools 實測後使用者確認 REL-01（Wave 1）
+- [x] 04-01-PLAN.md — 經同意 push 並確認 Cloudflare 部署、位元組比對、線上 bundle 掃描、深層連結、API 預期數量，DevTools 實測後使用者確認 REL-01（Wave 1）
 
 **Wave 2** *(blocked on Wave 1 completion)*
 
@@ -144,4 +144,4 @@ Plans:
 | 1. 測試與 API 資料層基礎 | 4/4 | Complete   | 2026-11-10 |
 | 2. 商品頁與首頁熱銷改讀後端 API | 6/6 | Complete   | 2026-11-10 |
 | 3. 靜態內容固化與移除 Airtable | 4/4 | Complete    | 2026-11-10 |
-| 4. 上線驗證與撤銷 token | 0/3 | Not started | - |
+| 4. 上線驗證與撤銷 token | 1/3 | In Progress|  |
