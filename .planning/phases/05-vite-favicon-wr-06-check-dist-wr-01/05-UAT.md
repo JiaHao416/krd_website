@@ -29,9 +29,9 @@ evidence: 真實滑鼠停在左組約 10 秒，左組不動、右組切換；移
 
 ### 3. 觸控點擊輪播後繼續自動播放
 expected: 在手機（或觸控模擬）點一下輪播的箭頭，手指離開後約 5 秒輪播仍自動切換，不會黏在暫停狀態（WR-02 修正）
-result: issue
-reported: "依 Android Chrome 觸控點擊事件順序（pointerdown/pointerup(touch) → mouseover/mouseenter/mousedown → focus → mouseup → click）合成事件點左組「下一張」，手動切換成功，但之後 12 秒左組未再自動切換；手動 blur 按鈕後 5 秒內恢復"
-severity: major
+result: pass
+retest: 2026-11-10 05-05（f4c22ef）修正後重測：同一組觸控事件序列點「下一張」，焦點仍在按鈕上，左組於 5.2s、10.2s 照常自動切換
+original_issue: "依 Android Chrome 觸控點擊事件順序（pointerdown/pointerup(touch) → mouseover/mouseenter/mousedown → focus → mouseup → click）合成事件點左組「下一張」，手動切換成功，但之後 12 秒左組未再自動切換；手動 blur 按鈕後 5 秒內恢復"
 note: 以合成事件模擬（非實機），事件順序依 Chrome 觸控相容滑鼠事件規則
 
 ### 4. 鍵盤焦點在輪播內時暫停
@@ -52,15 +52,17 @@ evidence: `<link rel="icon" type="image/png" href="/logo.png">`，GET /logo.png 
 ## Summary
 
 total: 6
-passed: 5
-issues: 1
+passed: 6
+issues: 0
 pending: 0
 skipped: 0
 
 ## Gaps
 
 - truth: "觸控點擊輪播的箭頭或指示點後，輪播仍會自動播放，不會黏在暫停狀態"
-  status: failed
+  status: resolved
+  resolved_by: 05-05（f4c22ef）
+  retest: "觸控序列後自動切換正常；觸控後再 Tab 進入仍暫停；真實滑鼠點指示點後移出約 5 秒恢復切換（皆於 Chrome localhost:5173 實測）"
   reason: "User reported: 依 Android Chrome 觸控事件順序點「下一張」後，12 秒未自動切換；blur 後才恢復"
   severity: major
   test: 3
