@@ -253,7 +253,9 @@ describe("fetchProducts", () => {
 
   it("價格欄位缺漏或為字串時視為價格洽詢，不顯示 NaN", async () => {
     const [first, second] = sampleResponse.data.items;
-    const { price_min: _min, ...noMin } = first;
+    // 模擬後端漏傳 price_min 欄位
+    const noMin: Partial<typeof first> = { ...first };
+    delete noMin.price_min;
     const { client } = setup({
       ...sampleResponse,
       data: {
