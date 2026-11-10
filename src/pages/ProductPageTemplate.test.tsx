@@ -7,6 +7,7 @@ import { fetchProducts } from "../services/products";
 import type { ProductListResult } from "../services/products";
 import type { Product } from "../services/transform";
 import type { ProductPageQuery } from "../services/catalog";
+import { ApiError } from "../services/errors";
 
 // Layout 內的 NavBar／SideMenu 仍會呼叫 Airtable，測試一律以假元件取代
 vi.mock("../components/Layout", () => ({
@@ -142,5 +143,84 @@ describe("ProductPageTemplate 排序", () => {
     await user.selectOptions(screen.getByRole("combobox"), "newest");
     expect(mockFetch).toHaveBeenCalledTimes(2);
     expect(mockFetch.mock.calls[1][0]).toMatchObject({ sort: "newest" });
+  });
+});
+
+describe("ProductPageTemplate 錯誤、空、淡化與截斷狀態", () => {
+  it("rate_limited 顯示錯誤卡片與友善文案，不洩漏後端原文", async () => {
+    mockFetch.mockRejectedValue(
+      new ApiError("rate_limited", "後端原始訊息XYZ", 429)
+    );
+    renderPage();
+    const alert = await screen.findByRole("alert");
+    expect(alert).toHaveTextContent("無法載入商品");
+    expect(alert).toHaveTextContent("瀏覽太頻繁，請稍候一分鐘再重試");
+    expect(screen.queryByText(/後端原始訊息XYZ/)).toBeNull();
+    expect(
+      screen.getByRole("heading", { level: 1, name: "測試分類" })
+    ).toBeInTheDocument();
+  });
+
+  it("點「重新載入」會再呼叫一次 API", async () => {
+    const user = userEvent.setup();
+    mockFetch
+      .mockRejectedValueOnce(new ApiError("network", "x"))
+      .mockResolvedValueOnce(makeResult([]));
+    renderPage();
+    await user.click(await screen.findByRole("button", { name: "重新載入" }));
+    expect(await screen.findByText("目前沒有商品")).toBeInTheDocument();
+    expect(mockFetch).toHaveBeenCalledTimes(2);
+  });
+
+  it("查詢成功但沒有商品顯示空狀態，不出現「請稍後再試」", async () => {
+    mockFetch.mockResolvedValue(makeResult([]));
+    renderPage();
+    expect(await screen.findByText("目前沒有商品")).toBeInTheDocument();
+    expect(screen.getByText("此分類目前沒有上架的商品")).toBeInTheDocument();
+    expect(screen.queryByText(/請稍後再試/)).toBeNull();
+  });
+
+  it("切換排序時保留舊列表並淡化，不顯示整頁 spinner", async () => {
+    const user = userEvent.setup();
+    mockFetch
+      .mockResolvedValueOnce(makeResult([makeProduct({ name: "舊商品" })]))
+      .mockReturnValueOnce(new Promise(() => {}));
+    const { container } = renderPage();
+    await screen.findByText("舊商品");
+    await user.selectOptions(screen.getByRole("combobox"), "newest");
+    expect(screen.getByText("舊商品")).toBeInTheDocument();
+    expect(container.querySelector('[aria-busy="true"]')).not.toBeNull();
+    expect(screen.getByRole("combobox")).toBeDisabled();
+    expect(screen.queryByText("正在載入產品資訊...")).toBeNull();
+  });
+
+  it("切換排序後失敗顯示錯誤卡片", async () => {
+    const user = userEvent.setup();
+    mockFetch
+      .mockResolvedValueOnce(makeResult([makeProduct()]))
+      .mockRejectedValueOnce(new ApiError("http", "boom", 500));
+    renderPage();
+    await screen.findByText("商品一");
+    await user.selectOptions(screen.getByRole("combobox"), "newest");
+    expect(await screen.findByRole("alert")).toBeInTheDocument();
+  });
+
+  it("truncated 為 true 時顯示截斷提示，false 時不顯示", async () => {
+    mockFetch.mockResolvedValue(makeResult([makeProduct()], true));
+    const { unmount } = renderPage();
+    expect(await screen.findByText("僅顯示前 100 項商品")).toBeInTheDocument();
+    unmount();
+    mockFetch.mockResolvedValue(makeResult([makeProduct()], false));
+    renderPage();
+    await screen.findByText("商品一");
+    expect(screen.queryByText("僅顯示前 100 項商品")).toBeNull();
+  });
+
+  it("network 錯誤顯示連線文案", async () => {
+    mockFetch.mockRejectedValue(new ApiError("network", "x"));
+    renderPage();
+    expect(
+      await screen.findByText("無法連線，請檢查網路後重試")
+    ).toBeInTheDocument();
   });
 });

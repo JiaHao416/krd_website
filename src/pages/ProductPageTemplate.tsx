@@ -6,6 +6,7 @@ import ImagePlaceholder from "../components/ImagePlaceholder";
 import { useProducts } from "../hooks/useProducts";
 import type { ProductPageQuery } from "../services/catalog";
 import type { ProductSort } from "../services/apiTypes";
+import { getErrorMessage } from "../services/errors";
 
 interface ProductPageProps {
   title: string;
@@ -13,6 +14,47 @@ interface ProductPageProps {
   icon?: ReactNode;
   query: ProductPageQuery;
 }
+
+interface ErrorCardProps {
+  error: unknown;
+  onRetry: () => void;
+}
+
+// 載入失敗卡片：文字只來自 getErrorMessage，不顯示後端原始訊息
+const ErrorCard = ({ error, onRetry }: ErrorCardProps) => {
+  const handleRetry = () => onRetry();
+  return (
+    <div role="alert" className="text-center py-20">
+      <div className="w-32 h-32 max-sm:w-24 max-sm:h-24 rounded-full bg-red-500/10 mx-auto mb-8 flex items-center justify-center">
+        <svg
+          className="w-16 h-16 text-red-400"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+          aria-hidden="true"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"
+          />
+        </svg>
+      </div>
+      <h3 className="text-3xl font-semibold text-gray-300 mb-4">
+        無法載入商品
+      </h3>
+      <p className="text-gray-400 text-base">{getErrorMessage(error)}</p>
+      <button
+        type="button"
+        onClick={handleRetry}
+        className="mt-8 bg-blue-500 hover:bg-blue-600 text-white text-sm font-semibold px-6 py-2 min-h-[44px] rounded-full transition-colors focus-visible:ring-2 ring-blue-400 ring-offset-2 ring-offset-slate-900"
+      >
+        重新載入
+      </button>
+    </div>
+  );
+};
 
 const ProductPageTemplate = ({
   title,
@@ -27,8 +69,13 @@ const ProductPageTemplate = ({
 
   // 頁面鎖定排序（如 /new-products）時不顯示下拉，也不送使用者排序
   const sortLocked = query.sort !== undefined;
-  const { status, items } = useProducts(query, sortLocked ? undefined : sortBy);
+  const { status, items, truncated, error, retry } = useProducts(
+    query,
+    sortLocked ? undefined : sortBy
+  );
   const isInitialLoading = status === "loading" && items.length === 0;
+  // 已有舊列表時重新載入：保留列表並淡化
+  const isRefreshing = status === "loading" && items.length > 0;
 
   const handleImageClick = (imageUrl: string) => {
     setSelectedImage(imageUrl);
@@ -107,6 +154,7 @@ const ProductPageTemplate = ({
                 <select
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value as ProductSort)}
+                  disabled={isRefreshing}
                   className="bg-slate-800 text-white border border-white/20 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500"
                 >
                   <option value="name">依名稱</option>
@@ -171,7 +219,9 @@ const ProductPageTemplate = ({
 
         {/* Products Section */}
         <div className="max-w-7xl mx-auto px-6 pb-12">
-          {items.length === 0 ? (
+          {status === "error" ? (
+            <ErrorCard error={error} onRetry={retry} />
+          ) : status === "success" && items.length === 0 ? (
             <div className="text-center py-20">
               <div className="w-32 h-32 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-8">
                 <svg
@@ -188,20 +238,23 @@ const ProductPageTemplate = ({
                   />
                 </svg>
               </div>
-              <h3 className="text-3xl font-bold text-gray-300 mb-4">
-                暫無產品
+              <h3 className="text-3xl font-semibold text-gray-300 mb-4">
+                目前沒有商品
               </h3>
-              <p className="text-gray-500 text-lg">
-                此分類目前沒有可用的產品，請稍後再試
+              <p className="text-gray-500 text-base">
+                此分類目前沒有上架的商品
               </p>
             </div>
           ) : (
             <div
-              className={
+              aria-busy={isRefreshing}
+              className={`transition-opacity duration-200 ${
+                isRefreshing ? "opacity-50 pointer-events-none" : ""
+              } ${
                 viewMode === "grid"
                   ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8"
                   : "space-y-6"
-              }
+              }`}
             >
               {items.map((product, index) => {
                 const productName = product.name;
@@ -355,6 +408,12 @@ const ProductPageTemplate = ({
                 );
               })}
             </div>
+          )}
+
+          {status === "success" && truncated && (
+            <p className="text-sm text-gray-500 text-center mt-8">
+              僅顯示前 100 項商品
+            </p>
           )}
         </div>
 
