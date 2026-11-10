@@ -182,7 +182,7 @@ const NavBar = () => {
           {/* Mobile Menu */}
           <div
             className={`lg:hidden transition-all duration-500 ease-in-out overflow-hidden ${
-              isMenuOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
+              isMenuOpen ? "max-h-[40rem] opacity-100" : "max-h-0 opacity-0"
             }`}
           >
             <div className="py-6 space-y-2 border-t border-white/10">
