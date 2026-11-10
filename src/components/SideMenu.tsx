@@ -1,14 +1,5 @@
-import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { airTable } from "../services/index";
-
-interface NavigationItem {
-  fields: {
-    title: string;
-    path: string;
-  };
-  id?: string;
-}
+import { NAV_ITEMS } from "../config/navigation";
 
 interface SideMenuProps {
   title?: string;
@@ -17,36 +8,6 @@ interface SideMenuProps {
 const SideMenu = ({ title }: SideMenuProps) => {
   const navigate = useNavigate();
   const location = useLocation();
-  const [navigationData, setNavigationData] = useState<NavigationItem[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    async function getNavigation() {
-      try {
-        setIsLoading(true);
-        const response = await airTable("navigation", "data");
-        // 類型轉換，確保 fields 有必要屬性
-        const navigationData = response
-          .filter((item) => item.fields?.title && item.fields?.path)
-          .map((item) => ({
-            ...item,
-            fields: {
-              ...item.fields,
-              title: item.fields.title as string,
-              path: item.fields.path as string,
-            },
-          })) as NavigationItem[];
-
-        setNavigationData(navigationData);
-      } catch (error) {
-        console.error("Error fetching navigation:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    }
-
-    getNavigation();
-  }, []);
 
   const handleNavigation = (path: string) => {
     navigate(path);
@@ -99,39 +60,26 @@ const SideMenu = ({ title }: SideMenuProps) => {
 
           {/* Menu Items */}
           <div className="p-3">
-            {isLoading ? (
-              <div className="space-y-3">
-                {[1, 2, 3, 4].map((i) => (
-                  <div
-                    key={i}
-                    className="flex items-center px-4 py-3 rounded-xl"
-                  >
-                    <div className="w-3 h-3 bg-gray-600 rounded-full animate-pulse mr-3"></div>
-                    <div className="h-4 bg-gray-600 rounded animate-pulse flex-1"></div>
-                  </div>
-                ))}
-              </div>
-            ) : (
               <div className="space-y-1">
-                {navigationData.map((item, index) => (
+                {NAV_ITEMS.map((item) => (
                   <button
-                    key={item.id || index}
-                    onClick={() => handleNavigation(item.fields.path)}
+                    key={item.path}
+                    onClick={() => handleNavigation(item.path)}
                     className={`w-full flex items-center px-4 py-3 text-left rounded-xl transition-all duration-300 group relative overflow-hidden ${
-                      isActivePath(item.fields.path)
+                      isActivePath(item.path)
                         ? "text-white bg-gradient-to-r from-blue-500/20 to-purple-500/20 border border-blue-500/30"
                         : "text-gray-300 hover:text-white hover:bg-white/5"
                     }`}
                   >
                     {/* Active indicator */}
-                    {isActivePath(item.fields.path) && (
+                    {isActivePath(item.path) && (
                       <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-gradient-to-b from-blue-500 to-purple-500 rounded-r-full"></div>
                     )}
 
                     {/* Dot indicator */}
                     <div
                       className={`w-2.5 h-2.5 rounded-full mr-4 transition-all duration-300 ${
-                        isActivePath(item.fields.path)
+                        isActivePath(item.path)
                           ? "bg-gradient-to-r from-blue-400 to-purple-400 scale-100"
                           : "bg-gray-500 group-hover:bg-gradient-to-r group-hover:from-blue-400 group-hover:to-purple-400 group-hover:scale-110 scale-75"
                       }`}
@@ -139,13 +87,13 @@ const SideMenu = ({ title }: SideMenuProps) => {
 
                     {/* Menu text */}
                     <span className="font-medium flex-1">
-                      {item.fields.title}
+                      {item.title}
                     </span>
 
                     {/* Arrow icon */}
                     <svg
                       className={`w-4 h-4 transition-all duration-300 ${
-                        isActivePath(item.fields.path)
+                        isActivePath(item.path)
                           ? "text-blue-400 translate-x-0"
                           : "text-gray-500 group-hover:text-blue-400 group-hover:translate-x-1 -translate-x-1 opacity-0 group-hover:opacity-100"
                       }`}
@@ -166,7 +114,6 @@ const SideMenu = ({ title }: SideMenuProps) => {
                   </button>
                 ))}
               </div>
-            )}
           </div>
         </div>
 
