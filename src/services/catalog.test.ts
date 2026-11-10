@@ -29,14 +29,14 @@ function toQueryUrl(path: string, userSort?: ProductSort): string {
 const BASE = "/api/v1/public/products";
 
 describe("PRODUCT_PAGES 設定", () => {
-  it("8 個商品頁路徑順序與路由一致", () => {
+  it("8 個商品頁路徑順序即導覽順序", () => {
     expect(PRODUCT_PAGES.map((p) => p.path)).toEqual([
       "/all-products",
       "/new-products",
-      "/micgo-products",
       "/krd-products",
-      "/wired-micphone",
+      "/micgo-products",
       "/wireless-micphone",
+      "/wired-micphone",
       "/trumpet",
       "/accessories",
     ]);

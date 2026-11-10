@@ -8,7 +8,7 @@ import { fetchProducts } from "./services/products";
 import { PRODUCT_PAGES, buildProductParams } from "./services/catalog";
 import { PRODUCT_PAGE_VIEWS } from "./config/productPageViews";
 
-// Layout 內的 NavBar／SideMenu 仍會呼叫 Airtable，測試一律以假元件取代
+// 以假元件取代 Layout，專注測商品路由
 vi.mock("./components/Layout", () => ({
   default: ({ children }: { children: ReactNode }) => <div>{children}</div>,
 }));
@@ -43,8 +43,10 @@ beforeEach(() => {
 });
 
 describe("App 商品路由", () => {
-  it("PRODUCT_PAGES 的路徑與舊網址完全相同", () => {
-    expect(PRODUCT_PAGES.map((p) => p.path)).toEqual(LEGACY_PATHS);
+  it("PRODUCT_PAGES 的路徑集合與舊網址完全相同", () => {
+    expect([...PRODUCT_PAGES.map((p) => p.path)].sort()).toEqual(
+      [...LEGACY_PATHS].sort()
+    );
   });
 
   it("每個路徑都有非空 title 的 UI 設定", () => {

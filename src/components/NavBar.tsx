@@ -1,27 +1,12 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { airTable } from "../services/index";
-
-// 定義導航項目的類型
-interface NavigationItem {
-  fields: {
-    title: string;
-    path: string;
-  };
-  id?: string;
-}
-
-interface LogoData {
-  fields: {
-    img: string;
-  };
-}
+import { NAV_ITEMS } from "../config/navigation";
 
 const NavBar = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const [navigationData, setNavigationData] = useState<NavigationItem[]>([]);
-  const [logo, setLogo] = useState<string>("");
+  // Logo 載入失敗時改顯示文字
+  const [logoFailed, setLogoFailed] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [activeHover, setActiveHover] = useState<string | null>(null);
@@ -33,52 +18,6 @@ const NavBar = () => {
 
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
-  useEffect(() => {
-    async function getLogo() {
-      try {
-        const response = await airTable("logo", "data");
-        const logoData = response
-          .filter((item) => item.fields?.img)
-          .map((item) => ({
-            ...item,
-            fields: {
-              ...item.fields,
-              img: item.fields.img as string,
-            },
-          })) as LogoData[];
-
-        if (logoData.length > 0) {
-          setLogo(logoData[0].fields.img);
-        }
-      } catch (error) {
-        console.error("Error fetching logo:", error);
-      }
-    }
-
-    async function getNavigation() {
-      try {
-        const response = await airTable("navigation", "data");
-        const navigationData = response
-          .filter((item) => item.fields?.title && item.fields?.path)
-          .map((item) => ({
-            ...item,
-            fields: {
-              ...item.fields,
-              title: item.fields.title as string,
-              path: item.fields.path as string,
-            },
-          })) as NavigationItem[];
-
-        setNavigationData(navigationData);
-      } catch (error) {
-        console.error("Error fetching navigation:", error);
-      }
-    }
-
-    getLogo();
-    getNavigation();
   }, []);
 
   const handleNavigation = (path: string) => {
@@ -108,12 +47,15 @@ const NavBar = () => {
               className="flex items-center cursor-pointer group relative"
               onClick={() => handleNavigation("/")}
             >
-              {logo ? (
+              {!logoFailed ? (
                 <div className="relative">
                   {/* 白色背景容器讓 Logo 更清晰 */}
                   <div className="bg-white/95 backdrop-blur-sm rounded-2xl p-3 border-2 border-blue-400/50 group-hover:border-blue-500 transition-all duration-300 group-hover:shadow-lg group-hover:shadow-blue-500/30">
                     <img
-                      src={logo}
+                      src="/brand-logo.png"
+                      width={800}
+                      height={235}
+                      onError={() => setLogoFailed(true)}
                       alt="KRD MICGO Logo"
                       className="h-7 sm:h-8 md:h-9 lg:h-10 w-auto transition-all duration-300 group-hover:scale-105"
                       style={{
@@ -137,30 +79,30 @@ const NavBar = () => {
 
             {/* Desktop Navigation */}
             <div className="hidden lg:flex items-center space-x-2">
-              {navigationData.map((item, index) => (
-                <div key={item.id || index} className="relative">
+              {NAV_ITEMS.map((item) => (
+                <div key={item.path} className="relative">
                   <button
-                    onClick={() => handleNavigation(item.fields.path)}
-                    onMouseEnter={() => setActiveHover(item.fields.path)}
+                    onClick={() => handleNavigation(item.path)}
+                    onMouseEnter={() => setActiveHover(item.path)}
                     onMouseLeave={() => setActiveHover(null)}
                     className={`relative px-5 py-2.5 font-medium text-sm transition-all duration-300 rounded-xl group ${
-                      isActivePath(item.fields.path)
+                      isActivePath(item.path)
                         ? "text-white bg-gradient-to-r from-blue-500/20 to-purple-500/20 backdrop-blur-sm border border-blue-500/30"
                         : "text-gray-300 hover:text-white hover:bg-white/5"
                     }`}
                   >
-                    <span className="relative z-10">{item.fields.title}</span>
+                    <span className="relative z-10">{item.title}</span>
 
                     {/* Active indicator */}
-                    {isActivePath(item.fields.path) && (
+                    {isActivePath(item.path) && (
                       <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-purple-500/10 rounded-xl"></div>
                     )}
 
                     {/* Hover effect */}
                     <div
                       className={`absolute inset-0 bg-gradient-to-r from-blue-500/5 to-purple-500/5 rounded-xl transition-opacity duration-200 ${
-                        activeHover === item.fields.path &&
-                        !isActivePath(item.fields.path)
+                        activeHover === item.path &&
+                        !isActivePath(item.path)
                           ? "opacity-100"
                           : "opacity-0"
                       }`}
@@ -169,9 +111,9 @@ const NavBar = () => {
                     {/* Bottom indicator */}
                     <div
                       className={`absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-0.5 bg-gradient-to-r from-blue-500 to-purple-500 transition-all duration-300 ${
-                        isActivePath(item.fields.path)
+                        isActivePath(item.path)
                           ? "w-3/4"
-                          : activeHover === item.fields.path
+                          : activeHover === item.path
                           ? "w-1/2"
                           : "w-0"
                       }`}
@@ -244,27 +186,27 @@ const NavBar = () => {
             }`}
           >
             <div className="py-6 space-y-2 border-t border-white/10">
-              {navigationData.map((item, index) => (
+              {NAV_ITEMS.map((item) => (
                 <button
-                  key={item.id || index}
-                  onClick={() => handleNavigation(item.fields.path)}
+                  key={item.path}
+                  onClick={() => handleNavigation(item.path)}
                   className={`flex items-center w-full px-4 py-3 text-left rounded-xl transition-all duration-300 group ${
-                    isActivePath(item.fields.path)
+                    isActivePath(item.path)
                       ? "text-blue-400 bg-gradient-to-r from-blue-500/10 to-purple-500/10 pl-6 border-l-2 border-blue-400"
                       : "text-gray-300 hover:text-white hover:bg-white/5 hover:pl-6"
                   }`}
                 >
                   <div
                     className={`w-2 h-2 rounded-full mr-4 transition-all duration-300 ${
-                      isActivePath(item.fields.path)
+                      isActivePath(item.path)
                         ? "bg-gradient-to-r from-blue-400 to-purple-400 scale-100"
                         : "bg-gray-500 group-hover:bg-gradient-to-r group-hover:from-blue-400 group-hover:to-purple-400 group-hover:scale-100 scale-75"
                     }`}
                   ></div>
-                  <span className="font-medium">{item.fields.title}</span>
+                  <span className="font-medium">{item.title}</span>
                   <svg
                     className={`w-4 h-4 ml-auto transition-all duration-300 ${
-                      isActivePath(item.fields.path)
+                      isActivePath(item.path)
                         ? "text-blue-400 translate-x-0"
                         : "text-gray-500 group-hover:text-blue-400 group-hover:translate-x-1"
                     }`}

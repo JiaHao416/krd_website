@@ -19,16 +19,16 @@ export interface ProductPageConfig {
 export const PRODUCT_LIMIT = 100;
 
 /**
- * 8 個商品頁的「路徑 → 查詢條件」單一來源，順序同 App.tsx 路由。
- * Phase 2 由此產生路由，Phase 3 導覽列擴充同一份設定（STAT-02 單一來源）。
+ * 8 個商品頁的「路徑 → 查詢條件」單一來源；陣列順序即導覽選單順序
+ * （NavBar、SideMenu 由 src/config/navigation.ts 衍生），路由比對與順序無關。
  */
 export const PRODUCT_PAGES: readonly ProductPageConfig[] = [
   { path: "/all-products", query: {} },
   { path: "/new-products", query: { sort: "newest" } },
-  { path: "/micgo-products", query: { brand: "MICGO" } },
   { path: "/krd-products", query: { brand: "KRD" } },
-  { path: "/wired-micphone", query: { category: "有線麥克風" } },
+  { path: "/micgo-products", query: { brand: "MICGO" } },
   { path: "/wireless-micphone", query: { category: "無線麥克風" } },
+  { path: "/wired-micphone", query: { category: "有線麥克風" } },
   { path: "/trumpet", query: { category: "喇叭" } },
   { path: "/accessories", query: { category: "配件" } },
 ];
