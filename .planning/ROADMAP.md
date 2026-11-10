@@ -57,7 +57,25 @@ Plans:
   4. 訪客選「最新」排序時，順序依後端 `published_at`；後台修改商品後重新整理即看到變更
   5. 載入中顯示載入狀態；API 失敗（網路、5xx、429）顯示錯誤訊息與重試按鈕；無商品時顯示「目前沒有商品」
 
-**Plans**: TBD
+**Plans:** 5 plans
+
+Plans:
+**Wave 1**
+
+- [ ] 02-01-PLAN.md — 套件合法性確認、jsdom／Testing Library 測試環境、fetchProducts 支援取消、useProducts hook（Wave 1，含 checkpoint）
+
+**Wave 2** *(blocked on Wave 1 completion)*
+
+- [ ] 02-02-PLAN.md — 8 個分類頁由設定產生路由並讀後端，含載入／錯誤重試／空／排序淡化／截斷（Wave 2）
+
+**Wave 3** *(blocked on Wave 2 completion)*
+
+- [ ] 02-03-PLAN.md — 首頁兩組熱銷輪播改讀 featured=1／2，各自處理載入／錯誤／空狀態（Wave 3）
+- [ ] 02-04-PLAN.md — ProductCard 元件：價格、破圖佔位、鍵盤開燈箱，商品頁改用（Wave 3）
+
+**Wave 4** *(blocked on Wave 3 completion)*
+
+- [ ] 02-05-PLAN.md — Phase gate 自動檢查與本機對 production API 目視驗收、Pages 建置確認（Wave 4，含 checkpoint）
 **UI hint**: yes
 
 ### Phase 3: 靜態內容固化與移除 Airtable
@@ -96,6 +114,6 @@ Plans:
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. 測試與 API 資料層基礎 | 4/4 | Complete   | 2026-11-10 |
-| 2. 商品頁與首頁熱銷改讀後端 API | 0/TBD | Not started | - |
+| 2. 商品頁與首頁熱銷改讀後端 API | 0/5 | Planned | - |
 | 3. 靜態內容固化與移除 Airtable | 0/TBD | Not started | - |
 | 4. 上線驗證與撤銷 token | 0/TBD | Not started | - |
