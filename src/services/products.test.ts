@@ -307,3 +307,25 @@ describe("fetchProducts", () => {
     expect(warn).not.toHaveBeenCalled();
   });
 });
+
+describe("fetchProducts 取消支援", () => {
+  it("傳入 signal 時會原樣傳給 axios adapter", async () => {
+    const { client, captured } = setup(sampleResponse);
+    const controller = new AbortController();
+    await fetchProducts({ limit: 100 }, client, { signal: controller.signal });
+    expect(captured.config?.signal).toBe(controller.signal);
+  });
+
+  it("signal 已 abort 時拋出 kind 為 canceled 的 ApiError", async () => {
+    const adapter: AxiosAdapter = async (config) => {
+      if (config.signal?.aborted) throw new CanceledError();
+      return { data: sampleResponse, status: 200, statusText: "", headers: {}, config };
+    };
+    const client = createApiClient("/api/v1/public", adapter);
+    const controller = new AbortController();
+    controller.abort();
+    await expect(
+      fetchProducts({ limit: 100 }, client, { signal: controller.signal })
+    ).rejects.toMatchObject({ kind: "canceled" });
+  });
+});

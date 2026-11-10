@@ -23,8 +23,26 @@ export default defineConfig(({ mode }) => {
       },
     },
     test: {
-      environment: "node",
-      include: ["src/**/*.test.ts"],
+      // 兩個 project：純邏輯（node，*.test.ts）與元件／hook（jsdom，*.test.tsx）
+      projects: [
+        {
+          extends: true,
+          test: {
+            name: "unit",
+            environment: "node",
+            include: ["src/**/*.test.ts"],
+          },
+        },
+        {
+          extends: true,
+          test: {
+            name: "component",
+            environment: "jsdom",
+            include: ["src/**/*.test.tsx"],
+            setupFiles: ["./src/test/setup.ts"],
+          },
+        },
+      ],
     },
   };
 });

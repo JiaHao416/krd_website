@@ -17,6 +17,12 @@ export interface ProductListResult {
   truncated: boolean;
 }
 
+/** fetchProducts 的選項 */
+export interface FetchProductsOptions {
+  /** 用於取消請求；abort 後會拋出 kind 為 canceled 的 ApiError */
+  signal?: AbortSignal;
+}
+
 /**
  * 型別守衛：驗證回應為 { success: true, data: { items: [...] } }
  * 涵蓋 success:false 與 SPA fallback 回傳 HTML 字串的情況。
@@ -54,16 +60,21 @@ function isPublicProduct(value: unknown): value is PublicProductApi {
  * 格式不符的單筆商品會被略過並 console.warn，不讓一筆壞資料拖垮整頁。
  * @param params - 查詢參數
  * @param client - axios instance，預設為共用 apiClient，測試時可注入
+ * @param options - 額外選項，目前支援 signal 用於取消請求
  * @returns 轉換後的商品、總數與是否被截斷
- * @throws {ApiError} 網路、限流、HTTP 錯誤或回應格式不符
+ * @throws {ApiError} 網路、限流、HTTP 錯誤、回應格式不符，或請求被取消（kind 為 canceled）
  */
 export async function fetchProducts(
   params: ProductQueryParams,
-  client: AxiosInstance = apiClient
+  client: AxiosInstance = apiClient,
+  options: FetchProductsOptions = {}
 ): Promise<ProductListResult> {
   let body: unknown;
   try {
-    const response = await client.get<unknown>("/products", { params });
+    const response = await client.get<unknown>("/products", {
+      params,
+      signal: options.signal,
+    });
     body = response.data;
   } catch (error: unknown) {
     throw normalizeError(error);
