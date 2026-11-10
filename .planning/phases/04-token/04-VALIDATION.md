@@ -37,19 +37,19 @@ created: 2026-11-10
 
 ## Per-Task Verification Map
 
-> Task ID 由 planner 定案後回填；以下依 RESEARCH 建議的拆分（04-01 實測、04-02 撤銷）預填。
+> Task ID 已依最終計畫回填：04-01（wave 1：push、shell 證據、DevTools 實測與使用者確認）、04-02（wave 2：撤銷前基準、Owner 撤銷、撤銷後確認）、04-03（wave 3：撤銷後精簡實測、文件收尾）。
 
 | Task ID | Plan | Wave | Requirement | Threat Ref | Secure Behavior | Test Type | Automated Command | File Exists | Status |
 |---------|------|------|-------------|------------|-----------------|-----------|-------------------|-------------|--------|
-| 4-01-xx | 01 | 1 | REL-01 | — | 部署的是最新 HEAD | shell | `gh api repos/JiaHao416/krd_website/commits/<HEAD>/check-runs` 中 Cloudflare Pages 的 conclusion 為 `success` | ✅ | ⬜ pending |
-| 4-01-xx | 01 | 1 | REL-01 | — | production 檔案與本機 build 相同 | shell | 比對 index.html 引用的檔名，並 `cmp` 下載的 JS 與 `dist/assets/` | ✅ | ⬜ pending |
-| 4-01-xx | 01 | 1 | REL-01 | T-03-15 | 線上 bundle 不含憑證 | shell | 一次性 scan-prod 腳本（放 scratch、從 check-dist.mjs 讀規則）：exit 0、0 命中 | ✅ scratch | ⬜ pending |
-| 4-01-xx | 01 | 1 | REL-01 | — | 9 條深層連結都回 200 | shell | `curl -s -o /dev/null -w '%{http_code}'` 逐一測試路徑 | ✅ | ⬜ pending |
-| 4-01-xx | 01 | 1 | REL-01 | — | 各頁商品數等於 API 數 | shell + manual | 帶 Origin 標頭用 curl 取 `pagination.total`；用 DevTools 快照計數比對 | manual | ⬜ pending |
-| 4-02-xx | 02 | 2 | REL-02 | T-03-12 | 撤銷前基準（舊 token 回 200） | shell | D-14 指令（`rtk proxy`），輸出為 `200` | ✅ | ⬜ pending |
-| 4-02-xx | 02 | 2 | REL-02 | T-03-12、T-03-17 | 舊 token 已失效 | shell | D-14 指令，輸出為 `401` 或 `403` | ✅ | ⬜ pending |
-| 4-02-xx | 02 | 2 | REL-02 | — | 撤銷後網站正常 | shell + manual | 重跑 bundle 掃描與深層連結，加上精簡版 DevTools 實測 | manual | ⬜ pending |
-| 回歸 | 01/02 | 1–2 | — | T-03-13 | 原始碼／dist 不含憑證 | unit | `npm test`（noAirtable.test.ts）與 `npm run check:dist` | ✅ | ⬜ pending |
+| 4-01-01 | 01 | 1 | REL-01 | T-04-01 | 部署的是最新 HEAD | shell | `gh api repos/JiaHao416/krd_website/commits/<HEAD>/check-runs` 中 Cloudflare Pages 的 conclusion 為 `success` | ✅ | ⬜ pending |
+| 4-01-02 | 01 | 1 | REL-01 | T-04-02 | production 檔案與本機 build 相同 | shell | 比對 index.html 引用的檔名，並 `cmp` 下載的 JS 與 `dist/assets/` | ✅ | ⬜ pending |
+| 4-01-02 | 01 | 1 | REL-01 | T-03-15、T-04-02、T-04-03 | 線上 bundle 不含憑證 | shell | 一次性 scan-prod 腳本（放 scratch、從 check-dist.mjs 讀規則）：exit 0、0 命中 | ✅ scratch | ⬜ pending |
+| 4-01-02 | 01 | 1 | REL-01 | — | 9 條深層連結都回 200 | shell | `curl -s -o /dev/null -w '%{http_code}'` 逐一測試路徑 | ✅ | ⬜ pending |
+| 4-01-02、4-01-03 | 01 | 1 | REL-01 | T-04-05 | 各頁商品數等於 API 數 | shell + manual | 帶 Origin 標頭用 curl 取 `pagination.total`；用 DevTools 快照計數比對 | manual | ⬜ pending |
+| 4-02-01 | 02 | 2 | REL-02 | T-03-12、T-04-09、T-04-10 | 撤銷前基準（舊 token 回 200） | shell | D-14 指令（`rtk proxy`），輸出為 `200` | ✅ | ⬜ pending |
+| 4-02-02、4-02-03 | 02 | 2 | REL-02 | T-03-12、T-03-17、T-04-07、T-04-08 | 舊 token 已失效 | shell | D-14 指令，輸出為 `401` 或 `403` | ✅ | ⬜ pending |
+| 4-02-03、4-03-01 | 02/03 | 2–3 | REL-02 | T-04-13 | 撤銷後網站正常 | shell + manual | 重跑 bundle 掃描與深層連結，加上精簡版 DevTools 實測 | manual | ⬜ pending |
+| 回歸（4-01-01、4-02-01、4-03-02） | 01/02/03 | 1–3 | — | T-03-13 | 原始碼／dist 不含憑證 | unit | `npm test`（noAirtable.test.ts）與 `npm run check:dist` | ✅ | ⬜ pending |
 
 *Status: ⬜ pending · ✅ green · ❌ red · ⚠️ flaky*
 
