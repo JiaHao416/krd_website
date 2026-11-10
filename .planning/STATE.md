@@ -3,10 +3,10 @@ gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: UI 重新設計與商品詳情頁
 status: planning
-last_updated: "2026-11-10T08:33:23.027Z"
+last_updated: "2026-11-10T09:00:00.000Z"
 last_activity: 2026-11-10
 progress:
-  total_phases: 0
+  total_phases: 6
   completed_phases: 0
   total_plans: 0
   completed_plans: 0
@@ -20,20 +20,22 @@ progress:
 See: .planning/PROJECT.md (updated 2026-11-10)
 
 **Core value:** 官網顯示的商品必須與家人在 KRD-Inventory App 維護的後端資料一致，且前端程式中不再含任何憑證。
-**Current focus:** 規劃下一個 milestone（UI 重新設計）
+**Current focus:** Phase 6 — 設計鎖定與測試盤點（v1.1，分支 `redesign`）
 
 ## Current Position
 
-Phase: Not started (defining requirements)
+Phase: 6 of 11（設計鎖定與測試盤點）
 Plan: —
-Status: Defining requirements
-Last activity: 2026-11-10 — Milestone v1.1 started
+Status: Ready to plan
+Last activity: 2026-11-10 — v1.1 roadmap 建立（Phases 6-11）
+
+Progress: [░░░░░░░░░░] 0%（v1.1：0/6 phases）
 
 ## Performance Metrics
 
 **Velocity:**
 
-- Total plans completed: 17
+- Total plans completed: 17（v1.0）
 - Average duration: -
 - Total execution time: -
 
@@ -56,10 +58,14 @@ Last activity: 2026-11-10 — Milestone v1.1 started
 - 靜態內容須在撤銷 Airtable token 前，用現有 token 抓取完成（Phase 3）
 - 撤銷 token（REL-02）為最後一步，由 Owner 手動執行
 - [Phase 05]: D-01：npm run build 串接 check:dist（推翻 Phase 3 D-15），Cloudflare 建置時若 bundle 含 Airtable 字樣即失敗
+- [v1.1 roadmap]: 研究建議的 7 個 phase 在 coarse 粒度下將「tokens 與骨架」與「既有頁面改版」合併為 Phase 8；設計鎖定（Phase 6）維持第一且不寫 UI 程式碼，連結接線（Phase 10）獨立隔離
+- [v1.1 roadmap]: MAINT-01 放在 Phase 6 的獨立 commit；TEST-06 於 Phase 6 產出測試盤點，後續 phase 以成功標準約束
+- [v1.1 roadmap]: 所有工作在 `redesign` 分支，只有 Phase 11 經使用者確認後才合併 `main`
 
 ### Roadmap Evolution
 
 - Phase 5 added: 清理技術債：Vite 範本殘留、favicon、輪播無障礙（WR-06）、check:dist 接線（WR-01）、規劃文件補齊（來源：v1.0-MILESTONE-AUDIT.md 選項 B）
+- v1.1 milestone started: Phases 6-11 建立（UI 重新設計與商品詳情頁）
 
 ### Pending Todos
 
@@ -67,15 +73,18 @@ None yet.
 
 ### Blockers/Concerns
 
-- 每次 commit 到 main 即自動部署 production，每個 phase 都必須保持 `npm run build` 通過
-- 後端 CORS 只允許 www.krd.com.tw / krd.com.tw，`*.pages.dev` 預覽站讀不到商品（可接受）
+- 每次 commit 到 main 即自動部署 production；`redesign` 分支合併前每個 commit 仍須 `npm run build` 通過
+- 後端 CORS 只允許 www.krd.com.tw / krd.com.tw，`*.pages.dev` 預覽站讀不到商品（可接受，只在 localhost 用 Vite proxy 預覽）
+- 聯絡資料：地址、電話、營業時間沿用現有（Footer／AboutPage），LINE／Email 選填，Owner 日後提供才顯示
+- 已定案：整張卡連到詳情頁、燈箱移到詳情頁；加分功能只做複製詢價訊息；依賴清理併入本輪
+- 待決：`in_stock=false` 商品在列表是否顯示（Phase 6 確認）
 
 ## Session Continuity
 
-Last session: 2026-11-10T08:18:20.972Z
-Stopped at: Phase 5 context gathered
+Last session: 2026-11-10
+Stopped at: v1.1 roadmap 建立完成，待使用者核准
 Resume file: None
 
 ## Operator Next Steps
 
-- Start the next milestone with /gsd-new-milestone
+- 核准 roadmap 後執行 /gsd-ui-phase 6 鎖定設計，再 /gsd-plan-phase 6

@@ -83,12 +83,39 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
+| DESIGN-01 | Phase 6 | Pending |
+| TEST-06 | Phase 6 | Pending |
+| MAINT-01 | Phase 6 | Pending |
+| TEST-05 | Phase 7 | Pending |
+| DESIGN-02 | Phase 8 | Pending |
+| DESIGN-03 | Phase 8 | Pending |
+| SHELL-01 | Phase 8 | Pending |
+| SHELL-02 | Phase 8 | Pending |
+| SHELL-03 | Phase 8 | Pending |
+| SHELL-04 | Phase 8 | Pending |
+| UX-04 | Phase 8 | Pending |
+| UX-05 | Phase 8 | Pending |
+| UX-06 | Phase 8 | Pending |
+| UX-07 | Phase 8 | Pending |
+| PROD-08 | Phase 9 | Pending |
+| PROD-09 | Phase 9 | Pending |
+| PROD-10 | Phase 9 | Pending |
+| PROD-11 | Phase 9 | Pending |
+| PROD-12 | Phase 9 | Pending |
+| PROD-13 | Phase 9 | Pending |
+| PROD-14 | Phase 9 | Pending |
+| PROD-15 | Phase 9 | Pending |
+| PROD-16 | Phase 9 | Pending |
+| LINK-01 | Phase 10 | Pending |
+| LINK-02 | Phase 10 | Pending |
+| REL-03 | Phase 11 | Pending |
+| REL-04 | Phase 11 | Pending |
 
 **Coverage:**
 - v1.1 requirements: 27 total
-- Mapped to phases: 0
-- Unmapped: 27
+- Mapped to phases: 27
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-11-10*
-*Last updated: 2026-11-10 after initial definition*
+*Last updated: 2026-11-10 after roadmap creation (Phases 6-11 mapped)*
