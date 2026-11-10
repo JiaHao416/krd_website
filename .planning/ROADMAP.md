@@ -10,7 +10,7 @@
 - [x] **Phase 2: 商品頁與首頁熱銷改讀後端 API** - 8 個分類頁與首頁輪播顯示後端資料，含載入／錯誤／空狀態 (completed 2026-11-10)
 - [x] **Phase 3: 靜態內容固化與移除 Airtable** - Logo、導覽、關於我們改為 repo 靜態內容，移除 Airtable 程式與 token (completed 2026-11-10)
 - [x] **Phase 4: 上線驗證與撤銷 token** - production 實測全站正常後，由 Owner 撤銷 Airtable token (completed 2026-11-10)
-- [ ] **Phase 5: 清理技術債** - 輪播無障礙（WR-06）、check:dist 接進 build（WR-01）、Vite 範本殘留與 favicon／lang、規劃文件補齊
+- [x] **Phase 5: 清理技術債** - 輪播無障礙（WR-06）、check:dist 接進 build（WR-01）、Vite 範本殘留與 favicon／lang、規劃文件補齊 (completed 2026-11-10)
 
 ## Phase Details
 
@@ -155,7 +155,7 @@ Plans:
   4. `02-06`／`03-02`／`04-02` SUMMARY frontmatter 記錄 `requirements-completed`，ROADMAP Phase 2 清單列出 `02-06-PLAN.md`
   5. `npm test`、`npm run lint`、`npm run build` 全部通過，使用者同意後 push 並在 production 確認
 
-**Plans:** 3/4 plans executed
+**Plans:** 4/4 plans complete
 
 Plans:
 **Wave 1**
@@ -172,7 +172,7 @@ Plans:
 
 **Wave 4** *(blocked on Wave 3 completion)*
 
-- [ ] 05-04-PLAN.md — Phase gate 自動檢查、瀏覽器驗收 reduced-motion／hover、經使用者同意後 push 並確認 production（Wave 4，含 checkpoint）
+- [x] 05-04-PLAN.md — Phase gate 自動檢查、瀏覽器驗收 reduced-motion／hover、經使用者同意後 push 並確認 production（Wave 4，含 checkpoint）
 
 ## Progress
 
@@ -182,4 +182,4 @@ Plans:
 | 2. 商品頁與首頁熱銷改讀後端 API | 6/6 | Complete   | 2026-11-10 |
 | 3. 靜態內容固化與移除 Airtable | 4/4 | Complete    | 2026-11-10 |
 | 4. 上線驗證與撤銷 token | 3/3 | Complete   | 2026-11-10 |
-| 5. 清理技術債 | 3/4 | In Progress|  |
+| 5. 清理技術債 | 4/4 | Complete   | 2026-11-10 |
