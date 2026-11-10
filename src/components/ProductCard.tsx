@@ -42,10 +42,13 @@ const ProductCard = ({ product, variant, onImageClick }: ProductCardProps) => {
       }
     : {};
 
+  // 價格行間距：grid 卡片高度固定，縮為 mb-1；list 維持 mb-2
+  const priceMarginClass = variant === "grid" ? "mb-1" : "mb-2";
+
   // 價格行：有價用 accent 色，無價低調灰色
   const priceLine = (
     <p
-      className={`text-sm mb-2 ${
+      className={`text-sm ${priceMarginClass} ${
         hasPrice ? "font-semibold text-blue-400" : "text-gray-500"
       }`}
     >
@@ -81,7 +84,10 @@ const ProductCard = ({ product, variant, onImageClick }: ProductCardProps) => {
             </h3>
             {priceLine}
             {product.description && (
-              <p className="text-gray-400 text-sm mb-3 line-clamp-2">
+              <p
+                data-testid="product-description"
+                className="text-gray-400 text-sm mb-3 line-clamp-2"
+              >
                 {product.description}
               </p>
             )}
@@ -157,15 +163,20 @@ const ProductCard = ({ product, variant, onImageClick }: ProductCardProps) => {
           )}
         </div>
 
-        {/* 產品信息 - 剩餘空間 */}
-        <div className="product-info flex-1 flex flex-col justify-between">
+        {/* 產品信息 - 剩餘空間
+            grid 卡片固定 h-96，縮小資訊區垂直內距、價格間距並把描述縮為一行，
+            避免底部提示列被裁（02-UAT 第 3 項、02-UI-SPEC 縮減方案） */}
+        <div className="product-info py-4 px-5 flex-1 flex flex-col justify-between">
           <div>
             <h3 className="product-title text-base leading-tight mb-1 line-clamp-2 min-h-[2.5rem]">
               {product.name}
             </h3>
             {priceLine}
             {product.description && (
-              <p className="text-gray-400 text-xs line-clamp-2 leading-relaxed">
+              <p
+                data-testid="product-description"
+                className="text-gray-400 text-xs line-clamp-1 leading-relaxed"
+              >
                 {product.description}
               </p>
             )}
