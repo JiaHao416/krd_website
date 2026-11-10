@@ -22,7 +22,7 @@ export const PRODUCT_LIMIT = 100;
  * 8 個商品頁的「路徑 → 查詢條件」單一來源；陣列順序即導覽選單順序
  * （NavBar、SideMenu 由 src/config/navigation.ts 衍生），路由比對與順序無關。
  */
-export const PRODUCT_PAGES: readonly ProductPageConfig[] = [
+const PRODUCT_PAGE_LIST = [
   { path: "/all-products", query: {} },
   { path: "/new-products", query: { sort: "newest" } },
   { path: "/krd-products", query: { brand: "KRD" } },
@@ -31,7 +31,15 @@ export const PRODUCT_PAGES: readonly ProductPageConfig[] = [
   { path: "/wired-micphone", query: { category: "有線麥克風" } },
   { path: "/trumpet", query: { category: "喇叭" } },
   { path: "/accessories", query: { category: "配件" } },
-];
+] as const satisfies readonly ProductPageConfig[];
+
+/** 商品頁路徑的字面值聯集，由上方清單推導；PRODUCT_PAGE_VIEWS 以此為 key，缺任一路徑即編譯失敗 */
+export type ProductPagePath = (typeof PRODUCT_PAGE_LIST)[number]["path"];
+
+/** 對外匯出的商品頁設定，path 收窄為 ProductPagePath */
+export const PRODUCT_PAGES: readonly (ProductPageConfig & {
+  path: ProductPagePath;
+})[] = PRODUCT_PAGE_LIST;
 
 /** 首頁熱銷輪播：依序對應 hot-products-1、hot-products-2 */
 export const HOME_FEATURED_QUERIES: readonly ProductPageQuery[] = [

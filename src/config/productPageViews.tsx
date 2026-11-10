@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import type { ProductPagePath } from "../services/catalog";
 
 /** 商品頁的 UI 設定（標題、描述、圖示） */
 export interface ProductPageView {
@@ -26,8 +27,9 @@ const makeIcon = (d: string) => (
 /**
  * 路徑 → 頁面 UI 設定，key 與 services/catalog 的 PRODUCT_PAGES 以 path 對齊。
  * icon 是 JSX，所以放在 services 之外（services 不依賴 React）；Phase 3 導覽列會共用此份。
+ * 型別為 Record<ProductPagePath, …>：PRODUCT_PAGES 新增路徑卻漏補設定時，tsc 直接報錯。
  */
-export const PRODUCT_PAGE_VIEWS: Record<string, ProductPageView> = {
+export const PRODUCT_PAGE_VIEWS: Record<ProductPagePath, ProductPageView> = {
   "/all-products": {
     title: "所有商品",
     description: "瀏覽我們完整的產品系列，包含各種專業音響設備",

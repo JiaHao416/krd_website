@@ -1,9 +1,10 @@
 import { PRODUCT_PAGES } from "../services/catalog";
+import type { ProductPagePath } from "../services/catalog";
 import { PRODUCT_PAGE_VIEWS } from "./productPageViews";
 
 /** 導覽項目 */
 export interface NavItem {
-  path: string;
+  path: ProductPagePath;
   title: string;
 }
 
