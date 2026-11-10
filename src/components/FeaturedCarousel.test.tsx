@@ -231,12 +231,12 @@ describe("FeaturedCarousel 暫停自動播放", () => {
     vi.useFakeTimers();
     renderCarousel(makeResult({ items: makeItems(3) }), 5000);
     const next = screen.getByRole("button", { name: "下一張" });
-    // 模擬瀏覽器點擊順序：pointerdown -> focus -> pointerup -> click
-    fireEvent.pointerDown(next);
+    // 模擬滑鼠點擊順序：pointerdown -> focus -> pointerup -> click
+    fireEvent.pointerDown(next, { pointerType: "mouse" });
     act(() => {
       next.focus();
     });
-    fireEvent.pointerUp(next);
+    fireEvent.pointerUp(next, { pointerType: "mouse" });
     fireEvent.click(next);
     expect(screen.getByText("商品2")).toBeInTheDocument();
     expect(next).toHaveFocus();
@@ -244,6 +244,89 @@ describe("FeaturedCarousel 暫停自動播放", () => {
       vi.advanceTimersByTime(5000);
     });
     expect(screen.getByText("商品3")).toBeInTheDocument();
+  });
+
+  /** 模擬觸控點擊按鈕的完整事件序列（焦點在 pointerup 之後才給） */
+  function touchTap(el: HTMLElement) {
+    fireEvent.pointerDown(el, { pointerType: "touch" });
+    fireEvent.pointerUp(el, { pointerType: "touch" });
+    act(() => {
+      el.focus();
+    });
+    fireEvent.click(el);
+  }
+
+  it("觸控點擊按鈕取得焦點時不暫停，仍會自動切換", () => {
+    vi.useFakeTimers();
+    renderCarousel(makeResult({ items: makeItems(3) }), 5000);
+    const next = screen.getByRole("button", { name: "下一張" });
+    // Android Chrome 觸控順序：pointerdown -> pointerup -> (相容 mousedown) -> focus -> click，
+    // 焦點在 pointerup 之後才給
+    touchTap(next);
+    expect(screen.getByText("商品2")).toBeInTheDocument();
+    expect(next).toHaveFocus();
+    act(() => {
+      vi.advanceTimersByTime(5000);
+    });
+    expect(screen.getByText("商品3")).toBeInTheDocument();
+  });
+
+  it("觸控點擊後再以鍵盤讓焦點進入，仍會暫停", () => {
+    vi.useFakeTimers();
+    renderCarousel(makeResult({ items: makeItems(3) }), 5000);
+    const next = screen.getByRole("button", { name: "下一張" });
+    const prev = screen.getByRole("button", { name: "上一張" });
+    // 先完整觸控點擊，再用無 pointer 事件的 focus 模擬 Tab
+    touchTap(next);
+    expect(screen.getByText("商品2")).toBeInTheDocument();
+    act(() => {
+      next.blur();
+    });
+    act(() => {
+      prev.focus();
+    });
+    act(() => {
+      vi.advanceTimersByTime(5000);
+    });
+    expect(screen.getByText("商品2")).toBeInTheDocument();
+  });
+
+  it("觸控被取消（pointercancel）後鍵盤焦點仍會暫停", () => {
+    vi.useFakeTimers();
+    const { container } = renderCarousel(
+      makeResult({ items: makeItems(3) }),
+      5000
+    );
+    const root = container.firstElementChild as HTMLElement;
+    const next = screen.getByRole("button", { name: "下一張" });
+    // 觸控按下後被捲動手勢取消：只有 pointerdown 與 pointercancel，沒有 click
+    fireEvent.pointerDown(root, { pointerType: "touch" });
+    fireEvent.pointerCancel(root, { pointerType: "touch" });
+    act(() => {
+      next.focus();
+    });
+    act(() => {
+      vi.advanceTimersByTime(5000);
+    });
+    expect(screen.getByText("商品1")).toBeInTheDocument();
+  });
+
+  it("觸控點在非按鈕區域後鍵盤焦點仍會暫停", () => {
+    vi.useFakeTimers();
+    renderCarousel(makeResult({ items: makeItems(3) }), 5000);
+    const next = screen.getByRole("button", { name: "下一張" });
+    const title = screen.getByText("商品1");
+    // 點在標題文字上：沒有任何元素取得焦點，click 冒泡到根 div
+    fireEvent.pointerDown(title, { pointerType: "touch" });
+    fireEvent.pointerUp(title, { pointerType: "touch" });
+    fireEvent.click(title);
+    act(() => {
+      next.focus();
+    });
+    act(() => {
+      vi.advanceTimersByTime(5000);
+    });
+    expect(screen.getByText("商品1")).toBeInTheDocument();
   });
 
   it("手動切換後重新計時，不會在原排程時間被切走", () => {

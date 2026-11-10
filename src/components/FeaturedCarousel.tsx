@@ -37,8 +37,10 @@ const FeaturedCarousel = ({
 
   const [isHovered, setIsHovered] = useState(false);
   const [hasFocusWithin, setHasFocusWithin] = useState(false);
-  // 記錄指標（滑鼠／觸控）按下中；此期間的 focus 來自點擊而非鍵盤，不應暫停，
-  // 否則點完箭頭後焦點留在按鈕上，自動播放會一直停住
+  // 代表「一次指標點擊序列進行中」：pointerdown 設定，focus／click／pointercancel 清除，
+  // pointerup 只對滑鼠清除。此期間的 focus 來自點擊而非鍵盤，不應暫停，
+  // 否則點完箭頭後焦點留在按鈕上，自動播放會一直停住。
+  // 不用 :focus-visible 判斷，因為 jsdom 無法區分而無法測試
   const isPointerDownRef = useRef(false);
   const prefersReducedMotion = usePrefersReducedMotion();
   // 減少動態偏好、滑鼠停留、焦點在輪播內時都不自動切換（WCAG 2.2.2）
@@ -148,7 +150,18 @@ const FeaturedCarousel = ({
       onPointerDown={() => {
         isPointerDownRef.current = true;
       }}
-      onPointerUp={() => {
+      onPointerUp={(event) => {
+        // 滑鼠的 focus 在 pointerdown 與 pointerup 之間，此時清除即可；
+        // 觸控／觸控筆的相容 mousedown 與 focus 在 pointerup 之後才發生，
+        // 若在此清除，focus 會被誤判為鍵盤焦點而暫停
+        if (event.pointerType === "mouse") isPointerDownRef.current = false;
+      }}
+      onPointerCancel={() => {
+        // 觸控被捲動／手勢取消時不會有 click，需在此清除旗標
+        isPointerDownRef.current = false;
+      }}
+      onClick={() => {
+        // 點擊序列結束；涵蓋點在非按鈕區域（不會觸發 focus）的情況，避免旗標殘留
         isPointerDownRef.current = false;
       }}
       onFocus={() => {
