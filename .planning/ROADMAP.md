@@ -155,7 +155,7 @@ Plans:
   4. `02-06`／`03-02`／`04-02` SUMMARY frontmatter 記錄 `requirements-completed`，ROADMAP Phase 2 清單列出 `02-06-PLAN.md`
   5. `npm test`、`npm run lint`、`npm run build` 全部通過，使用者同意後 push 並在 production 確認
 
-**Plans:** 4/4 plans complete
+**Plans:** 4/5 plans complete
 
 Plans:
 **Wave 1**
@@ -173,6 +173,10 @@ Plans:
 **Wave 4** *(blocked on Wave 3 completion)*
 
 - [x] 05-04-PLAN.md — Phase gate 自動檢查、瀏覽器驗收 reduced-motion／hover、經使用者同意後 push 並確認 production（Wave 4，含 checkpoint）
+
+**Gap Closure**（來源：05-UAT.md test 3）
+
+- [ ] 05-05-PLAN.md — 觸控點擊輪播後焦點不再讓自動播放停住：觸控事件順序測試先紅燈，指標旗標改在 click／focus／pointercancel 清除（gap closure）
 
 ## Progress
 
