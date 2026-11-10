@@ -251,6 +251,33 @@ describe("fetchProducts", () => {
     expect(result.items.map((p) => p.id)).toEqual(["a1"]);
   });
 
+  it("價格欄位缺漏或為字串時視為價格洽詢，不顯示 NaN", async () => {
+    const [first, second] = sampleResponse.data.items;
+    const { price_min: _min, ...noMin } = first;
+    const { client } = setup({
+      ...sampleResponse,
+      data: {
+        ...sampleResponse.data,
+        items: [noMin, { ...second, price_min: "100", price_max: "200" }],
+      },
+    });
+    const result = await fetchProducts({ limit: 100 }, client);
+    expect(result.items.map((p) => p.priceText)).toEqual([
+      "NT$1,200",
+      "價格洽詢",
+    ]);
+  });
+
+  it("image_url 不是字串時視為缺圖", async () => {
+    const [first] = sampleResponse.data.items;
+    const { client } = setup({
+      ...sampleResponse,
+      data: { ...sampleResponse.data, items: [{ ...first, image_url: 123 }] },
+    });
+    const result = await fetchProducts({ limit: 100 }, client);
+    expect(result.items[0].imageUrl).toBeNull();
+  });
+
   it("略過格式不符的商品時 console.warn 一次", async () => {
     const warn = vi.spyOn(console, "warn").mockImplementation(() => undefined);
     const [first, second] = sampleResponse.data.items;

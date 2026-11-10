@@ -53,6 +53,25 @@ function isPublicProduct(value: unknown): value is PublicProductApi {
   );
 }
 
+/** 價格欄位只接受有限數字，其餘（undefined、字串、NaN）一律視為 null */
+function toNullableNumber(value: unknown): number | null {
+  return typeof value === "number" && Number.isFinite(value) ? value : null;
+}
+
+/**
+ * 將價格與圖片欄位校正為合法值（fail safe）
+ * 壞資料退回「價格洽詢」與佔位圖，不讓整筆商品消失或顯示 "NT$NaN"。
+ */
+function sanitizeProduct(product: PublicProductApi): PublicProductApi {
+  const imageUrl: unknown = product.image_url;
+  return {
+    ...product,
+    price_min: toNullableNumber(product.price_min),
+    price_max: toNullableNumber(product.price_max),
+    image_url: typeof imageUrl === "string" ? imageUrl : null,
+  };
+}
+
 /**
  * 取得商品列表
  * 失敗一律拋出 ApiError，不吞成空陣列；查無商品是成功的空結果。
@@ -106,5 +125,5 @@ export async function fetchProducts(
     );
   }
 
-  return { items: validItems.map(toProduct), total, truncated };
+  return { items: validItems.map(sanitizeProduct).map(toProduct), total, truncated };
 }
