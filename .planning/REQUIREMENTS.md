@@ -7,13 +7,13 @@
 
 ### 商品資料（PROD）
 
-- [ ] **PROD-01**: 訪客在 8 個分類頁（`/all-products`、`/new-products`、`/micgo-products`、`/krd-products`、`/wired-micphone`、`/wireless-micphone`、`/trumpet`、`/accessories`）看到的商品，與後端公開 API 依 BRIEF.md 對照表查詢的結果一致
-- [ ] **PROD-02**: 訪客在首頁兩組熱銷輪播看到的商品，分別等於 API `featured=1`、`featured=2` 的結果
-- [ ] **PROD-03**: 訪客看到的每張商品卡片顯示後端的商品名稱與圖片（`img.krd.com.tw`），點圖仍可放大
+- [x] **PROD-01**: 訪客在 8 個分類頁（`/all-products`、`/new-products`、`/micgo-products`、`/krd-products`、`/wired-micphone`、`/wireless-micphone`、`/trumpet`、`/accessories`）看到的商品，與後端公開 API 依 BRIEF.md 對照表查詢的結果一致
+- [x] **PROD-02**: 訪客在首頁兩組熱銷輪播看到的商品，分別等於 API `featured=1`、`featured=2` 的結果
+- [x] **PROD-03**: 訪客看到的每張商品卡片顯示後端的商品名稱與圖片（`img.krd.com.tw`），點圖仍可放大
 - [x] **PROD-04**: 有價格的商品顯示含稅價（API 分 ÷100，min≠max 時顯示區間）；價格為 `null` 時顯示「洽詢」類文字
-- [ ] **PROD-05**: 訪客在分類頁選「最新」排序時，順序依後端 `sort=newest`（`published_at`）
+- [x] **PROD-05**: 訪客在分類頁選「最新」排序時，順序依後端 `sort=newest`（`published_at`）
 - [ ] **PROD-06**: 家人在後台修改商品（上下架、名稱、圖片、熱銷）後，訪客重新整理頁面即看到變更（受後端快取時間限制）
-- [ ] **PROD-07**: 現有網址路徑全部維持可用，舊連結不失效
+- [x] **PROD-07**: 現有網址路徑全部維持可用，舊連結不失效
 
 ### 靜態內容（STAT）
 
@@ -23,9 +23,9 @@
 
 ### 錯誤處理（UX）
 
-- [ ] **UX-01**: 商品資料載入期間，訪客看到載入中狀態
-- [ ] **UX-02**: API 失敗（網路錯誤、5xx、429 限流）時，訪客看到明確的錯誤訊息與重試按鈕，而非空白頁
-- [ ] **UX-03**: 查詢成功但沒有商品時（例如分類尚無商品），訪客看到「目前沒有商品」之類的空狀態
+- [x] **UX-01**: 商品資料載入期間，訪客看到載入中狀態
+- [x] **UX-02**: API 失敗（網路錯誤、5xx、429 限流）時，訪客看到明確的錯誤訊息與重試按鈕，而非空白頁
+- [x] **UX-03**: 查詢成功但沒有商品時（例如分類尚無商品），訪客看到「目前沒有商品」之類的空狀態
 
 ### 設定與安全（SEC）
 
@@ -81,16 +81,16 @@ Which phases cover which requirements. Updated during roadmap creation.
 | TEST-02 | Phase 1 | Complete |
 | TEST-03 | Phase 1 | Complete |
 | TEST-04 | Phase 1 | Complete |
-| PROD-01 | Phase 2 | Pending |
-| PROD-02 | Phase 2 | Pending |
-| PROD-03 | Phase 2 | Pending |
+| PROD-01 | Phase 2 | Complete |
+| PROD-02 | Phase 2 | Complete |
+| PROD-03 | Phase 2 | Complete |
 | PROD-04 | Phase 2 | Complete |
-| PROD-05 | Phase 2 | Pending |
+| PROD-05 | Phase 2 | Complete |
 | PROD-06 | Phase 2 | Pending |
-| PROD-07 | Phase 2 | Pending |
-| UX-01 | Phase 2 | Pending |
-| UX-02 | Phase 2 | Pending |
-| UX-03 | Phase 2 | Pending |
+| PROD-07 | Phase 2 | Complete |
+| UX-01 | Phase 2 | Complete |
+| UX-02 | Phase 2 | Complete |
+| UX-03 | Phase 2 | Complete |
 | SEC-01 | Phase 3 | Pending |
 | SEC-04 | Phase 3 | Pending |
 | STAT-01 | Phase 3 | Pending |

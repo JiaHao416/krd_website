@@ -7,7 +7,7 @@
 ## Phases
 
 - [x] **Phase 1: 測試與 API 資料層基礎** - 導入 Vitest、建立 API client／轉換邏輯與 Vite proxy，皆有單元測試 (completed 2026-11-10)
-- [ ] **Phase 2: 商品頁與首頁熱銷改讀後端 API** - 8 個分類頁與首頁輪播顯示後端資料，含載入／錯誤／空狀態
+- [x] **Phase 2: 商品頁與首頁熱銷改讀後端 API** - 8 個分類頁與首頁輪播顯示後端資料，含載入／錯誤／空狀態 (completed 2026-11-10)
 - [ ] **Phase 3: 靜態內容固化與移除 Airtable** - Logo、導覽、關於我們改為 repo 靜態內容，移除 Airtable 程式與 token
 - [ ] **Phase 4: 上線驗證與撤銷 token** - production 實測全站正常後，由 Owner 撤銷 Airtable token
 
@@ -57,7 +57,7 @@ Plans:
   4. 訪客選「最新」排序時，順序依後端 `published_at`；後台修改商品後重新整理即看到變更
   5. 載入中顯示載入狀態；API 失敗（網路、5xx、429）顯示錯誤訊息與重試按鈕；無商品時顯示「目前沒有商品」
 
-**Plans:** 4/5 plans executed
+**Plans:** 6/6 plans complete
 
 Plans:
 **Wave 1**
@@ -75,7 +75,7 @@ Plans:
 
 **Wave 4** *(blocked on Wave 3 completion)*
 
-- [ ] 02-05-PLAN.md — Phase gate 自動檢查與本機對 production API 目視驗收、Pages 建置確認（Wave 4，含 checkpoint）
+- [x] 02-05-PLAN.md — Phase gate 自動檢查與本機對 production API 目視驗收、Pages 建置確認（Wave 4，含 checkpoint）
 **UI hint**: yes
 
 ### Phase 3: 靜態內容固化與移除 Airtable
@@ -114,6 +114,6 @@ Plans:
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. 測試與 API 資料層基礎 | 4/4 | Complete   | 2026-11-10 |
-| 2. 商品頁與首頁熱銷改讀後端 API | 4/5 | In Progress|  |
+| 2. 商品頁與首頁熱銷改讀後端 API | 6/6 | Complete   | 2026-11-10 |
 | 3. 靜態內容固化與移除 Airtable | 0/TBD | Not started | - |
 | 4. 上線驗證與撤銷 token | 0/TBD | Not started | - |
