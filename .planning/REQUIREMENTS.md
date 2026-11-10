@@ -17,9 +17,9 @@
 
 ### 靜態內容（STAT）
 
-- [ ] **STAT-01**: 訪客看到的 Logo 來自 repo `public/` 內的圖片，外觀與現行一致
-- [ ] **STAT-02**: 導覽列（桌機 NavBar、手機選單）與商品頁側邊選單的項目與順序與現行一致，且與 `App.tsx` 路由取自同一份定義
-- [ ] **STAT-03**: 關於我們頁的文字與圖片與現行一致，內容來自 repo 內的內容檔，圖片存放於 repo
+- [x] **STAT-01**: 訪客看到的 Logo 來自 repo `public/` 內的圖片，外觀與現行一致
+- [x] **STAT-02**: 導覽列（桌機 NavBar、手機選單）與商品頁側邊選單的項目與順序與現行一致，且與 `App.tsx` 路由取自同一份定義
+- [x] **STAT-03**: 關於我們頁的文字與圖片與現行一致，內容來自 repo 內的內容檔，圖片存放於 repo
 
 ### 錯誤處理（UX）
 
@@ -93,9 +93,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 | UX-03 | Phase 2 | Complete |
 | SEC-01 | Phase 3 | Complete |
 | SEC-04 | Phase 3 | Complete |
-| STAT-01 | Phase 3 | Pending |
-| STAT-02 | Phase 3 | Pending |
-| STAT-03 | Phase 3 | Pending |
+| STAT-01 | Phase 3 | Complete |
+| STAT-02 | Phase 3 | Complete |
+| STAT-03 | Phase 3 | Complete |
 | REL-01 | Phase 4 | Pending |
 | REL-02 | Phase 4 | Pending |
 
