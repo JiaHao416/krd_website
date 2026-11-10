@@ -9,7 +9,7 @@ import type { Product } from "../services/transform";
 import type { ProductPageQuery } from "../services/catalog";
 import { ApiError } from "../services/errors";
 
-// Layout 內的 NavBar／SideMenu 仍會呼叫 Airtable，測試一律以假元件取代
+// 以假元件取代 Layout，專注測頁面本身
 vi.mock("../components/Layout", () => ({
   default: ({ children }: { children: ReactNode }) => <div>{children}</div>,
 }));
