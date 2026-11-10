@@ -12,7 +12,7 @@
 - [x] **PROD-03**: 訪客看到的每張商品卡片顯示後端的商品名稱與圖片（`img.krd.com.tw`），點圖仍可放大
 - [x] **PROD-04**: 有價格的商品顯示含稅價（API 分 ÷100，min≠max 時顯示區間）；價格為 `null` 時顯示「洽詢」類文字
 - [x] **PROD-05**: 訪客在分類頁選「最新」排序時，順序依後端 `sort=newest`（`published_at`）
-- [ ] **PROD-06**: 家人在後台修改商品（上下架、名稱、圖片、熱銷）後，訪客重新整理頁面即看到變更（受後端快取時間限制）
+- [x] **PROD-06**: 家人在後台修改商品（上下架、名稱、圖片、熱銷）後，訪客重新整理頁面即看到變更（受後端快取時間限制）
 - [x] **PROD-07**: 現有網址路徑全部維持可用，舊連結不失效
 
 ### 靜態內容（STAT）
@@ -86,7 +86,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | PROD-03 | Phase 2 | Complete |
 | PROD-04 | Phase 2 | Complete |
 | PROD-05 | Phase 2 | Complete |
-| PROD-06 | Phase 2 | Pending |
+| PROD-06 | Phase 2 | Complete |
 | PROD-07 | Phase 2 | Complete |
 | UX-01 | Phase 2 | Complete |
 | UX-02 | Phase 2 | Complete |

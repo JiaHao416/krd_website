@@ -49,23 +49,22 @@ note: 首頁兩個錯誤框寬 593／592px、同高同頂；右側錯誤框深�
 
 ### 7. 後台修改即時反映（PROD-06，可選）
 expected: 修改後台商品，快取過期後重新整理可見
-result: skipped
-reason: 需修改 production 後台資料，留給使用者
+result: pass
+note: 以機制驗證（API max-age=60、邊緣不快取、前端無快取），詳見 02-HUMAN-UAT.md 第 1 項
 
 ### 8. Cloudflare Pages 建置（Node 版本）
 expected: push main 後 Pages 建置成功、Node 為 .nvmrc 版本
-result: blocked
-blocked_by: release-build
-reason: push main 即上線，須由使用者在 gap 修正後自行 push 並確認
+result: pass
+note: 2026-11-10 push 4c89b38，Pages 建置 success、線上新版正常；詳見 02-HUMAN-UAT.md 第 2 項
 
 ## Summary
 
 total: 8
-passed: 5
+passed: 7
 issues: 1
 pending: 0
-skipped: 1
-blocked: 1
+skipped: 0
+blocked: 0
 
 ## Gaps
 
