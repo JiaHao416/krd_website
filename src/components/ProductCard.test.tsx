@@ -60,6 +60,16 @@ describe("ProductCard 價格顯示", () => {
     );
   });
 
+  it("只有 priceMax 有值時 grid 仍顯示價格徽章", () => {
+    const product = makeProduct({
+      priceMin: null,
+      priceMax: 150000,
+      priceText: formatPriceRange(null, 150000),
+    });
+    render(<ProductCard product={product} variant="grid" onImageClick={vi.fn()} />);
+    expect(screen.getAllByText("NT$1,500")).toHaveLength(2);
+  });
+
   it("grid 無價：顯示價格洽詢且沒有徽章", () => {
     const { container } = render(
       <ProductCard

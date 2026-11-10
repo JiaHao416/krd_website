@@ -1,6 +1,7 @@
 import { useState } from "react";
 import type { KeyboardEvent } from "react";
 import ImagePlaceholder from "./ImagePlaceholder";
+import { PRICE_ON_REQUEST } from "../services/format";
 import type { Product } from "../services/transform";
 
 interface ProductCardProps {
@@ -14,7 +15,8 @@ const ProductCard = ({ product, variant, onImageClick }: ProductCardProps) => {
   // 記錄載入失敗的網址；換成新網址時自動重新嘗試
   const [failedImageUrl, setFailedImageUrl] = useState<string | null>(null);
 
-  const hasPrice = product.priceMin !== null;
+  // 與 formatPriceRange 語意一致：只要有顯示價格文字（含只有 priceMax）就算有價
+  const hasPrice = product.priceText !== PRICE_ON_REQUEST;
   const showImage =
     product.imageUrl !== null && product.imageUrl !== failedImageUrl;
 
