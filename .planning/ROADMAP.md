@@ -57,12 +57,12 @@ Plans:
   4. 訪客選「最新」排序時，順序依後端 `published_at`；後台修改商品後重新整理即看到變更
   5. 載入中顯示載入狀態；API 失敗（網路、5xx、429）顯示錯誤訊息與重試按鈕；無商品時顯示「目前沒有商品」
 
-**Plans:** 5 plans
+**Plans:** 1/5 plans executed
 
 Plans:
 **Wave 1**
 
-- [ ] 02-01-PLAN.md — 套件合法性確認、jsdom／Testing Library 測試環境、fetchProducts 支援取消、useProducts hook（Wave 1，含 checkpoint）
+- [x] 02-01-PLAN.md — 套件合法性確認、jsdom／Testing Library 測試環境、fetchProducts 支援取消、useProducts hook（Wave 1，含 checkpoint）
 
 **Wave 2** *(blocked on Wave 1 completion)*
 
@@ -114,6 +114,6 @@ Plans:
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. 測試與 API 資料層基礎 | 4/4 | Complete   | 2026-11-10 |
-| 2. 商品頁與首頁熱銷改讀後端 API | 0/5 | Planned | - |
+| 2. 商品頁與首頁熱銷改讀後端 API | 1/5 | In Progress|  |
 | 3. 靜態內容固化與移除 Airtable | 0/TBD | Not started | - |
 | 4. 上線驗證與撤銷 token | 0/TBD | Not started | - |
