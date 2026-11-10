@@ -181,12 +181,26 @@ describe("FeaturedCarousel 暫停自動播放", () => {
       5000
     );
     const root = container.firstElementChild as HTMLElement;
-    fireEvent.mouseEnter(root);
+    fireEvent.pointerEnter(root, { pointerType: "mouse" });
     act(() => {
       vi.advanceTimersByTime(5000);
     });
     expect(screen.getByText("商品1")).toBeInTheDocument();
-    fireEvent.mouseLeave(root);
+    fireEvent.pointerLeave(root, { pointerType: "mouse" });
+    act(() => {
+      vi.advanceTimersByTime(5000);
+    });
+    expect(screen.getByText("商品2")).toBeInTheDocument();
+  });
+
+  it("觸控進入輪播時不暫停，仍會自動切換", () => {
+    vi.useFakeTimers();
+    const { container } = renderCarousel(
+      makeResult({ items: makeItems(3) }),
+      5000
+    );
+    const root = container.firstElementChild as HTMLElement;
+    fireEvent.pointerEnter(root, { pointerType: "touch" });
     act(() => {
       vi.advanceTimersByTime(5000);
     });

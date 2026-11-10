@@ -139,8 +139,12 @@ const FeaturedCarousel = ({
   return (
     <div
       className="relative group"
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
+      // 只有滑鼠停留才暫停；觸控裝置點擊會模擬 mouseenter 卻不送 mouseleave，
+      // 若用 mouse 事件，手機點過一次後輪播就會黏在暫停狀態
+      onPointerEnter={(event) => {
+        if (event.pointerType === "mouse") setIsHovered(true);
+      }}
+      onPointerLeave={() => setIsHovered(false)}
       onPointerDown={() => {
         isPointerDownRef.current = true;
       }}
