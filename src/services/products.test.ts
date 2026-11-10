@@ -207,6 +207,50 @@ describe("fetchProducts", () => {
     });
   });
 
+  it("name 為 null 的商品被略過，其餘商品照常回傳", async () => {
+    vi.spyOn(console, "warn").mockImplementation(() => undefined);
+    const [first, second] = sampleResponse.data.items;
+    const { client } = setup({
+      ...sampleResponse,
+      data: { ...sampleResponse.data, items: [{ ...first, name: null }, second] },
+    });
+    const result = await fetchProducts({ limit: 100 }, client);
+    expect(result.items.map((p) => p.id)).toEqual(["b2"]);
+  });
+
+  it("元素為 null 時被略過而不拋出 TypeError", async () => {
+    vi.spyOn(console, "warn").mockImplementation(() => undefined);
+    const [first] = sampleResponse.data.items;
+    const { client } = setup({
+      ...sampleResponse,
+      data: { ...sampleResponse.data, items: [null, first] },
+    });
+    const result = await fetchProducts({ limit: 100 }, client);
+    expect(result.items.map((p) => p.id)).toEqual(["a1"]);
+  });
+
+  it("in_stock 不是布林值的商品被略過", async () => {
+    vi.spyOn(console, "warn").mockImplementation(() => undefined);
+    const [first, second] = sampleResponse.data.items;
+    const { client } = setup({
+      ...sampleResponse,
+      data: { ...sampleResponse.data, items: [first, { ...second, in_stock: "yes" }] },
+    });
+    const result = await fetchProducts({ limit: 100 }, client);
+    expect(result.items.map((p) => p.id)).toEqual(["a1"]);
+  });
+
+  it("略過格式不符的商品時 console.warn 一次", async () => {
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => undefined);
+    const [first, second] = sampleResponse.data.items;
+    const { client } = setup({
+      ...sampleResponse,
+      data: { ...sampleResponse.data, items: [{ ...first, id: 1 }, second] },
+    });
+    await fetchProducts({ limit: 100 }, client);
+    expect(warn).toHaveBeenCalledTimes(1);
+  });
+
   it("HTTP 500 時只發出一次請求（不自動重試）", async () => {
     const { client, captured } = setup({ success: false }, 500);
     await fetchProducts({ limit: 100 }, client).catch(() => undefined);
