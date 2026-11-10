@@ -48,7 +48,7 @@ created: 2026-11-10
 | 4-01-03 | 01 | 1 | REL-01 | — | 9 條深層連結都回 200 | shell | `curl -s -o /dev/null -w '%{http_code}'` 逐一測試路徑 | ✅ | ⬜ pending |
 | 4-01-03、4-01-04 | 01 | 1 | REL-01 | T-04-05 | 各頁商品數等於 API 數 | shell + manual | 帶 Origin 標頭用 curl 取 `pagination.total`；用 DevTools 快照計數比對 | manual | ⬜ pending |
 | 4-02-01 | 02 | 2 | REL-02 | T-03-12、T-04-09、T-04-10 | 撤銷前基準（舊 token 回 200） | shell | D-14 指令（`rtk proxy`），輸出為 `200` | ✅ | ⬜ pending |
-| 4-02-02、4-02-03 | 02 | 2 | REL-02 | T-03-12、T-03-17、T-04-07、T-04-08 | 舊 token 已失效 | shell | D-14 指令，輸出為 `401` 或 `403`；04-02-SUMMARY 寫 `token-revoked: true`（不寫 requirements-completed） | ✅ | ⬜ pending |
+| 4-02-03 | 02 | 2 | REL-02 | T-03-12、T-03-17、T-04-07、T-04-08 | 舊 token 已失效 | shell | D-14 指令，輸出為 `401` 或 `403`；04-02-SUMMARY 寫 `token-revoked: true`（不寫 requirements-completed） | ✅ | ⬜ pending |
 | 4-02-03、4-03-01 | 02/03 | 2–3 | REL-02 | T-04-13 | 撤銷後網站正常 | shell + manual | 重跑 bundle 掃描與深層連結，加上精簡版 DevTools 實測；approved 後 04-03-SUMMARY 寫 `requirements-completed: [REL-01, REL-02]` | manual | ⬜ pending |
 | 4-02-01 | 02 | 2 | REL-02 | T-04-11 | 鄰近 repo 掃描不因目錄不存在而假通過 | shell | 每個目錄先 `test -d`，不存在記「不存在」而非 0 | ✅ | ⬜ pending |
 | 回歸（4-01-01、4-02-01、4-03-02；每次 commit 前） | 01/02/03 | 1–3 | — | T-03-13、T-04-12 | 原始碼／dist／staged diff／commit 訊息不含憑證 | unit | `npm test`（noAirtable.test.ts）與 `npm run check:dist`；commit 前 `git diff --cached` 與訊息檔對 PAT／Base ID 格式計數 0 | ✅ | ⬜ pending |
