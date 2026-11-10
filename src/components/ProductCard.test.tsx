@@ -208,15 +208,122 @@ describe("ProductCard 圖片與燈箱", () => {
 });
 
 describe("ProductCard 描述與其他欄位", () => {
-  it("描述為 null 時不渲染描述段落", () => {
-    const { container } = render(
+  it("描述為 null 時（grid 與 list）都不渲染描述段落", () => {
+    const { unmount } = render(
       <ProductCard
         product={makeProduct({ description: null })}
         variant="grid"
         onImageClick={vi.fn()}
       />
     );
-    expect(container.querySelector("p.line-clamp-2")).toBeNull();
+    expect(screen.queryByTestId("product-description")).toBeNull();
+    unmount();
+    render(
+      <ProductCard
+        product={makeProduct({ description: null })}
+        variant="list"
+        onImageClick={vi.fn()}
+      />
+    );
+    expect(screen.queryByTestId("product-description")).toBeNull();
+  });
+
+  it("grid 描述只顯示一行（line-clamp-1），避免卡片溢出", () => {
+    render(
+      <ProductCard
+        product={makeProduct({ description: "這是描述" })}
+        variant="grid"
+        onImageClick={vi.fn()}
+      />
+    );
+    const description = screen.getByTestId("product-description");
+    expect(description).toHaveClass("line-clamp-1");
+    expect(description).not.toHaveClass("line-clamp-2");
+  });
+
+  it("list 描述維持兩行（line-clamp-2）", () => {
+    render(
+      <ProductCard
+        product={makeProduct({ description: "這是描述" })}
+        variant="list"
+        onImageClick={vi.fn()}
+      />
+    );
+    const description = screen.getByTestId("product-description");
+    expect(description).toHaveClass("line-clamp-2");
+    expect(description).not.toHaveClass("line-clamp-1");
+  });
+
+  it("grid 資訊區使用縮小的內距 py-4 px-5", () => {
+    const { container } = render(
+      <ProductCard
+        product={makeProduct()}
+        variant="grid"
+        onImageClick={vi.fn()}
+      />
+    );
+    const info = container.querySelector(".product-info");
+    expect(info).toHaveClass("py-4", "px-5");
+  });
+
+  it("grid 價格行間距為 mb-1，list 價格行維持 mb-2（有價）", () => {
+    const product = makeProduct();
+    const { container, unmount } = render(
+      <ProductCard product={product} variant="grid" onImageClick={vi.fn()} />
+    );
+    // 徽章也含 priceText，取不在 .product-badge 內的價格行
+    const gridPrice = screen
+      .getAllByText(product.priceText)
+      .find((el) => !el.closest(".product-badge"));
+    expect(container.querySelector(".product-badge")).not.toBeNull();
+    expect(gridPrice).toHaveClass("mb-1");
+    expect(gridPrice).not.toHaveClass("mb-2");
+    unmount();
+    render(
+      <ProductCard product={product} variant="list" onImageClick={vi.fn()} />
+    );
+    const listPrice = screen.getByText(product.priceText);
+    expect(listPrice).toHaveClass("mb-2");
+    expect(listPrice).not.toHaveClass("mb-1");
+  });
+
+  it("grid 價格洽詢行間距為 mb-1，list 為 mb-2", () => {
+    const { unmount } = render(
+      <ProductCard
+        product={makeNoPrice()}
+        variant="grid"
+        onImageClick={vi.fn()}
+      />
+    );
+    expect(screen.getByText(PRICE_ON_REQUEST)).toHaveClass("mb-1");
+    unmount();
+    render(
+      <ProductCard
+        product={makeNoPrice()}
+        variant="list"
+        onImageClick={vi.fn()}
+      />
+    );
+    expect(screen.getByText(PRICE_ON_REQUEST)).toHaveClass("mb-2");
+  });
+
+  it("grid 長名稱＋有價＋長描述：卡片 h-96、圖片 h-64、名稱兩行截斷皆不變，提示仍存在", () => {
+    const { container } = render(
+      <ProductCard
+        product={makeProduct({
+          name: "這是一個非常非常長的商品名稱需要佔滿兩行甚至更多行的空間來測試",
+          description: "這是很長的描述".repeat(20),
+        })}
+        variant="grid"
+        onImageClick={vi.fn()}
+      />
+    );
+    expect(container.querySelector(".product-card-new")).toHaveClass("h-96");
+    expect(container.querySelector(".product-image-container")).toHaveClass(
+      "h-64"
+    );
+    expect(container.querySelector("h3")).toHaveClass("line-clamp-2");
+    expect(screen.getByText("點擊查看大圖")).toBeInTheDocument();
   });
 
   it("有描述時顯示，且不顯示品牌、型號、現貨", () => {
