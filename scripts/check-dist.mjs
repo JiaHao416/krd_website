@@ -1,5 +1,6 @@
 // dist/ 憑證殘留檢查：build 後執行 `npm run check:dist`。
-// 規則需與 src/noAirtable.test.ts 保持一致；只描述格式，不得寫入實際值。
+// 規則需與 src/noAirtable.test.ts 保持一致（該測試會逐條比對 FORBIDDEN，請維持一行一條的寫法）；
+// 只描述格式，不得寫入實際值。
 // 命中時只輸出「相對路徑：規則名稱」，絕不輸出匹配內容。
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { extname, join, relative } from "node:path";
