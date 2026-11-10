@@ -29,10 +29,10 @@
 
 ### 設定與安全（SEC）
 
-- [ ] **SEC-01**: 打包後的前端程式（`dist/`）不含任何 Airtable 網址、token 或 Base ID
+- [x] **SEC-01**: 打包後的前端程式（`dist/`）不含任何 Airtable 網址、token 或 Base ID
 - [x] **SEC-02**: API base URL 由 `VITE_` 環境變數設定，未設定時預設為 production `https://api.krd.com.tw/api/v1/public`
 - [x] **SEC-03**: 開發者在本機 `npm run dev` 時能透過 Vite proxy 讀到商品資料（不被 CORS 白名單擋下）
-- [ ] **SEC-04**: Airtable service、相關型別與未使用的 `ProductView.tsx` 自 repo 移除
+- [x] **SEC-04**: Airtable service、相關型別與未使用的 `ProductView.tsx` 自 repo 移除
 
 ### 測試（TEST）
 
@@ -91,8 +91,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 | UX-01 | Phase 2 | Complete |
 | UX-02 | Phase 2 | Complete |
 | UX-03 | Phase 2 | Complete |
-| SEC-01 | Phase 3 | Pending |
-| SEC-04 | Phase 3 | Pending |
+| SEC-01 | Phase 3 | Complete |
+| SEC-04 | Phase 3 | Complete |
 | STAT-01 | Phase 3 | Pending |
 | STAT-02 | Phase 3 | Pending |
 | STAT-03 | Phase 3 | Pending |

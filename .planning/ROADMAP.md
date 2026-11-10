@@ -92,7 +92,7 @@ Plans:
   4. Airtable service、相關型別與未使用的 `ProductView.tsx` 已移除，`dist/` 搜尋不到 Airtable 網址、token 或 Base ID
   5. `npm run build` 成功，全站頁面可正常瀏覽
 
-**Plans:** 2/4 plans executed
+**Plans:** 3/4 plans executed
 
 Plans:
 **Wave 1**
@@ -102,7 +102,7 @@ Plans:
 
 **Wave 2** *(blocked on Wave 1 completion)*
 
-- [ ] 03-03-PLAN.md — 刪除 Airtable service 與 ProductView、原始碼掃描測試、npm run check:dist、文件更新（Wave 2）
+- [x] 03-03-PLAN.md — 刪除 Airtable service 與 ProductView、原始碼掃描測試、npm run check:dist、文件更新（Wave 2）
 
 **Wave 3** *(blocked on Wave 2 completion)*
 
@@ -130,5 +130,5 @@ Plans:
 |-------|----------------|--------|-----------|
 | 1. 測試與 API 資料層基礎 | 4/4 | Complete   | 2026-11-10 |
 | 2. 商品頁與首頁熱銷改讀後端 API | 6/6 | Complete   | 2026-11-10 |
-| 3. 靜態內容固化與移除 Airtable | 2/4 | In Progress|  |
+| 3. 靜態內容固化與移除 Airtable | 3/4 | In Progress|  |
 | 4. 上線驗證與撤銷 token | 0/TBD | Not started | - |
