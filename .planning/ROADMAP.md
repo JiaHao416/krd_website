@@ -10,6 +10,7 @@
 - [x] **Phase 2: 商品頁與首頁熱銷改讀後端 API** - 8 個分類頁與首頁輪播顯示後端資料，含載入／錯誤／空狀態 (completed 2026-11-10)
 - [x] **Phase 3: 靜態內容固化與移除 Airtable** - Logo、導覽、關於我們改為 repo 靜態內容，移除 Airtable 程式與 token (completed 2026-11-10)
 - [x] **Phase 4: 上線驗證與撤銷 token** - production 實測全站正常後，由 Owner 撤銷 Airtable token (completed 2026-11-10)
+- [ ] **Phase 5: 清理技術債** - 輪播無障礙（WR-06）、check:dist 接進 build（WR-01）、Vite 範本殘留與 favicon／lang、規劃文件補齊
 
 ## Phase Details
 
@@ -137,6 +138,38 @@ Plans:
 
 - [x] 04-03-PLAN.md — 撤銷後精簡版 DevTools 實測與使用者確認、文件收尾並關閉 TR-03-01（Wave 3）
 
+### Phase 5: 清理技術債：Vite 範本殘留、favicon、輪播無障礙（WR-06）、check:dist 接線（WR-01）、規劃文件補齊
+
+**Goal**: 清掉 v1.0 稽核列出的非阻擋技術債：首頁熱銷輪播可暫停並尊重減少動態設定、`npm run build` 自動擋下 dist 憑證殘留、移除 Vite 範本殘留並修正 favicon／語系、規劃文件與實際完成狀態一致；不新增功能、不改視覺設計
+**Depends on**: Phase 4
+**Requirements**: 無（技術債 phase，來源為 `.planning/v1.0-MILESTONE-AUDIT.md`）
+**Success Criteria** (what must be TRUE):
+
+  1. 系統開啟 `prefers-reduced-motion: reduce` 時首頁輪播不自動切換；滑鼠移入或焦點在輪播內時暫停、離開後恢復；手動切換後重新計時；畫面上沒有新增按鈕
+  2. `npm run build`（Cloudflare Pages 建置指令）在 vite build 後自動執行 dist 憑證掃描，dist 含 Airtable 字樣時建置失敗
+  3. `src/assets/react.svg`、`public/vite.svg` 已刪除，`src/App.css` 只剩 `#root`，`index.html` 為 `lang="zh-Hant-TW"` 且 favicon `type="image/png"`，build 無 Browserslist 過舊警告
+  4. `02-06`／`03-02`／`04-02` SUMMARY frontmatter 記錄 `requirements-completed`，ROADMAP Phase 2 清單列出 `02-06-PLAN.md`
+  5. `npm test`、`npm run lint`、`npm run build` 全部通過，使用者同意後 push 並在 production 確認
+
+**Plans:** 4 plans
+
+Plans:
+**Wave 1**
+
+- [ ] 05-01-PLAN.md — 熱銷輪播 reduced-motion 停用、hover／focus-within 暫停、手動切換重新計時，先寫測試再實作（Wave 1）
+
+**Wave 2** *(blocked on Wave 1 completion)*
+
+- [ ] 05-02-PLAN.md — 刪 Vite 範本殘留、App.css 精簡、favicon MIME 與 html lang、Browserslist 更新、SUMMARY frontmatter 與 ROADMAP 02-06 補登（Wave 2）
+
+**Wave 3** *(blocked on Wave 2 completion)*
+
+- [ ] 05-03-PLAN.md — `npm run build` 串接 check-dist 並正反實測，CLAUDE.md 與 codebase 文件同步（Wave 3）
+
+**Wave 4** *(blocked on Wave 3 completion)*
+
+- [ ] 05-04-PLAN.md — Phase gate 自動檢查、瀏覽器驗收 reduced-motion／hover、經使用者同意後 push 並確認 production（Wave 4，含 checkpoint）
+
 ## Progress
 
 | Phase | Plans Complete | Status | Completed |
@@ -145,13 +178,4 @@ Plans:
 | 2. 商品頁與首頁熱銷改讀後端 API | 6/6 | Complete   | 2026-11-10 |
 | 3. 靜態內容固化與移除 Airtable | 4/4 | Complete    | 2026-11-10 |
 | 4. 上線驗證與撤銷 token | 3/3 | Complete   | 2026-11-10 |
-
-### Phase 5: 清理技術債：Vite 範本殘留、favicon、輪播無障礙（WR-06）、check:dist 接線（WR-01）、規劃文件補齊
-
-**Goal:** [To be planned]
-**Requirements**: TBD
-**Depends on:** Phase 4
-**Plans:** 0 plans
-
-Plans:
-- [ ] TBD (run /gsd-plan-phase 5 to break down)
+| 5. 清理技術債 | 0/4 | Planned | - |
