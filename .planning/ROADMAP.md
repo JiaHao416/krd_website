@@ -155,7 +155,7 @@ Plans:
   4. `02-06`／`03-02`／`04-02` SUMMARY frontmatter 記錄 `requirements-completed`，ROADMAP Phase 2 清單列出 `02-06-PLAN.md`
   5. `npm test`、`npm run lint`、`npm run build` 全部通過，使用者同意後 push 並在 production 確認
 
-**Plans:** 2/4 plans executed
+**Plans:** 3/4 plans executed
 
 Plans:
 **Wave 1**
@@ -168,7 +168,7 @@ Plans:
 
 **Wave 3** *(blocked on Wave 2 completion)*
 
-- [ ] 05-03-PLAN.md — `npm run build` 串接 check-dist 並正反實測，CLAUDE.md 與 codebase 文件同步（Wave 3）
+- [x] 05-03-PLAN.md — `npm run build` 串接 check-dist 並正反實測，CLAUDE.md 與 codebase 文件同步（Wave 3）
 
 **Wave 4** *(blocked on Wave 3 completion)*
 
@@ -182,4 +182,4 @@ Plans:
 | 2. 商品頁與首頁熱銷改讀後端 API | 6/6 | Complete   | 2026-11-10 |
 | 3. 靜態內容固化與移除 Airtable | 4/4 | Complete    | 2026-11-10 |
 | 4. 上線驗證與撤銷 token | 3/3 | Complete   | 2026-11-10 |
-| 5. 清理技術債 | 2/4 | In Progress|  |
+| 5. 清理技術債 | 3/4 | In Progress|  |
