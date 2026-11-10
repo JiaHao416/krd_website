@@ -24,7 +24,13 @@
   3. API base URL 由 `VITE_` 環境變數控制，未設定時預設指向 production `https://api.krd.com.tw/api/v1/public`
   4. 單元測試涵蓋：API 回應轉畫面資料（含價格 ÷100、`null` 價格）、分類頁到查詢參數對照（含中文 encode）、網路／非 2xx／`success:false` 錯誤轉換
   5. `npm run build` 成功，現有網站行為不變
-**Plans**: TBD
+**Plans:** 4 plans
+
+Plans:
+- [ ] 01-01-PLAN.md — 導入 Vitest、VITE_API_BASE_URL、Vite dev proxy，並建立 client 與 fetchProducts 最薄端到端切片（Wave 1）
+- [ ] 01-02-PLAN.md — 價格格式與 API 商品 → 畫面 Product 轉換，含單元測試（Wave 2）
+- [ ] 01-03-PLAN.md — 商品頁／首頁熱銷查詢設定與 buildProductParams，斷言中文 encode 查詢字串（Wave 2）
+- [ ] 01-04-PLAN.md — ApiError 錯誤分類與中文訊息，fetchProducts 完整化（驗證、轉換、不重試、筆數警告）（Wave 3）
 
 ### Phase 2: 商品頁與首頁熱銷改讀後端 API
 **Goal**: 訪客在所有商品頁與首頁看到的商品，與家人在後台維護的資料一致，且載入、失敗、無資料都有明確畫面
@@ -69,7 +75,7 @@
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. 測試與 API 資料層基礎 | 0/TBD | Not started | - |
+| 1. 測試與 API 資料層基礎 | 0/4 | Not started | - |
 | 2. 商品頁與首頁熱銷改讀後端 API | 0/TBD | Not started | - |
 | 3. 靜態內容固化與移除 Airtable | 0/TBD | Not started | - |
 | 4. 上線驗證與撤銷 token | 0/TBD | Not started | - |
