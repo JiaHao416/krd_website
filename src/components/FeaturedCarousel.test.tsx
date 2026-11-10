@@ -56,7 +56,25 @@ function renderCarousel(result: UseProductsResult, intervalMs = 5000) {
 
 afterEach(() => {
   vi.useRealTimers();
+  vi.unstubAllGlobals();
 });
+
+/** 模擬 matchMedia；僅 prefers-reduced-motion: reduce 查詢回傳指定值 */
+function mockReducedMotion(matches: boolean) {
+  vi.stubGlobal(
+    "matchMedia",
+    vi.fn().mockImplementation((query: string) => ({
+      matches: query === "(prefers-reduced-motion: reduce)" ? matches : false,
+      media: query,
+      onchange: null,
+      addEventListener: vi.fn(),
+      removeEventListener: vi.fn(),
+      addListener: vi.fn(),
+      removeListener: vi.fn(),
+      dispatchEvent: vi.fn(),
+    }))
+  );
+}
 
 describe("FeaturedCarousel 狀態", () => {
   it("載入中顯示「載入產品中...」", () => {
@@ -136,5 +154,80 @@ describe("FeaturedCarousel 自動播放", () => {
       vi.advanceTimersByTime(20000);
     });
     expect(screen.getByText("載入產品中...")).toBeInTheDocument();
+  });
+});
+
+describe("FeaturedCarousel 暫停自動播放", () => {
+  it("系統偏好減少動態時不自動切換，手動仍可切換", () => {
+    mockReducedMotion(true);
+    vi.useFakeTimers();
+    renderCarousel(makeResult({ items: makeItems(3) }), 5000);
+    act(() => {
+      vi.advanceTimersByTime(5000);
+    });
+    expect(screen.getByText("商品1")).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "下一張" }));
+    expect(screen.getByText("商品2")).toBeInTheDocument();
+    act(() => {
+      vi.advanceTimersByTime(5000);
+    });
+    expect(screen.getByText("商品2")).toBeInTheDocument();
+  });
+
+  it("滑鼠移入時不自動切換，移出後恢復", () => {
+    vi.useFakeTimers();
+    const { container } = renderCarousel(
+      makeResult({ items: makeItems(3) }),
+      5000
+    );
+    const root = container.firstElementChild as HTMLElement;
+    fireEvent.mouseEnter(root);
+    act(() => {
+      vi.advanceTimersByTime(5000);
+    });
+    expect(screen.getByText("商品1")).toBeInTheDocument();
+    fireEvent.mouseLeave(root);
+    act(() => {
+      vi.advanceTimersByTime(5000);
+    });
+    expect(screen.getByText("商品2")).toBeInTheDocument();
+  });
+
+  it("焦點在輪播內時不自動切換，焦點離開後恢復", () => {
+    vi.useFakeTimers();
+    renderCarousel(makeResult({ items: makeItems(3) }), 5000);
+    const next = screen.getByRole("button", { name: "下一張" });
+    act(() => {
+      next.focus();
+    });
+    act(() => {
+      vi.advanceTimersByTime(5000);
+    });
+    expect(screen.getByText("商品1")).toBeInTheDocument();
+    act(() => {
+      next.blur();
+    });
+    act(() => {
+      vi.advanceTimersByTime(5000);
+    });
+    expect(screen.getByText("商品2")).toBeInTheDocument();
+  });
+
+  it("手動切換後重新計時，不會在原排程時間被切走", () => {
+    vi.useFakeTimers();
+    renderCarousel(makeResult({ items: makeItems(3) }), 5000);
+    act(() => {
+      vi.advanceTimersByTime(3000);
+    });
+    fireEvent.click(screen.getByRole("button", { name: "下一張" }));
+    expect(screen.getByText("商品2")).toBeInTheDocument();
+    act(() => {
+      vi.advanceTimersByTime(3000);
+    });
+    expect(screen.getByText("商品2")).toBeInTheDocument();
+    act(() => {
+      vi.advanceTimersByTime(2000);
+    });
+    expect(screen.getByText("商品3")).toBeInTheDocument();
   });
 });

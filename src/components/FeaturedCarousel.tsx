@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import type { UseProductsResult } from "../hooks/useProducts";
+import { usePrefersReducedMotion } from "../hooks/usePrefersReducedMotion";
 import ImagePlaceholder from "./ImagePlaceholder";
 import { getErrorMessage } from "../services/errors";
 
@@ -34,14 +35,21 @@ const FeaturedCarousel = ({
   const [failedImageUrl, setFailedImageUrl] = useState<string | null>(null);
   const { items, status } = result;
 
-  // 只有成功且多於一筆時才自動播放
+  const [isHovered, setIsHovered] = useState(false);
+  const [hasFocusWithin, setHasFocusWithin] = useState(false);
+  const prefersReducedMotion = usePrefersReducedMotion();
+  // 減少動態偏好、滑鼠停留、焦點在輪播內時都不自動切換（WCAG 2.2.2）
+  const isPaused = prefersReducedMotion || isHovered || hasFocusWithin;
+
+  // 只有成功、多於一筆且未暫停時才自動播放；
+  // 每次切換（自動或手動）都會因 currentSlide 改變而重新計時
   useEffect(() => {
-    if (status !== "success" || items.length <= 1) return;
-    const timer = setInterval(() => {
+    if (status !== "success" || items.length <= 1 || isPaused) return;
+    const timer = setTimeout(() => {
       setCurrentSlide((prev) => (prev + 1) % items.length);
     }, intervalMs);
-    return () => clearInterval(timer);
-  }, [status, items.length, intervalMs]);
+    return () => clearTimeout(timer);
+  }, [status, items.length, intervalMs, isPaused, currentSlide]);
 
   // 非成功輪播的狀態共用同一個框，尺寸與成功狀態一致，避免兩組左右失衡
   const stateBoxClass =
@@ -126,7 +134,18 @@ const FeaturedCarousel = ({
   const goNext = () => setCurrentSlide((activeIndex + 1) % items.length);
 
   return (
-    <div className="relative group">
+    <div
+      className="relative group"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      onFocus={() => setHasFocusWithin(true)}
+      onBlur={(event) => {
+        // 焦點在輪播內部移動時不算離開
+        if (!event.currentTarget.contains(event.relatedTarget as Node | null)) {
+          setHasFocusWithin(false);
+        }
+      }}
+    >
       {/* 主要輪播區域 */}
       <div className="relative overflow-hidden rounded-3xl shadow-2xl">
         <div className="aspect-video relative">
