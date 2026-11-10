@@ -10,11 +10,21 @@ KRD 音響／麥克風盤商的品牌官網（`www.krd.com.tw`），給客戶瀏
 - 測試：Vitest 215 項；`npm run build` 內含 `tsc -b` 與 dist 憑證掃描
 - 舊 Airtable token 已撤銷並確認失效
 
-## Next Milestone Goals
+## Current Milestone: v1.1 UI 重新設計與商品詳情頁
 
-- UI 版面整體重新設計（技術棧不變），在 `redesign` 分支開發、完成後再合併回 `main`，避免半成品上線
-- 一併處理 WR-04（1024px 桌機導覽文字擠壓）
-- 開工前需決定預覽方式：`*.pages.dev` 不在後端 CORS 白名單，分支預覽抓不到商品
+**Goal:** 全站版面重新設計並新增商品詳情頁，在 `redesign` 分支開發、整套完成後再合併回 `main` 上線。
+
+**Target features:**
+- 共用骨架重設計（NavBar、SideMenu、Footer、Layout），一併修正 WR-04（1024px 導覽文字擠壓）
+- 首頁重設計（含熱銷輪播，保留 WCAG 2.2.2 行為）
+- 商品分類頁重設計（8 分類共用 Template，保留 grid/list、排序、燈箱）
+- 關於我們頁重設計
+- 新增商品詳情頁 `/products/:id`（讀 `/public/products/:id`，含 variants；列表與輪播可點入）
+
+**Key context:**
+- 視覺方向未定，於 UI phase 用 sketch／UI-SPEC 探索後決定
+- 只在本機預覽（`npm run dev` + Vite proxy 讀 production API），不改後端 CORS
+- 技術棧不變、舊網址全數保留、前端不含憑證、每次提交 `npm run build` 必須通過
 
 ## Core Value
 
@@ -47,11 +57,10 @@ KRD 音響／麥克風盤商的品牌官網（`www.krd.com.tw`），給客戶瀏
 
 ### Active
 
-（待 `/gsd-new-milestone` 定義 UI 重新設計需求）
+（v1.1 需求見 `.planning/REQUIREMENTS.md`）
 
 ### Out of Scope
 
-- 商品詳情頁（`/products/:id`、變體）— 本輪專注替換 Airtable，留待下一輪
 - 補 `public/_redirects` — 實測 Cloudflare Pages 已預設 SPA fallback，不需要
 - Tailwind v3/v4 套件混裝、`@types/react-router-dom` v5 等依賴不一致 — 與停用 Airtable 無關且可能影響樣式，另案處理
 - 配件拆子分類（開關、線材）— 後端已定案配件統一為分類「配件」
@@ -108,4 +117,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-11-10 after v1.0 milestone*
+*Last updated: 2026-11-10 — Milestone v1.1 started*

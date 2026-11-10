@@ -1,17 +1,16 @@
 ---
 gsd_state_version: 1.0
-milestone: v1.0
-milestone_name: API 遷移與停用 Airtable
-status: Awaiting next milestone
-stopped_at: v1.0 milestone 已歸檔
-last_updated: "2026-11-10T08:28:19.609Z"
-last_activity: 2026-11-10 — Milestone v1.0 completed and archived
+milestone: v1.1
+milestone_name: UI 重新設計與商品詳情頁
+status: planning
+last_updated: "2026-11-10T08:33:23.027Z"
+last_activity: 2026-11-10
 progress:
-  total_phases: 5
-  completed_phases: 5
-  total_plans: 22
-  completed_plans: 22
-  percent: 100
+  total_phases: 0
+  completed_phases: 0
+  total_plans: 0
+  completed_plans: 0
+  percent: 0
 ---
 
 # Project State
@@ -25,10 +24,10 @@ See: .planning/PROJECT.md (updated 2026-11-10)
 
 ## Current Position
 
-Phase: Milestone v1.0 complete
+Phase: Not started (defining requirements)
 Plan: —
-Status: Awaiting next milestone
-Last activity: 2026-11-10 — Milestone v1.0 completed and archived
+Status: Defining requirements
+Last activity: 2026-11-10 — Milestone v1.1 started
 
 ## Performance Metrics
 
