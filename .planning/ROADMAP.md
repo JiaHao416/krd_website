@@ -155,7 +155,7 @@ Plans:
   4. `02-06`／`03-02`／`04-02` SUMMARY frontmatter 記錄 `requirements-completed`，ROADMAP Phase 2 清單列出 `02-06-PLAN.md`
   5. `npm test`、`npm run lint`、`npm run build` 全部通過，使用者同意後 push 並在 production 確認
 
-**Plans:** 4/5 plans complete
+**Plans:** 5/5 plans complete
 
 Plans:
 **Wave 1**
@@ -176,7 +176,7 @@ Plans:
 
 **Gap Closure**（來源：05-UAT.md test 3）
 
-- [ ] 05-05-PLAN.md — 觸控點擊輪播後焦點不再讓自動播放停住：觸控事件順序測試先紅燈，指標旗標改在 click／focus／pointercancel 清除（gap closure）
+- [x] 05-05-PLAN.md — 觸控點擊輪播後焦點不再讓自動播放停住：觸控事件順序測試先紅燈，指標旗標改在 click／focus／pointercancel 清除（gap closure）
 
 ## Progress
 
@@ -186,4 +186,4 @@ Plans:
 | 2. 商品頁與首頁熱銷改讀後端 API | 6/6 | Complete   | 2026-11-10 |
 | 3. 靜態內容固化與移除 Airtable | 4/4 | Complete    | 2026-11-10 |
 | 4. 上線驗證與撤銷 token | 3/3 | Complete   | 2026-11-10 |
-| 5. 清理技術債 | 4/4 | Complete   | 2026-11-10 |
+| 5. 清理技術債 | 5/5 | Complete   | 2026-11-10 |
