@@ -92,13 +92,13 @@ Plans:
   4. Airtable service、相關型別與未使用的 `ProductView.tsx` 已移除，`dist/` 搜尋不到 Airtable 網址、token 或 Base ID
   5. `npm run build` 成功，全站頁面可正常瀏覽
 
-**Plans:** 4 plans
+**Plans:** 2/4 plans executed
 
 Plans:
 **Wave 1**
 
-- [ ] 03-01-PLAN.md — 導覽與 Logo 切片：PRODUCT_PAGES 改現行選單順序、NAV_ITEMS 單一來源、SideMenu／NavBar 改讀靜態清單、Logo 存入 public/brand-logo.png（Wave 1）
-- [ ] 03-02-PLAN.md — 關於我們切片：6 張圖存入 public/abouts/、ABOUT_SERVICES 內容檔、AboutPage 改讀靜態內容（Wave 1）
+- [x] 03-01-PLAN.md — 導覽與 Logo 切片：PRODUCT_PAGES 改現行選單順序、NAV_ITEMS 單一來源、SideMenu／NavBar 改讀靜態清單、Logo 存入 public/brand-logo.png（Wave 1）
+- [x] 03-02-PLAN.md — 關於我們切片：6 張圖存入 public/abouts/、ABOUT_SERVICES 內容檔、AboutPage 改讀靜態內容（Wave 1）
 
 **Wave 2** *(blocked on Wave 1 completion)*
 
@@ -130,5 +130,5 @@ Plans:
 |-------|----------------|--------|-----------|
 | 1. 測試與 API 資料層基礎 | 4/4 | Complete   | 2026-11-10 |
 | 2. 商品頁與首頁熱銷改讀後端 API | 6/6 | Complete   | 2026-11-10 |
-| 3. 靜態內容固化與移除 Airtable | 0/4 | Not started | - |
+| 3. 靜態內容固化與移除 Airtable | 2/4 | In Progress|  |
 | 4. 上線驗證與撤銷 token | 0/TBD | Not started | - |
