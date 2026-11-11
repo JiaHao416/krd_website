@@ -62,6 +62,7 @@ Progress: [████████░░] 75%
 - [v1.1 roadmap]: 研究建議的 7 個 phase 在 coarse 粒度下將「tokens 與骨架」與「既有頁面改版」合併為 Phase 8；設計鎖定（Phase 6）維持第一且不寫 UI 程式碼，連結接線（Phase 10）獨立隔離
 - [v1.1 roadmap]: MAINT-01 放在 Phase 6 的獨立 commit；TEST-06 於 Phase 6 產出測試盤點，後續 phase 以成功標準約束
 - [v1.1 roadmap]: 所有工作在 `redesign` 分支，只有 Phase 11 經使用者確認後才合併 `main`
+- [Phase 06]: TEST-06 測試總數基準 215 項／17 個檔（2026-11-11）；Phase 7–11 每個 VERIFICATION 須執行 npm test 並記錄總數 ≥ 215，且對照 .planning/phases/06-design-lock/06-TEST-INVENTORY.md 確認契約列斷言未被刪除；不加自動化數量檢查腳本（D-11、D-12）
 
 ### Roadmap Evolution
 

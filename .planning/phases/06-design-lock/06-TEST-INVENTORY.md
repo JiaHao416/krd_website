@@ -363,6 +363,39 @@ Phase 8 需新增「打電話問問 href=tel:…」與「選單鈕 aria-expanded
 | src/components/ProductCard.test.tsx > ProductCard 描述與其他欄位 > grid 長名稱＋有價＋長描述：卡片 h-96、圖片 h-64、名稱兩行截斷皆不變，提示仍存在 | 呈現 | — | 8 | 調整斷言 | UI-SPEC 取消固定 h-96，grid 改 aspect-square；「點擊查看大圖」提示刪除；data-testid 保留 |
 | src/components/ProductCard.test.tsx > ProductCard 描述與其他欄位 > 有描述時顯示，且不顯示品牌、型號、現貨 | 契約 | 資料轉換 | 8 | 保留 | 有描述時顯示、不顯示品牌／型號／現貨；data-testid="product-description" 保留（D-08） |
 
+## accessible name 契約清單
+
+來源：`grep -nE "ByRole\(|ByLabelText\(|ByAltText\(|name: " -r src --include='*.test.tsx'`（D-04）。「變更 phase」為實際改寫測試的 phase。
+
+| accessible name | role | 引用測試檔 | UI-SPEC 是否保留 | 新字串／變更 | 變更 phase |
+|---|---|---|---|---|---|
+| 上一張 | button | `src/components/FeaturedCarousel.test.tsx` | 保留 | 無 | 無 |
+| 下一張 | button | `src/components/FeaturedCarousel.test.tsx` | 保留 | 無 | 無 |
+| 第 N 張 | button | `src/components/FeaturedCarousel.test.tsx` | 保留 | 無 | 無 |
+| 暫無圖片 | img | `src/components/ProductCard.test.tsx`、`src/components/FeaturedCarousel.test.tsx`、`src/pages/ProductPageTemplate.test.tsx` | 保留 | 無 | 無 |
+| 重新載入 | button | `src/components/FeaturedCarousel.test.tsx`、`src/pages/ProductPageTemplate.test.tsx` | 保留 | 無 | 無 |
+| 格狀檢視 | button（aria-pressed） | `src/pages/ProductPageTemplate.test.tsx` | 功能保留，字串 UI-SPEC 未明列 | Phase 8 驗證沿用 | 無 |
+| 列表檢視 | button（aria-pressed） | `src/pages/ProductPageTemplate.test.tsx` | 功能保留，字串 UI-SPEC 未明列 | Phase 8 驗證沿用 | 無 |
+| 商品名稱（img alt） | img | `src/components/ProductCard.test.tsx`、`src/pages/ProductPageTemplate.test.tsx`、`src/components/FeaturedCarousel.test.tsx` | 保留 | 無 | 無 |
+| 所有商品、最新商品、KRD、MICGO、無線麥克風、有線麥克風、擴大機 / 喇叭、配件（8 項） | button → link | `src/components/SideMenu.test.tsx`、`src/components/NavBar.test.tsx` | name 保留 | role button→link，改在 CategoryChips／chip 列驗證 | 8 |
+| 商店介紹 | button | `src/components/NavBar.test.tsx` | 改字串 | 「關於我們」 | 8 |
+| /查看/（查看 {name} 大圖） | button | `src/components/ProductCard.test.tsx`、`src/pages/ProductPageTemplate.test.tsx` | 刪除 | 整張卡為 link，name 由卡內文字組成（LINK-01） | 10 |
+| 前往喇叭 | button | `src/App.test.tsx` | UI-SPEC 未列，沿用現有 | Phase 8 驗證沿用 | 8 |
+| KRD MICGO Logo（img alt）／KRD MICGO（失敗文字備援） | img／文字 | `src/components/NavBar.test.tsx` | 保留 | 無 | 無 |
+| 產品詳細圖片（img alt） | img | `src/pages/ProductPageTemplate.test.tsx` | UI-SPEC 未列，沿用現有 | Phase 10 詳情頁主圖另行驗證 | 10 |
+| 開啟選單／關閉選單 | button（aria-expanded） | 無（現有測試未引用） | 新增 | 現有測試未引用，UI-SPEC 新增，Phase 8 新增測試 | 8 |
+
+被測試引用的文案字串（D-07）：
+
+| 現有字串 | 引用測試檔 | 處置 | 變更 phase |
+|---|---|---|---|
+| 載入產品中... | `src/components/FeaturedCarousel.test.tsx` | 保留（A2 新字串由 Phase 8 決定） | 8 |
+| 目前沒有精選商品 | `src/components/FeaturedCarousel.test.tsx` | 保留 | 無 |
+| 瀏覽太頻繁，請稍候一分鐘再重試 | `src/components/FeaturedCarousel.test.tsx` | 改為「現在逛的人有點多，等幾秒再試一次。」；不洩漏後端原文仍為契約 | 8 |
+| 點擊查看大圖 | `src/components/ProductCard.test.tsx` | 刪除 | 8 |
+| 價格洽詢 | `src/components/ProductCard.test.tsx`、`src/pages/ProductPageTemplate.test.tsx` | 卡片改顯示「價格請來電」（常數見 A1） | 8 |
+| 熱門推薦系列／頂級精選系列 | `src/pages/HomePage.test.tsx` | 改為「這陣子大家都在問」 | 8 |
+
 ## 待 Phase 8 決定
 
 - A1：`PRICE_ON_REQUEST` 常數值（目前「價格洽詢」）是否更動 — UI-SPEC 只在卡片顯示「價格請來電」tag；本盤點暫將 `format.test.ts` 常數斷言列為契約保留，Phase 8 決定後更新對應列。
