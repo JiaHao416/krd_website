@@ -36,7 +36,7 @@
 - [x] **Phase 8: Tokens、共用骨架與既有頁面改版** - 套用設計 token 與字型，改版為膠囊頂列、分類 chip（取代 SideMenu）、一行頁尾與手機固定撥號列，並改版首頁、分類頁、關於我們（不改連結語意） (completed 2026-11-11)
 - [x] **Phase 9: 商品詳情頁 UI、路由與 NotFound** - 完成 `/products/:id` 頁面、各種狀態、頁面標題與全域 NotFound (completed 2026-11-11)
 - [x] **Phase 10: 連結接線** - 分類頁卡片與熱銷輪播連到詳情頁（唯一改變測試語意的 phase） (completed 2026-11-11)
-- [ ] **Phase 11: 收尾驗證與合併上線** - 全綠檢查、經使用者確認後合併 `main`，並在 production 實測
+- [x] **Phase 11: 收尾驗證與合併上線** - 全綠檢查、經使用者確認後合併 `main`，並在 production 實測 (completed 2026-11-11)
 
 ## Phase Details
 
@@ -167,11 +167,11 @@ Plans:
 
 **Wave 2** *(blocked on Wave 1 completion)*
 
-- [ ] 11-02-PLAN.md — 本地 main `--no-ff` 合併、使用者明確同意後 push、等 Cloudflare 部署完成（REL-03）
+- [x] 11-02-PLAN.md — 本地 main `--no-ff` 合併、使用者明確同意後 push、等 Cloudflare 部署完成（REL-03）
 
 **Wave 3** *(blocked on Wave 2 completion)*
 
-- [ ] 11-03-PLAN.md — production 實測 11-UAT.md 與回滾判定（REL-04）
+- [x] 11-03-PLAN.md — production 實測 11-UAT.md 與回滾判定（REL-04）
 
 ## Progress
 
@@ -187,4 +187,4 @@ Plans:
 | 8. Tokens、共用骨架與既有頁面改版 | v1.1 | 8/8 | Complete    | 2026-11-11 |
 | 9. 商品詳情頁 UI、路由與 NotFound | v1.1 | 5/5 | Complete    | 2026-11-11 |
 | 10. 連結接線 | v1.1 | 3/3 | Complete    | 2026-11-11 |
-| 11. 收尾驗證與合併上線 | v1.1 | 1/3 | In Progress|  |
+| 11. 收尾驗證與合併上線 | v1.1 | 3/3 | Complete    | 2026-11-11 |

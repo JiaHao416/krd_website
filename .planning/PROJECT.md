@@ -14,6 +14,7 @@ KRD 音響／麥克風盤商的品牌官網（`www.krd.com.tw`），給客戶瀏
 - v1.1 Phase 8 完成（2026-11-11）：C5a token、膠囊頂列、分類 chip、一行頁尾、手機撥號列、skip link，首頁／分類頁／關於我們改版；真實瀏覽器 UAT 通過，測試 413 項
 - v1.1 Phase 9 完成（2026-11-11）：`/products/:id` 詳情頁（變體、價格、燈箱、複製詢價、麵包屑／返回、標題）、找不到商品與全域 NotFound；瀏覽器 UAT 通過，測試 525 項
 - v1.1 Phase 10 完成（2026-11-11）：分類頁商品卡與首頁熱銷便條卡改為連到 `/products/{id}` 的單一連結，列表頁移除燈箱；輪播暫停行為不退步，卡片連結名稱只念商品名稱與價格；瀏覽器 UAT 通過，測試 541 項
+- v1.1 Phase 11 完成（2026-11-11）：上線前追加移除「價格請來電」「洽詢交期」、營業時間改為週一至週五 09:00 - 18:00 見紅休、聯絡區嵌入 Google 地圖與店面照片；redesign 合併回 main 並 push（a69e918），www.krd.com.tw production 實測通過，測試 557 項
 
 ## Current Milestone: v1.1 UI 重新設計與商品詳情頁
 
@@ -66,6 +67,7 @@ KRD 音響／麥克風盤商的品牌官網（`www.krd.com.tw`），給客戶瀏
 - ✓ 語意 token、字型堆疊、新版骨架（頂列、chip、頁尾、撥號列、skip link）與首頁／分類頁／關於我們改版（DESIGN-02/03、SHELL-01~04、UX-04~07） — Validated in Phase 8: Tokens、共用骨架與既有頁面改版
 - ✓ 商品詳情頁、錯誤／找不到狀態、全域 NotFound、頁面標題（PROD-08~16） — Validated in Phase 9: 商品詳情頁 UI、路由與 NotFound
 - ✓ 商品卡與熱銷便條卡連到詳情頁（LINK-01、LINK-02） — Validated in Phase 10: 連結接線
+- ✓ 合併上線與 production 實測（REL-03、REL-04） — Validated in Phase 11: 收尾驗證與合併上線
 
 ### Active
 
@@ -129,4 +131,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-11-11 — Phase 10 complete*
+*Last updated: 2026-11-11 — Phase 11 complete（v1.1 已上線）*

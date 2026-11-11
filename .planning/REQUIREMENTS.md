@@ -51,8 +51,8 @@
 
 ### 上線（REL）
 
-- [ ] **REL-03**: `redesign` 合併回 `main` 前 test、lint、build 全綠，經使用者確認後才 push
-- [ ] **REL-04**: 上線後於 production 實測：詳情頁深連結重新整理、找不到商品、8 條舊網址、輪播、RWD
+- [x] **REL-03**: `redesign` 合併回 `main` 前 test、lint、build 全綠，經使用者確認後才 push
+- [x] **REL-04**: 上線後於 production 實測：詳情頁深連結重新整理、找不到商品、8 條舊網址、輪播、RWD
 
 ## Future Requirements
 
@@ -108,8 +108,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 | PROD-16 | Phase 9 | Complete |
 | LINK-01 | Phase 10 | Complete |
 | LINK-02 | Phase 10 | Complete |
-| REL-03 | Phase 11 | Pending |
-| REL-04 | Phase 11 | Pending |
+| REL-03 | Phase 11 | Complete |
+| REL-04 | Phase 11 | Complete |
 
 **Coverage:**
 - v1.1 requirements: 27 total
