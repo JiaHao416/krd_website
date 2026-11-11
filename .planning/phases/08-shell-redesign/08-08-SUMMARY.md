@@ -3,7 +3,7 @@ phase: 08-shell-redesign
 plan: 08
 subsystem: design-system
 tags: [tailwind, design-tokens, vitest, regression-guard]
-status: partial  # Task 1、2 完成；Task 3（瀏覽器 UAT）待主 session 完成
+status: complete
 requires:
   - phase: 08-shell-redesign
     provides: 08-01～08-07 全部元件已遷移至語意 token
@@ -34,7 +34,7 @@ metrics:
 
 # Phase 8 Plan 08：收尾——token 掃描測試、theme 覆寫、契約核對（暫時版）Summary
 
-> **狀態：Task 1、Task 2 完成；Task 3（真實瀏覽器 UAT，checkpoint:human-verify）待主 session 以 chrome-devtools MCP 執行並寫 `08-UAT.md`，完成後再補本檔 UAT 摘要。** 本計畫尚未標記為 complete。
+> **狀態：Task 1–3 全部完成。** Task 3 由主 session 以 chrome-devtools MCP 執行，結果見 `08-UAT.md`。
 
 刪除 index.css 的 LEGACY 樣式，新增 20 項的 designTokens 掃描測試（15 條樣式規則、DESIGN-03 字型、SHELL-03／UX-06 聯絡單一來源）。tailwind 改用 theme 覆寫，sm/lg/2xl 斷點、預設色票、字重、字級不再產生 CSS，成為掃描測試以外的第二道防線。
 
@@ -44,7 +44,7 @@ metrics:
 |---|---|---|
 | 1 | 刪除 LEGACY、新增 designTokens.test.ts、unit project 啟用 CSS ?raw | 387e58a |
 | 2 | tailwind theme 覆寫、dist 檢查、契約與總數核對、main 同步 | 2d8ef6a |
-| 3 | 真實瀏覽器 UAT | **待主 session** |
+| 3 | 真實瀏覽器 UAT | 完成（6ef063a 修正 2 項 gap；08-UAT.md） |
 
 ## 測試數（D-10）
 
@@ -135,11 +135,13 @@ LEGACY 刪除前，以 grep 確認 src 的 .tsx（非測試）沒有使用 glass
 
 無。
 
-## 待辦（Task 3，主 session）
+## Task 3：真實瀏覽器 UAT（主 session）
 
-依 08-08-PLAN Task 3 how-to-verify 步驟 1–11 執行瀏覽器 UAT，寫 `08-UAT.md` 與 `uat/*.png`。完成後補上本檔的 UAT 摘要連結，並把 status 改為 complete。
+完整紀錄見 `08-UAT.md`，截圖在 `uat/`（22 張）。
 
-## Self-Check: PASSED
-
-- src/designTokens.test.ts、tailwind.config.js、src/index.css 都存在
-- commit 387e58a、2d8ef6a 都存在
+- SHELL-01／02／03／04、UX-04／05／06／07 全部 pass。CLS 為 0.0025；輪播間隔約 5027 與 5431ms；hover、焦點、reduced-motion、base 都不會自動播放，點擊後也不會卡住。
+- 發現 2 項 gap，已在 6ef063a 修正並重驗：
+  - G-1：Logo 是深灰單色圖，在深色頂列上看不見，改成 `brightness-0 invert`。
+  - G-2：手機分類卡的名稱被擠成直排，base 改為上下排列。
+- 修正後 `npm test` 407/407、lint、build 全綠。
+- 請使用者確認：A5（兩組輪播的版面）。human-needed（延到 Phase 11）：Windows antialias、實機觸控、iOS safe-area。
