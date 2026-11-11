@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { Link } from "react-router-dom";
 import type { UseProductsResult } from "../hooks/useProducts";
 import { usePrefersReducedMotion } from "../hooks/usePrefersReducedMotion";
 import { useMediaQuery } from "../hooks/useMediaQuery";
@@ -24,15 +25,17 @@ const BASE_QUERY = "(max-width: 767px)";
 // 便條卡依位置輪流傾斜；寫成靜態字串才不會被 Tailwind purge
 const NOTE_TILTS = ["-rotate-[1.5deg]", "rotate-[1deg]", "-rotate-[0.5deg]"] as const;
 
-// 單張便條卡：自行記錄破圖，3 張同時顯示時各自判斷（Phase 8 為非連結 div）
+// 單張便條卡：整張為連到詳情頁的連結；自行記錄破圖，3 張同時顯示時各自判斷
 const NoteCard = ({ product, tilt, isFirst }: NoteCardProps) => {
   // 記錄載入失敗的圖片網址；換成其他網址時自動重新嘗試（比照 ProductCard）
   const [failedImageUrl, setFailedImageUrl] = useState<string | null>(null);
   const showImage = product.imageUrl && product.imageUrl !== failedImageUrl;
 
   return (
-    <div
-      className={`relative rounded-card bg-surface-raised p-4 shadow-note-sm md:shadow-note ${tilt}`}
+    <Link
+      to={`/products/${product.id}`}
+      aria-label={`查看 ${product.name} 詳情`}
+      className={`block relative rounded-card bg-surface-raised p-4 shadow-note-sm md:shadow-note ${tilt}`}
     >
       {/* 琥珀色膠帶裝飾 */}
       <span
@@ -60,13 +63,13 @@ const NoteCard = ({ product, tilt, isFirst }: NoteCardProps) => {
       </h3>
       <div className="mt-2 flex items-center justify-between gap-2">
         <PriceTag product={product} />
-        {/* 卡片尚非連結，文字僅為裝飾（Phase 10 整張改為 Link） */}
+        {/* 整張卡已是連結，這段只是視覺提示；讀屏以連結名稱為準 */}
         <span aria-hidden="true" className="text-body font-semibold text-accent">
           <span className="hidden md:inline">查看詳情 →</span>
           <span className="md:hidden">詳情 →</span>
         </span>
       </div>
-    </div>
+    </Link>
   );
 };
 

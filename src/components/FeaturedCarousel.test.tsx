@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, afterEach } from "vitest";
 import { act, fireEvent, render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { MemoryRouter } from "react-router-dom";
 import FeaturedCarousel from "./FeaturedCarousel";
 import type { UseProductsResult } from "../hooks/useProducts";
 import type { Product } from "../services/transform";
@@ -48,9 +49,11 @@ function makeItems(count: number): Product[] {
   );
 }
 
+/** 便條卡含 Link，需包在 Router 內；MemoryRouter 不產生 DOM，firstElementChild 仍是輪播根容器 */
 function renderCarousel(result: UseProductsResult, intervalMs = 5000) {
   return render(
-    <FeaturedCarousel result={result} intervalMs={intervalMs} />
+    <FeaturedCarousel result={result} intervalMs={intervalMs} />,
+    { wrapper: MemoryRouter }
   );
 }
 
@@ -509,5 +512,105 @@ describe("FeaturedCarousel base 寬度", () => {
     expect(setScrollLeft).toHaveBeenCalledWith(552);
     // 只調整水平捲動，不用 scrollIntoView，避免輪播不在畫面內時整頁跳動
     expect(calls).toHaveLength(0);
+  });
+});
+
+describe("FeaturedCarousel 便條卡連結", () => {
+  /** 觸控點擊序列：pointerdown -> pointerup -> focus -> click（焦點在 pointerup 之後才給） */
+  function touchTapLink(el: HTMLElement) {
+    fireEvent.pointerDown(el, { pointerType: "touch" });
+    fireEvent.pointerUp(el, { pointerType: "touch" });
+    act(() => {
+      el.focus();
+    });
+    fireEvent.click(el);
+  }
+
+  it("便條卡為連結，href 為 /products/{id}、名稱為查看 {name} 詳情", () => {
+    renderCarousel(makeResult({ items: makeItems(3) }));
+    expect(
+      screen.getByRole("link", { name: "查看 商品1 詳情" })
+    ).toHaveAttribute("href", "/products/id-1");
+    expect(
+      screen.getByRole("link", { name: "查看 商品2 詳情" })
+    ).toHaveAttribute("href", "/products/id-2");
+    expect(
+      screen.getByRole("link", { name: "查看 商品3 詳情" })
+    ).toHaveAttribute("href", "/products/id-3");
+  });
+
+  it("便條卡內沒有巢狀互動元素", () => {
+    renderCarousel(makeResult({ items: makeItems(1) }));
+    expect(screen.getAllByRole("link")).toHaveLength(1);
+    expect(screen.queryAllByRole("button")).toHaveLength(0);
+    expect(screen.getByText("查看詳情 →").closest('[aria-hidden="true"]')).not.toBeNull();
+  });
+
+  it("鍵盤聚焦便條卡連結時不自動切換，焦點離開後恢復", () => {
+    vi.useFakeTimers();
+    renderCarousel(makeResult({ items: makeItems(3) }), 5000);
+    const link = screen.getByRole("link", { name: "查看 商品1 詳情" });
+    act(() => {
+      link.focus();
+    });
+    act(() => {
+      vi.advanceTimersByTime(5000);
+    });
+    expect(firstCard()).toHaveTextContent("商品1");
+    act(() => {
+      link.blur();
+    });
+    act(() => {
+      vi.advanceTimersByTime(5000);
+    });
+    expect(firstCard()).toHaveTextContent("商品2");
+  });
+
+  it("用滑鼠點擊便條卡連結時不暫停，仍會自動切換", () => {
+    vi.useFakeTimers();
+    renderCarousel(makeResult({ items: makeItems(3) }), 5000);
+    const link = screen.getByRole("link", { name: "查看 商品1 詳情" });
+    // 滑鼠點擊順序：pointerdown -> focus -> pointerup -> click
+    fireEvent.pointerDown(link, { pointerType: "mouse" });
+    act(() => {
+      link.focus();
+    });
+    fireEvent.pointerUp(link, { pointerType: "mouse" });
+    fireEvent.click(link);
+    act(() => {
+      vi.advanceTimersByTime(5000);
+    });
+    expect(firstCard()).toHaveTextContent("商品2");
+  });
+
+  it("觸控點擊便條卡連結後不黏住", () => {
+    vi.useFakeTimers();
+    renderCarousel(makeResult({ items: makeItems(3) }), 5000);
+    touchTapLink(screen.getByRole("link", { name: "查看 商品1 詳情" }));
+    act(() => {
+      vi.advanceTimersByTime(5000);
+    });
+    expect(firstCard()).toHaveTextContent("商品2");
+  });
+
+  it("md+ 5 筆時只有視窗內 3 張為連結（不在視窗內的卡不在 tab 順序內）", () => {
+    renderCarousel(makeResult({ items: makeItems(5) }));
+    const hrefs = () =>
+      screen.getAllByRole("link").map((el) => el.getAttribute("href"));
+    expect(hrefs()).toEqual(["/products/id-1", "/products/id-2", "/products/id-3"]);
+    fireEvent.click(screen.getByRole("button", { name: "下一張" }));
+    expect(hrefs()).toEqual(["/products/id-2", "/products/id-3", "/products/id-4"]);
+  });
+
+  it("base 寬度時便條卡也是連結", () => {
+    mockMatchMedia({ base: true });
+    renderCarousel(makeResult({ items: makeItems(3) }));
+    const links = screen.getAllByRole("link");
+    expect(links).toHaveLength(3);
+    expect(links.map((el) => el.getAttribute("href"))).toEqual([
+      "/products/id-1",
+      "/products/id-2",
+      "/products/id-3",
+    ]);
   });
 });
