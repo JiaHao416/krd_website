@@ -32,7 +32,7 @@
 
 - [ ] **Phase 6: 設計鎖定與測試盤點** - 鎖定視覺方向與 UI-SPEC、盤點 215 項測試、清掉無用依賴（不寫 UI 程式碼）
 - [ ] **Phase 7: 詳情資料層** - 以 TDD 完成商品詳情的型別、service、transform、hook 與錯誤分類
-- [ ] **Phase 8: Tokens、共用骨架與既有頁面改版** - 套用設計 token 與字型，改版 NavBar／SideMenu／Footer 與首頁、分類頁、關於我們（不改連結語意）
+- [ ] **Phase 8: Tokens、共用骨架與既有頁面改版** - 套用設計 token 與字型，改版為膠囊頂列、分類 chip（取代 SideMenu）、一行頁尾與手機固定撥號列，並改版首頁、分類頁、關於我們（不改連結語意）
 - [ ] **Phase 9: 商品詳情頁 UI、路由與 NotFound** - 完成 `/products/:id` 頁面、各種狀態、頁面標題與全域 NotFound
 - [ ] **Phase 10: 連結接線** - 分類頁卡片與熱銷輪播連到詳情頁（唯一改變測試語意的 phase）
 - [ ] **Phase 11: 收尾驗證與合併上線** - 全綠檢查、經使用者確認後合併 `main`，並在 production 實測
@@ -69,7 +69,7 @@
 **Success Criteria** (what must be TRUE):
   1. 全站樣式只使用 `tailwind.config.js` 的語意 token，程式碼中不再有散落的寫死色碼；中文在 Windows、Mac、手機都顯示對應的黑體且不載入 CJK webfont
   2. 訪客在 320–1440px 各寬度都能正常使用 NavBar（1024px 不擠壓、不折行），商品頁可用 SideMenu 切換分類，手機版可開關
-  3. Footer 顯示地址、電話、營業時間，關於我們頁的聯絡資訊與 Footer 來自同一份 `src/config/contact.ts`；LINE／Email 有設定才顯示
+  3. 首頁聯絡區顯示地址、電話、營業時間，其他頁一行頁尾與「打電話問問」按鈕提供聯絡方式；關於我們、首頁聯絡區與頁尾來自同一份 `src/config/contact.ts`；LINE／Email 有設定才顯示
   4. 鍵盤使用者可用 skip link 跳到主內容，所有可互動元素都有清楚的焦點樣式
   5. 新版首頁熱銷輪播仍有 hover／焦點暫停、尊重減少動態、點擊後不停住的行為，並已通過真實瀏覽器 UAT；分類頁仍可切換 grid/list、依名稱排序，8 條舊網址皆正常；商品圖片有固定長寬比與載入失敗替代畫面，載入時版面不跳動
 **Plans**: TBD

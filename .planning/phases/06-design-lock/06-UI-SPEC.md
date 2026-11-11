@@ -1,7 +1,8 @@
 ---
 phase: 6
 slug: design-lock
-status: draft
+status: approved
+reviewed_at: 2026-11-11
 shadcn_initialized: false
 preset: none
 created: 2026-11-10
@@ -235,7 +236,7 @@ Exceptions（非間距 token）：
 規則：
 - 傾斜為靜態 `transform: rotate()`，與 `motion-safe` 無關；**hover/focus/active 不位移、不縮放**（取消現有 `translateY/scale`）。
 - 任一元素傾斜角度絕對值 ≤ 2deg（戳章 -10deg 為純裝飾圓形，除外）。
-- **可讀性：** 文字密集區塊（價格區、規格表、變體選擇、說明、聯絡區文字、表單/按鈕列）不傾斜；只有卡片外框與圖片傾斜，最大 2deg 在 22px 以上文字可接受。Phase 8 UAT 須在 Windows Chrome 檢查文字 antialias 不模糊（若模糊，該元素角度降到 ≤ 1deg 或加 `will-change: transform`）。
+- **可讀性：** 文字密集區塊（價格區、規格表、變體選擇、說明、聯絡區文字、表單/按鈕列）不傾斜；只有卡片外框與圖片傾斜，最大 2deg 僅限 Heading 以上文字。Phase 8 UAT 須在 Windows Chrome 檢查文字 antialias 不模糊（若模糊，該元素角度降到 ≤ 1deg 或加 `will-change: transform`）。
 - **焦點環：** 一律 2px `accent`、**offset 3px**，環跟著元素一起傾斜（跟形狀一致，可接受）。傾斜容器的父層**不可** `overflow:hidden` 或需留 ≥ 8px padding，避免旋轉後的角落與焦點環被裁（卡片 grid 外層、便條卡列、橫向捲動條都要留 padding-top/bottom 16px）。
 - 卡片內容 `forced-colors`/高對比模式：邊框改為 1px `CanvasText`（不特別設計，僅避免消失）。
 
@@ -278,7 +279,7 @@ Exceptions（非間距 token）：
 
 由上而下：頂列 → hero → 分類貼紙卡 → 這陣子大家都在問 → 聯絡區 → 頁尾 → （base）底部固定列。區塊垂直間距 `xl` 64px / base 32px。
 
-1. **hero：** 小 tag「台中太平・實體門市」（`block-1` 底、`rounded-pill`、Label 600）→ h1「找麥克風、喇叭？來問我們就對了。」（Display；「來問我們」下方 SVG 琥珀螢光筆底線 `tape` 7px，手機改為 `border-bottom: 4px solid tape`）→ 導言（Body、`ink-muted`、`max-w-[520px]`）→ 按鈕列：「逛逛商品 →」（`ink` 底、`surface-raised` 字、高 56px、`rounded-pill`，連 `/all-products`）+ 電話連結（`accent` 文字 + 2px 虛線 `accent` 底線，顯示 `contact.phone`）。手機版 hero 不放按鈕列（由底部固定列與頂列承擔，詳示意稿 home-mobile）。
+1. **hero：** 小 tag「台中太平・實體門市」（`block-1` 底、`rounded-pill`、Label 600）→ h1「找麥克風、喇叭？來問我們就對了。」（Display；「來問我們」下方 SVG 琥珀螢光筆底線 `tape` 8px，手機改為 `border-bottom: 4px solid tape`）→ 導言（Body、`ink-muted`、`max-w-[520px]`）→ 按鈕列：「逛逛商品 →」（`ink` 底、`surface-raised` 字、高 56px、`rounded-pill`，連 `/all-products`）+ 電話連結（`accent` 文字 + 2px 虛線 `accent` 底線，顯示 `contact.phone`）。手機版 hero 不放按鈕列（由底部固定列與頂列承擔，詳示意稿 home-mobile）。
 2. **店面照片預留位：** 見「素材預留位」。
 3. **營業中戳章：** 直徑 148px 圓形、`block-3` 底、-10deg、`0 6px 0` 實色陰影（`shadow-card`，`0 6px 0 rgba(0,0,0,0.3)`）、標題「營業中」Heading、副行 Label 兩行「週一至週六／09:00–17:30」。僅 `xl` 顯示，位於照片預留位左下（left -32px）。戳章文字取自 `contact.businessHours`（解析不易時整句顯示於 Label，不拆時段）。
 4. **分類貼紙卡（h2「想找什麼？」）：** 4 張整張為 `<Link>`：有線麥克風 `/wired-micphone`（`block-1`）、無線麥克風 `/wireless-micphone`（`block-2`）、擴大機 / 喇叭 `/trumpet`（`block-3`）、配件 `/accessories`（`surface-raised`）。結構：左上 64×64 圓形（`surface-raised` 底；配件卡因卡色同底，圓形改 `block-1`）內放手繪風圖示（34px，`ink` 線）→ 底部一行名稱（Heading）+ 右側「看看 →」（Label）。min-height 180（手機 136，容納兩行 Heading 名稱）、padding 24（手機 16）、`rounded-block`、`shadow-card`、傾斜如上。名稱取自 `PRODUCT_PAGE_VIEWS[path].title`，不另寫死。
@@ -318,7 +319,7 @@ Exceptions（非間距 token）：
 
 **取代原「單張大圖輪播」外觀。** 標題列（h2「這陣子大家都在問」）右側為兩顆 44×44 圓形按鈕（`aria-label` 見下）。
 
-- **便條卡：** 整張為 `<Link to="/products/{id}">`（`aria-label="查看 {商品名稱} 詳情"`）；`surface-raised`、`rounded-card`、padding 16、`shadow-note`、傾斜 -1.5/1/-0.5deg 循環；頂端琥珀膠帶（`tape` 80% 透明，96×28，`aria-hidden`，-4deg，置中、top -14px）。結構：圖片容器（高 200 / 手機 170、`white`、`rounded-image`、`object-contain`）→ 品牌（Label、`ink-muted`）→ 名稱（Body 17px/600，行高 1.35）→ 底列：左 tag「價格請來電」（`block-2`）或價格、右 `查看詳情 →`（`accent`、600；手機「詳情 →」）。**`accent` 文字在 `surface-raised` 上 5.24:1，符合；但不得放在 block-2 / sand 上。**
+- **便條卡：** 整張為 `<Link to="/products/{id}">`（`aria-label="查看 {商品名稱} 詳情"`）；`surface-raised`、`rounded-card`、padding 16、`shadow-note`、傾斜 -1.5/1/-0.5deg 循環；頂端琥珀膠帶（`tape` 80% 透明，96×28，`aria-hidden`，-4deg，置中、top -16px）。結構：圖片容器（高 200 / 手機 170、`white`、`rounded-image`、`object-contain`）→ 品牌（Label、`ink-muted`）→ 名稱（Body 17px/600，行高 1.35）→ 底列：左 tag「價格請來電」（`block-2`）或價格、右 `查看詳情 →`（`accent`、600；手機「詳情 →」）。**`accent` 文字在 `surface-raised` 上 5.24:1，符合；但不得放在 block-2 / sand 上。**
 - **版面：** `md`+ 一次 3 張並排（grid 3 欄，gap 32，外層留 padding-top 16px 給膠帶）；base 為橫向捲動條（卡寬 260、gap 16，`scroll-snap-type: x mandatory`、卡 `scroll-snap-align: start`，左側 padding 16px，出血到畫面邊）。條下方 Label 提示「← 左右滑動看更多 →」（`ink-muted`）。
 - **按鈕：** 「上一張」「下一張」（`aria-label` 沿用現有字串 `上一張`／`下一張`，每按一次移動 1 張，不改成「組」以免連動測試改寫）；左鈕描邊（2px `ink`、透明底）、右鈕實心（`ink` 底、`surface-raised` 圖示）。只有 ≥ 2 筆才顯示。指示點（`aria-label="第 N 張"`）保留，置於卡列下方置中，視覺 8px、點擊區 44px；示意稿未畫，為保留既有契約而保留（`md`+ 與 base 皆顯示；base 僅在 ≥ 2 筆）。
 - **狀態：** loading（3 張 skeleton，文字「載入產品中...」保留於 `aria-live` 區）、空（「目前沒有精選商品」）、錯誤（`role="alert"`、`danger` 圖示、「重新載入」主按鈕）— 文案沿用既有。
@@ -524,7 +525,7 @@ export interface ContactInfo {
 | 3 | RWD | 要。沿用 base / md / xl 三段斷點，可依示意稿調整（本文已據此調整）|
 | 4 | 配色 | 原 C 太少女 → 要深色、再淺一階 → **C5a 溫暖在地小店 × 深石板藍**（取代先前「深色 slate」「專業器材型錄淺色 + 訊號橘」兩個方向）|
 | 5 | `in_stock=false` | 已確認：照常顯示並加「洽詢交期」tag |
-| 6 | 熱銷輪播 | 改為「這陣子大家都在問」便條卡：桌機 3 張並排、手機橫向滑動；每張卡整張連到詳情（取代原單張輪播外觀；行為契約與測試影響見上）。**待使用者認可（偏離）：前後按鈕步進 1 張、沿用既有 aria-label「上一張／下一張」**（使用者原要求為「翻組」；orchestrator 將於最終確認時詢問）|
+| 6 | 熱銷輪播 | 改為「這陣子大家都在問」便條卡：桌機 3 張並排、手機橫向滑動；每張卡整張連到詳情（取代原單張輪播外觀；行為契約與測試影響見上）。**已確認（2026-11-11）：前後按鈕步進 1 張、沿用既有 aria-label「上一張／下一張」**（使用者原示意為「翻組」，最終確認時改選步進 1 張）|
 | 7 | 營業時間與 LINE／Email | 已確認：採 AboutPage 版本；LINE／Email 有值才顯示 |
 | 8 | 分類 | 首頁 4 張微傾斜貼紙分類卡（有線麥克風、無線麥克風、擴大機/喇叭、配件，手繪風線條圖示）；列表頁桌機/平板為可換行膠囊 chip、手機為橫向捲動 chip；**不再有固定側欄 SideMenu**，NAV_ITEMS 仍為單一來源 |
 | 9 | 素材 | 「店面照片」「地圖」待提供，先以預留位呈現 |
@@ -545,11 +546,11 @@ DESIGN-01 的最終確認：待 checker 通過後，由使用者對整份 UI-SPE
 
 ## Checker Sign-Off
 
-- [ ] Dimension 1 Copywriting: PASS
-- [ ] Dimension 2 Visuals: PASS
-- [ ] Dimension 3 Color: PASS
-- [ ] Dimension 4 Typography: PASS
-- [ ] Dimension 5 Spacing: PASS
-- [ ] Dimension 6 Registry Safety: PASS
+- [x] Dimension 1 Copywriting: PASS
+- [x] Dimension 2 Visuals: PASS
+- [x] Dimension 3 Color: PASS
+- [x] Dimension 4 Typography: PASS
+- [x] Dimension 5 Spacing: PASS
+- [x] Dimension 6 Registry Safety: PASS
 
-**Approval:** pending
+**Approval:** approved 2026-11-11 — checker 第 2 輪通過，使用者已明確確認定案（DESIGN-01）
