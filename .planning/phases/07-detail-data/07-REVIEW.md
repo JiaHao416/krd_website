@@ -17,6 +17,10 @@ findings:
   info: 4
   total: 6
 status: issues_found
+fixed:
+  - WR-01
+  - WR-02
+fixed_note: WR-01、WR-02 已修復（Info 項目未處理）
 ---
 
 # Phase 7: Code Review Report
@@ -41,7 +45,7 @@ status: issues_found
 
 ## Warnings
 
-### WR-01: A → B → A 快速切換時，會瞬間顯示過期的 A 結果（違反「不殘留舊資料」）
+### WR-01: A → B → A 快速切換時，會瞬間顯示過期的 A 結果（違反「不殘留舊資料」）【已修復】
 
 **File:** `src/hooks/useProductDetail.ts:42-81`
 **Issue:** `stored` 只保存最近一次完成的結果，`requestKey` 為 `id#reloadToken`。
@@ -74,7 +78,7 @@ return () => {
 
 另外請新增測試：A 成功 → 切 B（pending）→ 切回 A，斷言第一個 render 為 `loading`。
 
-### WR-02: 負價格會產生 `NT$-xx` 文字
+### WR-02: 負價格會產生 `NT$-xx` 文字【已修復】
 
 **File:** `src/services/transform.ts:158-168`
 **Issue:** `toFiniteNumberOrNull` 只擋 NaN 與 Infinity。後端若回傳負值（例如資料錯誤的 `-100`），會格式化成 `NT$-1`。這不是 `NT$NaN`，但同屬「不可信回應產生怪異價格文字」。保固月數已有 `> 0` 防護，價格卻沒有對應的下限檢查，處理不一致。價格 `0` 會輸出 `NT$0`，是否應視為「請來電」也沒有被明確決策。

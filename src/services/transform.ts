@@ -155,7 +155,9 @@ function toDetailVariant(value: unknown): ProductVariant | null {
     console.warn("略過格式不符的商品變體:", value);
     return null;
   }
-  const priceInclTax = toFiniteNumberOrNull(v.price_incl_tax);
+  // 負價格視為不可信資料，與 null 同樣處理；0 維持原值
+  const rawPrice = toFiniteNumberOrNull(v.price_incl_tax);
+  const priceInclTax = rawPrice !== null && rawPrice >= 0 ? rawPrice : null;
   return {
     id: v.id,
     sku: v.sku,

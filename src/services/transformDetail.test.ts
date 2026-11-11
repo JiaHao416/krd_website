@@ -103,6 +103,22 @@ describe("toProductDetail 價格（依契約手寫，非實測）", () => {
     expect(result.variants[0].priceText).toBeNull();
     expect(JSON.stringify(result)).not.toContain("NaN");
   });
+
+  it("price_incl_tax 為負數時價格與文字皆為 null（不產生 NT$-xx）", () => {
+    const result = toProductDetail(
+      makeDetail({ variants: [makeVariant({ price_incl_tax: -10000 })] })
+    );
+    expect(result.variants[0].priceInclTax).toBeNull();
+    expect(result.variants[0].priceText).toBeNull();
+  });
+
+  it("price_incl_tax 為 0 時維持原值與文字", () => {
+    const result = toProductDetail(
+      makeDetail({ variants: [makeVariant({ price_incl_tax: 0 })] })
+    );
+    expect(result.variants[0].priceInclTax).toBe(0);
+    expect(result.variants[0].priceText).toBe("NT$0");
+  });
 });
 
 describe("toProductDetail 保固（依契約手寫，非實測）", () => {
