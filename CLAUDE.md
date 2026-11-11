@@ -40,7 +40,6 @@ KRD 音響／麥克風盤商的品牌官網（`www.krd.com.tw`），給客戶瀏
 ## Key Dependencies
 - axios ^1.9.0 - HTTP client，`src/services/client.ts` 建立共用 `apiClient`（timeout 10000ms，不帶任何憑證）
 - react-router-dom ^6.30.1 - 頁面導覽
-- `@types/react-router-dom` ^5.3.3 - 過時型別（router 為 v6，自帶型別）
 ## Configuration
 - 未使用環境變數（`import.meta.env` 無任何引用，無 `.env*` 檔）
 - 前端不含任何憑證；API base URL 由 `VITE_API_BASE_URL` 設定（見 `INTEGRATIONS.md`）

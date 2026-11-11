@@ -42,9 +42,6 @@
 - axios ^1.9.0 - HTTP client，`src/services/client.ts` 建立共用 `apiClient`（timeout 10000ms，不帶任何憑證）
 - react-router-dom ^6.30.1 - 頁面導覽
 
-**Infrastructure:**
-- `@types/react-router-dom` ^5.3.3 - 過時型別（router 為 v6，自帶型別）
-
 ## Configuration
 
 **Environment:**
