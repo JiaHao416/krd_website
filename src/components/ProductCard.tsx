@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useId, useState } from "react";
 import { Link } from "react-router-dom";
 import ImagePlaceholder from "./ImagePlaceholder";
 import PriceTag from "./PriceTag";
@@ -38,6 +38,22 @@ const ProductCard = ({
 
   const handleImageError = () => setFailedImageUrl(product.imageUrl);
 
+  // 連結名稱只取商品名稱與價格文字，避免圖片 alt、「暫無圖片」佔位與描述併入名稱（WR-01／WR-02）
+  const nameId = useId();
+  const priceId = useId();
+  const leadTimeId = useId();
+  const descId = useId();
+  // 缺貨標籤與 list 描述改作補充說明（aria-describedby），讀屏仍可取得
+  const descriptionIds: string[] = [];
+  if (!product.inStock) descriptionIds.push(leadTimeId);
+  if (variant === "list" && product.description) descriptionIds.push(descId);
+  const describedBy =
+    descriptionIds.length > 0 ? descriptionIds.join(" ") : undefined;
+  const linkA11yProps = {
+    "aria-labelledby": `${nameId} ${priceId}`,
+    "aria-describedby": describedBy,
+  };
+
   // 圖片區：有圖顯示 img，缺圖或破圖顯示佔位
   const imageContent = showImage ? (
     <img
@@ -56,8 +72,12 @@ const ProductCard = ({
   // 標籤列：價格（文字或「價格請來電」）＋缺貨時的「洽詢交期」
   const tagRow = (
     <div className="mt-2 flex flex-wrap items-center gap-2">
-      <PriceTag product={product} />
-      {!product.inStock && <span className={LEAD_TIME_TAG_CLASS}>洽詢交期</span>}
+      <PriceTag product={product} id={priceId} />
+      {!product.inStock && (
+        <span id={leadTimeId} className={LEAD_TIME_TAG_CLASS}>
+          洽詢交期
+        </span>
+      )}
     </div>
   );
 
@@ -71,19 +91,24 @@ const ProductCard = ({
     return (
       <Link
         to={detailPath}
+        {...linkA11yProps}
         className="flex items-center gap-4 rounded-card bg-surface-raised p-4 shadow-card transition-colors duration-150 hover:ring-2 hover:ring-inset hover:ring-accent"
       >
         <div className="h-20 w-20 shrink-0 overflow-hidden rounded-image bg-white md:h-24 md:w-24">
           {imageContent}
         </div>
         <div className="min-w-0 flex-1">
-          <h3 className="line-clamp-2 text-body font-semibold leading-card text-ink">
+          <h3
+            id={nameId}
+            className="line-clamp-2 text-body font-semibold leading-card text-ink"
+          >
             {product.name}
           </h3>
           {brandLine}
           {tagRow}
           {product.description && (
             <p
+              id={descId}
               data-testid="product-description"
               className="mt-1 line-clamp-2 text-label text-ink-muted"
             >
@@ -99,6 +124,7 @@ const ProductCard = ({
   return (
     <Link
       to={detailPath}
+      {...linkA11yProps}
       className={`block h-full rounded-image bg-surface-raised p-2 shadow-card-sm transition-colors duration-150 hover:ring-2 hover:ring-inset hover:ring-accent active:ring-2 active:ring-inset active:ring-accent md:rounded-card md:p-4 md:shadow-card ${
         CARD_TILTS[index % CARD_TILTS.length]
       }`}
@@ -110,7 +136,9 @@ const ProductCard = ({
       {product.brand && (
         <p className="mt-2 text-label text-ink-muted">{product.brand}</p>
       )}
-      <h3 className="mt-1 line-clamp-2 min-h-[44px] text-body font-semibold leading-card text-ink md:min-h-[48px]">
+      <h3
+        id={nameId}
+        className="mt-1 line-clamp-2 min-h-[44px] text-body font-semibold leading-card text-ink md:min-h-[48px]">
         {product.name}
       </h3>
       {tagRow}

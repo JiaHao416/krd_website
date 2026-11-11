@@ -304,7 +304,8 @@ describe("ProductPageTemplate 價格、檢視切換與鍵盤", () => {
       ])
     );
     renderPageWithDetailRoute();
-    const card = await screen.findByRole("link", { name: /甲商品/ });
+    // 精確比對：連結名稱只含商品名稱與價格文字
+    const card = await screen.findByRole("link", { name: "甲商品 價格請來電" });
     card.focus();
     await user.keyboard("{Enter}");
     expect(await screen.findByText("詳情頁 a")).toBeInTheDocument();
@@ -393,7 +394,11 @@ describe("ProductPageTemplate 連到詳情頁", () => {
     );
     renderPage();
     await screen.findByText("甲商品");
-    const links = screen.getAllByRole("link", { name: /甲商品|乙商品/ });
+    // 精確比對：每張卡的連結名稱只含商品名稱與價格文字
+    const links = [
+      screen.getByRole("link", { name: "甲商品 價格請來電" }),
+      screen.getByRole("link", { name: "乙商品 價格請來電" }),
+    ];
     expect(links.map((el) => el.getAttribute("href"))).toEqual([
       "/products/a",
       "/products/b",

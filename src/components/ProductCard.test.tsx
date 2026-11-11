@@ -214,12 +214,48 @@ describe("ProductCard 圖片與連結", () => {
   it("accessible name 由卡內文字組成：含商品名稱與價格文字，不含大圖", () => {
     render(<ProductCard product={makeProduct()} variant="grid" />);
     const link = screen.getByRole("link");
-    expect(link).toHaveAccessibleName(/商品一/);
-    expect(link).toHaveAccessibleName(/NT\$1,200/);
+    // 精確比對：名稱只含商品名稱與價格文字，不重複、不含品牌或大圖提示
+    expect(link).toHaveAccessibleName("商品一 NT$1,200");
     expect(link).not.toHaveAccessibleName(/大圖/);
     expect(
       screen.getByRole("heading", { level: 3, name: "商品一" })
     ).toBeInTheDocument();
+  });
+
+  it("grid 卡 accessible name 不因圖片 alt 重複念商品名稱", () => {
+    render(<ProductCard product={makeNoPrice()} variant="grid" />);
+    expect(screen.getByRole("link")).toHaveAccessibleName(
+      "商品一 價格請來電"
+    );
+    // 圖片 alt 契約不變
+    expect(screen.getByAltText("商品一")).toBeInTheDocument();
+  });
+
+  it("list 卡 accessible name 不含描述，描述改作補充說明", () => {
+    render(
+      <ProductCard
+        product={makeProduct({ description: "很長的描述文字" })}
+        variant="list"
+      />
+    );
+    const link = screen.getByRole("link");
+    expect(link).toHaveAccessibleName("商品一 NT$1,200");
+    expect(link).toHaveAccessibleDescription("很長的描述文字");
+  });
+
+  it("缺圖卡 accessible name 不以「暫無圖片」開頭，佔位契約不變", () => {
+    render(
+      <ProductCard
+        product={makeProduct({ imageUrl: null, inStock: false })}
+        variant="list"
+      />
+    );
+    const link = screen.getByRole("link");
+    expect(link).toHaveAccessibleName("商品一 NT$1,200");
+    expect(link).not.toHaveAccessibleName(/^暫無圖片/);
+    // 缺貨的「洽詢交期」改作補充說明，讀屏仍聽得到
+    expect(link).toHaveAccessibleDescription("洽詢交期");
+    expect(screen.getByRole("img", { name: "暫無圖片" })).toBeInTheDocument();
   });
 
   it("破圖後換成新圖片網址會重新顯示 img", () => {
