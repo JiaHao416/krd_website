@@ -9,22 +9,22 @@
 ### 設計基礎（DESIGN）
 
 - [x] **DESIGN-01**: 視覺方向、設計 token（色彩、字級、間距、圓角、陰影）、字型堆疊與斷點表寫成 UI-SPEC，經使用者確認後才寫 UI 程式碼
-- [ ] **DESIGN-02**: 全站樣式使用 `tailwind.config.js` 的語意 token，不再散落寫死的色碼
-- [ ] **DESIGN-03**: 中文字型在 Windows、Mac、手機都顯示對應的黑體（字型堆疊補 `PingFang TC`、`Noto Sans TC`，不載入 CJK webfont）
+- [x] **DESIGN-02**: 全站樣式使用 `tailwind.config.js` 的語意 token，不再散落寫死的色碼
+- [x] **DESIGN-03**: 中文字型在 Windows、Mac、手機都顯示對應的黑體（字型堆疊補 `PingFang TC`、`Noto Sans TC`，不載入 CJK webfont）
 
 ### 共用骨架（SHELL）
 
-- [ ] **SHELL-01**: 訪客在 320–1440px 各寬度都能正常使用新版 NavBar，1024px 導覽文字不再擠壓或折行（WR-04）
-- [ ] **SHELL-02**: 訪客在列表頁可用分類 chip 列切換分類（桌機／平板可換行，手機單列橫向捲動），取代舊 SideMenu
-- [ ] **SHELL-03**: 訪客可以找到地址、電話、營業時間：首頁「有空來店裡坐坐」聯絡區完整呈現三者，其他頁以一行頁尾（地址、營業時間）＋頂列／手機底部固定列的「打電話問問」提供電話（單一來源 `src/config/contact.ts`；LINE／Email 有設定才顯示）
-- [ ] **SHELL-04**: 鍵盤使用者可用 skip link 跳到主內容，所有可互動元素都有清楚的焦點樣式
+- [x] **SHELL-01**: 訪客在 320–1440px 各寬度都能正常使用新版 NavBar，1024px 導覽文字不再擠壓或折行（WR-04）
+- [x] **SHELL-02**: 訪客在列表頁可用分類 chip 列切換分類（桌機／平板可換行，手機單列橫向捲動），取代舊 SideMenu
+- [x] **SHELL-03**: 訪客可以找到地址、電話、營業時間：首頁「有空來店裡坐坐」聯絡區完整呈現三者，其他頁以一行頁尾（地址、營業時間）＋頂列／手機底部固定列的「打電話問問」提供電話（單一來源 `src/config/contact.ts`；LINE／Email 有設定才顯示）
+- [x] **SHELL-04**: 鍵盤使用者可用 skip link 跳到主內容，所有可互動元素都有清楚的焦點樣式
 
 ### 既有頁面改版（UX）
 
-- [ ] **UX-04**: 訪客看到新版首頁，熱銷輪播保有 WCAG 2.2.2 行為（hover／焦點暫停、尊重減少動態、滑鼠與觸控點擊後不停住），並通過真實瀏覽器 UAT
-- [ ] **UX-05**: 訪客在新版分類頁仍可切換 grid/list、依名稱排序；8 條舊網址皆正常
-- [ ] **UX-06**: 訪客看到新版關於我們頁，聯絡資訊與 Footer 同一來源
-- [ ] **UX-07**: 商品圖片有固定長寬比與載入失敗的替代畫面，載入時版面不跳動
+- [x] **UX-04**: 訪客看到新版首頁，熱銷輪播保有 WCAG 2.2.2 行為（hover／焦點暫停、尊重減少動態、滑鼠與觸控點擊後不停住），並通過真實瀏覽器 UAT
+- [x] **UX-05**: 訪客在新版分類頁仍可切換 grid/list、依名稱排序；8 條舊網址皆正常
+- [x] **UX-06**: 訪客看到新版關於我們頁，聯絡資訊與 Footer 同一來源
+- [x] **UX-07**: 商品圖片有固定長寬比與載入失敗的替代畫面，載入時版面不跳動
 
 ### 商品詳情頁（PROD）
 
@@ -87,16 +87,16 @@ Which phases cover which requirements. Updated during roadmap creation.
 | TEST-06 | Phase 6 | Complete |
 | MAINT-01 | Phase 6 | Complete |
 | TEST-05 | Phase 7 | Complete |
-| DESIGN-02 | Phase 8 | Pending |
-| DESIGN-03 | Phase 8 | Pending |
-| SHELL-01 | Phase 8 | Pending |
-| SHELL-02 | Phase 8 | Pending |
-| SHELL-03 | Phase 8 | Pending |
-| SHELL-04 | Phase 8 | Pending |
-| UX-04 | Phase 8 | Pending |
-| UX-05 | Phase 8 | Pending |
-| UX-06 | Phase 8 | Pending |
-| UX-07 | Phase 8 | Pending |
+| DESIGN-02 | Phase 8 | Complete |
+| DESIGN-03 | Phase 8 | Complete |
+| SHELL-01 | Phase 8 | Complete |
+| SHELL-02 | Phase 8 | Complete |
+| SHELL-03 | Phase 8 | Complete |
+| SHELL-04 | Phase 8 | Complete |
+| UX-04 | Phase 8 | Complete |
+| UX-05 | Phase 8 | Complete |
+| UX-06 | Phase 8 | Complete |
+| UX-07 | Phase 8 | Complete |
 | PROD-08 | Phase 9 | Pending |
 | PROD-09 | Phase 9 | Pending |
 | PROD-10 | Phase 9 | Pending |

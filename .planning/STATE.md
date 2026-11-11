@@ -2,15 +2,15 @@
 gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: UI 重新設計與商品詳情頁
-status: planning
-stopped_at: Phase 8 context gathered
-last_updated: "2026-11-11T02:43:53.195Z"
+status: ready_to_plan
+stopped_at: Phase 8 complete (8/8) — ready to discuss Phase 9
+last_updated: 2026-11-11T03:03:02.599Z
 last_activity: 2026-11-11
 progress:
   total_phases: 6
   completed_phases: 2
   total_plans: 15
-  completed_plans: 14
+  completed_plans: 15
   percent: 33
 ---
 
@@ -21,11 +21,11 @@ progress:
 See: .planning/PROJECT.md (updated 2026-11-10)
 
 **Core value:** 官網顯示的商品必須與家人在 KRD-Inventory App 維護的後端資料一致，且前端程式中不再含任何憑證。
-**Current focus:** Phase 8 — tokens、共用骨架與既有頁面改版
+**Current focus:** Phase 9 — 商品詳情頁 ui、路由與 notfound
 
 ## Current Position
 
-Phase: 8
+Phase: 9
 Plan: Not started
 Status: Ready to plan
 Last activity: 2026-11-11
@@ -36,7 +36,7 @@ Progress: [█████████░] 93%
 
 **Velocity:**
 
-- Total plans completed: 24（v1.0）
+- Total plans completed: 32（v1.0）
 - Average duration: -
 - Total execution time: -
 
@@ -53,6 +53,7 @@ Progress: [█████████░] 93%
 | Phase 06 P04 | 25min | 3 tasks | 2 files |
 | 6 | 4 | - | - |
 | 7 | 3 | - | - |
+| 8 | 8 | - | - |
 
 ## Accumulated Context
 

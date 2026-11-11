@@ -11,6 +11,7 @@ KRD 音響／麥克風盤商的品牌官網（`www.krd.com.tw`），給客戶瀏
 - 舊 Airtable token 已撤銷並確認失效
 - v1.1 Phase 6 完成（2026-11-11）：UI-SPEC（C5a）核准、215 項測試盤點為契約 201／呈現 14、移除兩個未使用的 devDependencies
 - v1.1 Phase 7 完成（2026-11-11）：商品詳情資料層（型別、service、錯誤分類、useProductDetail），測試 314 項
+- v1.1 Phase 8 完成（2026-11-11）：C5a token、膠囊頂列、分類 chip、一行頁尾、手機撥號列、skip link，首頁／分類頁／關於我們改版；真實瀏覽器 UAT 通過，測試 413 項
 
 ## Current Milestone: v1.1 UI 重新設計與商品詳情頁
 
@@ -60,6 +61,7 @@ KRD 音響／麥克風盤商的品牌官網（`www.krd.com.tw`），給客戶瀏
 - ✓ 215 項測試盤點與總數基準，契約類標示不得刪除（TEST-06） — Validated in Phase 6: 設計鎖定與測試盤點
 - ✓ 移除未使用的 `@tailwindcss/postcss` 與 `@types/react-router-dom`（MAINT-01） — Validated in Phase 6: 設計鎖定與測試盤點
 - ✓ 詳情資料層 service／transform／hook 含 404／400／429 分類，有單元測試（TEST-05） — Validated in Phase 7: 詳情資料層
+- ✓ 語意 token、字型堆疊、新版骨架（頂列、chip、頁尾、撥號列、skip link）與首頁／分類頁／關於我們改版（DESIGN-02/03、SHELL-01~04、UX-04~07） — Validated in Phase 8: Tokens、共用骨架與既有頁面改版
 
 ### Active
 
@@ -123,4 +125,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-11-11 — Phase 7 complete*
+*Last updated: 2026-11-11 — Phase 8 complete*
