@@ -1,4 +1,5 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
+import { CloseIcon } from "./icons";
 
 interface ImageModalProps {
   show: boolean;
@@ -7,6 +8,29 @@ interface ImageModalProps {
 }
 
 const ImageModal = ({ show, onHide, img }: ImageModalProps) => {
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
+
+  // 開啟時把焦點移到關閉鈕並鎖住 Tab，關閉時還原到觸發元素（通常是商品卡）
+  useEffect(() => {
+    if (!show) return;
+    const previous = document.activeElement as HTMLElement | null;
+    closeButtonRef.current?.focus();
+
+    // 燈箱內只有關閉鈕可聚焦，Tab／Shift+Tab 一律留在關閉鈕
+    const handleTab = (e: KeyboardEvent) => {
+      if (e.key === "Tab") {
+        e.preventDefault();
+        closeButtonRef.current?.focus();
+      }
+    };
+
+    document.addEventListener("keydown", handleTab);
+    return () => {
+      document.removeEventListener("keydown", handleTab);
+      previous?.focus();
+    };
+  }, [show]);
+
   // 防止背景滾動和處理 ESC 鍵
   useEffect(() => {
     if (show) {
@@ -55,51 +79,40 @@ const ImageModal = ({ show, onHide, img }: ImageModalProps) => {
 
   return (
     <div
+      role="dialog"
+      aria-modal="true"
+      aria-label="商品大圖"
       className="fixed inset-0 z-50 flex items-center justify-center p-4"
       onClick={handleBackdropClick}
     >
-      {/* 背景遮罩 */}
-      <div className="absolute inset-0 bg-black/95 backdrop-blur-sm" />
+      {/* 背景遮罩：surface 90% */}
+      <div className="absolute inset-0 bg-surface/90" />
 
       {/* 圖片容器 */}
       <div
         className="relative max-w-full max-h-full"
         onClick={handleImageClick}
       >
-        {/* 關閉按鈕 */}
+        {/* 關閉按鈕：右上 44×44 */}
         <button
+          ref={closeButtonRef}
           onClick={handleCloseClick}
-          className="absolute -top-6 -right-6 z-20 w-14 h-14 bg-white/90 hover:bg-white text-gray-800 hover:text-gray-900 rounded-full flex items-center justify-center transition-all duration-200 hover:scale-105 shadow-2xl group"
+          className="absolute -right-4 -top-4 z-20 inline-flex h-11 w-11 items-center justify-center rounded-pill bg-ink text-surface"
           aria-label="關閉圖片"
           type="button"
         >
-          <svg
-            className="w-7 h-7 transition-transform group-hover:rotate-90"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-            strokeWidth={2.5}
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M6 18L18 6M6 6l12 12"
-            />
-          </svg>
+          <CloseIcon className="h-5 w-5" />
         </button>
 
-        {/* 圖片 */}
-        <div className="relative bg-white/5 backdrop-blur-xl rounded-2xl border border-white/20 overflow-hidden shadow-2xl">
+        {/* 圖片：白底容器、不裁切 */}
+        <div className="relative overflow-hidden rounded-block bg-white">
           <img
             src={img}
             alt="產品詳細圖片"
-            className="max-w-full max-h-[90vh] object-contain rounded-2xl"
+            className="max-h-[90vh] max-w-full object-contain"
             draggable={false}
             onContextMenu={(e) => e.preventDefault()}
           />
-
-          {/* 圖片邊框效果 */}
-          <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 via-transparent to-purple-500/10 rounded-2xl pointer-events-none"></div>
         </div>
       </div>
     </div>

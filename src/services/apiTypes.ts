@@ -52,3 +52,36 @@ export interface ProductQueryParams {
   sort?: ProductSort;
   limit: number;
 }
+
+/** 詳情回應中的商品變體（欄位以實測樣本為準，07-API-SAMPLES.md） */
+export interface PublicVariantApi {
+  id: string;
+  sku: string;
+  attributes: Record<string, string | number | boolean>;
+  image_url: string | null;
+  is_default: boolean;
+  in_stock: boolean;
+  /** 含稅價格，整數「分」；未公開價格時為 null */
+  price_incl_tax: number | null;
+}
+
+/** 商品詳情（不含列表專用的 featured_group、price_min、price_max） */
+export interface PublicProductDetailApi {
+  id: string;
+  name: string;
+  brand: string | null;
+  model: string | null;
+  category: string;
+  description: string | null;
+  image_url: string | null;
+  warranty_period_months: number | null;
+  published_at: string | null;
+  in_stock: boolean;
+  variants: PublicVariantApi[];
+}
+
+/** 商品詳情回應（data 直接是商品，不是 items） */
+export interface PublicProductDetailResponse {
+  success: true;
+  data: PublicProductDetailApi;
+}

@@ -9,12 +9,27 @@ KRD 音響／麥克風盤商的品牌官網（`www.krd.com.tw`），給客戶瀏
 - **Shipped:** v1.0 API 遷移與停用 Airtable（2026-11-10，5 phases／22 plans，詳見 `.planning/MILESTONES.md`）
 - 測試：Vitest 215 項；`npm run build` 內含 `tsc -b` 與 dist 憑證掃描
 - 舊 Airtable token 已撤銷並確認失效
+- v1.1 Phase 6 完成（2026-11-11）：UI-SPEC（C5a）核准、215 項測試盤點為契約 201／呈現 14、移除兩個未使用的 devDependencies
+- v1.1 Phase 7 完成（2026-11-11）：商品詳情資料層（型別、service、錯誤分類、useProductDetail），測試 314 項
+- v1.1 Phase 8 完成（2026-11-11）：C5a token、膠囊頂列、分類 chip、一行頁尾、手機撥號列、skip link，首頁／分類頁／關於我們改版；真實瀏覽器 UAT 通過，測試 413 項
+- v1.1 Phase 9 完成（2026-11-11）：`/products/:id` 詳情頁（變體、價格、燈箱、複製詢價、麵包屑／返回、標題）、找不到商品與全域 NotFound；瀏覽器 UAT 通過，測試 525 項
+- v1.1 Phase 10 完成（2026-11-11）：分類頁商品卡與首頁熱銷便條卡改為連到 `/products/{id}` 的單一連結，列表頁移除燈箱；輪播暫停行為不退步，卡片連結名稱只念商品名稱與價格；瀏覽器 UAT 通過，測試 541 項
 
-## Next Milestone Goals
+## Current Milestone: v1.1 UI 重新設計與商品詳情頁
 
-- UI 版面整體重新設計（技術棧不變），在 `redesign` 分支開發、完成後再合併回 `main`，避免半成品上線
-- 一併處理 WR-04（1024px 桌機導覽文字擠壓）
-- 開工前需決定預覽方式：`*.pages.dev` 不在後端 CORS 白名單，分支預覽抓不到商品
+**Goal:** 全站版面重新設計並新增商品詳情頁，在 `redesign` 分支開發、整套完成後再合併回 `main` 上線。
+
+**Target features:**
+- 共用骨架重設計（膠囊浮動頂列、分類 chip 列取代 SideMenu、一行頁尾、手機固定撥號列、Layout），一併修正 WR-04（1024px 導覽文字擠壓）
+- 首頁重設計（含熱銷輪播，保留 WCAG 2.2.2 行為）
+- 商品分類頁重設計（8 分類共用 Template，保留 grid/list、排序；整張卡改連到詳情頁，燈箱移到詳情頁主圖）
+- 關於我們頁重設計
+- 新增商品詳情頁 `/products/:id`（讀 `/public/products/:id`，含 variants；列表與輪播可點入）
+
+**Key context:**
+- 視覺方向未定，於 UI phase 用 sketch／UI-SPEC 探索後決定
+- 只在本機預覽（`npm run dev` + Vite proxy 讀 production API），不改後端 CORS
+- 技術棧不變、舊網址全數保留、前端不含憑證、每次提交 `npm run build` 必須通過
 
 ## Core Value
 
@@ -44,14 +59,20 @@ KRD 音響／麥克風盤商的品牌官網（`www.krd.com.tw`），給客戶瀏
 - ✓ Owner 已撤銷舊官網 Airtable token，舊 token 經 whoami 確認失效，網站不受影響 — Validated in Phase 4: 上線驗證與撤銷 token
 - ✓ 熱銷輪播符合 WCAG 2.2.2（hover／鍵盤焦點暫停、尊重減少動態；滑鼠與觸控點擊後不會停住）— v1.0（Phase 5）
 - ✓ `npm run build` 自動擋下 dist 內的 Airtable 痕跡 — v1.0（Phase 5）
+- ✓ UI-SPEC（C5a 溫暖在地小店 × 深石板藍）經使用者確認（DESIGN-01） — Validated in Phase 6: 設計鎖定與測試盤點
+- ✓ 215 項測試盤點與總數基準，契約類標示不得刪除（TEST-06） — Validated in Phase 6: 設計鎖定與測試盤點
+- ✓ 移除未使用的 `@tailwindcss/postcss` 與 `@types/react-router-dom`（MAINT-01） — Validated in Phase 6: 設計鎖定與測試盤點
+- ✓ 詳情資料層 service／transform／hook 含 404／400／429 分類，有單元測試（TEST-05） — Validated in Phase 7: 詳情資料層
+- ✓ 語意 token、字型堆疊、新版骨架（頂列、chip、頁尾、撥號列、skip link）與首頁／分類頁／關於我們改版（DESIGN-02/03、SHELL-01~04、UX-04~07） — Validated in Phase 8: Tokens、共用骨架與既有頁面改版
+- ✓ 商品詳情頁、錯誤／找不到狀態、全域 NotFound、頁面標題（PROD-08~16） — Validated in Phase 9: 商品詳情頁 UI、路由與 NotFound
+- ✓ 商品卡與熱銷便條卡連到詳情頁（LINK-01、LINK-02） — Validated in Phase 10: 連結接線
 
 ### Active
 
-（待 `/gsd-new-milestone` 定義 UI 重新設計需求）
+（v1.1 需求見 `.planning/REQUIREMENTS.md`）
 
 ### Out of Scope
 
-- 商品詳情頁（`/products/:id`、變體）— 本輪專注替換 Airtable，留待下一輪
 - 補 `public/_redirects` — 實測 Cloudflare Pages 已預設 SPA fallback，不需要
 - Tailwind v3/v4 套件混裝、`@types/react-router-dom` v5 等依賴不一致 — 與停用 Airtable 無關且可能影響樣式，另案處理
 - 配件拆子分類（開關、線材）— 後端已定案配件統一為分類「配件」
@@ -108,4 +129,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-11-10 after v1.0 milestone*
+*Last updated: 2026-11-11 — Phase 10 complete*

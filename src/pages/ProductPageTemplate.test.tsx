@@ -1,7 +1,8 @@
 import type { ReactNode } from "react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { MemoryRouter, Route, Routes, useParams } from "react-router-dom";
 import ProductPageTemplate from "./ProductPageTemplate";
 import { fetchProducts } from "../services/products";
 import type { ProductListResult } from "../services/products";
@@ -43,14 +44,40 @@ function makeResult(items: Product[], truncated = false): ProductListResult {
   return { items, total: items.length, truncated };
 }
 
-/** 渲染商品頁 */
-function renderPage(query: ProductPageQuery = {}) {
+/** 渲染商品頁（分類 chip 列需要 Router）；initialPath 決定目前頁 chip */
+function renderPage(
+  query: ProductPageQuery = {},
+  initialPath = "/all-products"
+) {
   return render(
-    <ProductPageTemplate
-      title="測試分類"
-      description="測試描述"
-      query={query}
-    />
+    <MemoryRouter initialEntries={[initialPath]}>
+      <ProductPageTemplate
+        title="測試分類"
+        description="測試描述"
+        query={query}
+      />
+    </MemoryRouter>
+  );
+}
+
+/** 詳情頁探針：顯示路由參數，用來斷言導向路徑 */
+const DetailProbe = () => {
+  const { id } = useParams();
+  return <p>詳情頁 {id}</p>;
+};
+
+/** 以分類頁＋詳情探針路由渲染，可斷言點卡片後的路徑 */
+function renderPageWithDetailRoute(initialPath = "/all-products") {
+  return render(
+    <MemoryRouter initialEntries={[initialPath]}>
+      <Routes>
+        <Route
+          path="/all-products"
+          element={<ProductPageTemplate title="測試分類" query={{}} />}
+        />
+        <Route path="/products/:id" element={<DetailProbe />} />
+      </Routes>
+    </MemoryRouter>
   );
 }
 
@@ -91,39 +118,33 @@ describe("ProductPageTemplate 基本載入與卡片", () => {
     expect(img).toHaveAttribute("src", "https://img.krd.com.tw/x.jpg");
   });
 
-  it("點有圖卡片會開燈箱顯示該圖", async () => {
+  it("點有圖卡片導向 /products/{id}，不出現 dialog", async () => {
     const user = userEvent.setup();
     mockFetch.mockResolvedValue(
       makeResult([
         makeProduct({
+          id: "a",
           name: "甲商品",
           imageUrl: "https://img.krd.com.tw/x.jpg",
         }),
       ])
     );
-    renderPage();
+    renderPageWithDetailRoute();
     await user.click(await screen.findByText("甲商品"));
-    // role=button 內的 img 屬 presentational，改以 alt 文字查詢（卡片與燈箱 alt 不同）
-    const imgs = [
-      ...screen.getAllByAltText("甲商品"),
-      ...screen.getAllByAltText("產品詳細圖片"),
-    ].filter((el) => el.getAttribute("src") === "https://img.krd.com.tw/x.jpg");
-    // 卡片一張、燈箱一張
-    expect(imgs.length).toBeGreaterThanOrEqual(2);
+    expect(await screen.findByText("詳情頁 a")).toBeInTheDocument();
+    expect(screen.queryByRole("dialog")).toBeNull();
   });
 
-  it("缺圖商品顯示「暫無圖片」佔位圖，點擊不開燈箱", async () => {
+  it("缺圖商品顯示「暫無圖片」佔位圖，點擊導向 /products/{id} 且不出現 dialog", async () => {
     const user = userEvent.setup();
     mockFetch.mockResolvedValue(
-      makeResult([makeProduct({ name: "無圖商品", imageUrl: null })])
+      makeResult([makeProduct({ id: "n", name: "無圖商品", imageUrl: null })])
     );
-    renderPage();
+    renderPageWithDetailRoute();
     const placeholder = await screen.findByRole("img", { name: "暫無圖片" });
     await user.click(placeholder);
-    // 燈箱未開：頁面上仍只有佔位圖，沒有任何帶 src 的圖片
-    expect(
-      screen.getAllByRole("img").every((el) => !el.getAttribute("src"))
-    ).toBe(true);
+    expect(await screen.findByText("詳情頁 n")).toBeInTheDocument();
+    expect(screen.queryByRole("dialog")).toBeNull();
   });
 });
 
@@ -168,15 +189,19 @@ describe("ProductPageTemplate 錯誤、空、淡化與截斷狀態", () => {
       .mockResolvedValueOnce(makeResult([]));
     renderPage();
     await user.click(await screen.findByRole("button", { name: "重新載入" }));
-    expect(await screen.findByText("目前沒有商品")).toBeInTheDocument();
+    expect(await screen.findByText("這裡還沒有商品")).toBeInTheDocument();
     expect(mockFetch).toHaveBeenCalledTimes(2);
   });
 
   it("查詢成功但沒有商品顯示空狀態，不出現「請稍後再試」", async () => {
     mockFetch.mockResolvedValue(makeResult([]));
     renderPage();
-    expect(await screen.findByText("目前沒有商品")).toBeInTheDocument();
-    expect(screen.getByText("此分類目前沒有上架的商品")).toBeInTheDocument();
+    expect(await screen.findByText("這裡還沒有商品")).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        "這個分類暫時沒東西，過幾天再來看看，或直接打電話問我們。"
+      )
+    ).toBeInTheDocument();
     expect(screen.queryByText(/請稍後再試/)).toBeNull();
   });
 
@@ -226,7 +251,7 @@ describe("ProductPageTemplate 錯誤、空、淡化與截斷狀態", () => {
 });
 
 describe("ProductPageTemplate 價格、檢視切換與鍵盤", () => {
-  it("同時顯示有價商品的 priceText 與無價商品的「價格洽詢」", async () => {
+  it("同時顯示有價商品的 priceText 與無價商品的「價格請來電」", async () => {
     mockFetch.mockResolvedValue(
       makeResult([
         makeProduct({
@@ -242,7 +267,7 @@ describe("ProductPageTemplate 價格、檢視切換與鍵盤", () => {
     renderPage();
     await screen.findByText("有價商品");
     expect(screen.getAllByText("NT$1,200").length).toBeGreaterThanOrEqual(1);
-    expect(screen.getByText("價格洽詢")).toBeInTheDocument();
+    expect(screen.getByText("價格請來電")).toBeInTheDocument();
   });
 
   it("切換列表檢視後 aria-pressed 更新，且仍顯示價格行", async () => {
@@ -267,24 +292,116 @@ describe("ProductPageTemplate 價格、檢視切換與鍵盤", () => {
     expect(screen.getByText("NT$1,200")).toBeInTheDocument();
   });
 
-  it("有圖卡片以 Enter 開啟燈箱", async () => {
+  it("有圖卡片以 Enter 導向 /products/{id}", async () => {
     const user = userEvent.setup();
     mockFetch.mockResolvedValue(
       makeResult([
         makeProduct({
+          id: "a",
           name: "甲商品",
           imageUrl: "https://img.krd.com.tw/x.jpg",
         }),
       ])
     );
-    renderPage();
-    const card = await screen.findByRole("button", { name: /查看 甲商品/ });
+    renderPageWithDetailRoute();
+    // 精確比對：連結名稱只含商品名稱與價格文字
+    const card = await screen.findByRole("link", { name: "甲商品 價格請來電" });
     card.focus();
     await user.keyboard("{Enter}");
-    // 燈箱開啟後出現該圖片
-    expect(screen.getByAltText("產品詳細圖片")).toHaveAttribute(
-      "src",
-      "https://img.krd.com.tw/x.jpg"
+    expect(await screen.findByText("詳情頁 a")).toBeInTheDocument();
+  });
+});
+
+describe("ProductPageTemplate 改版版面", () => {
+  it("h1 下方副行顯示共 N 項", async () => {
+    mockFetch.mockResolvedValue(
+      makeResult([
+        makeProduct({ id: "a", name: "甲商品" }),
+        makeProduct({ id: "b", name: "乙商品" }),
+      ])
     );
+    renderPage();
+    expect(
+      await screen.findByText("共 2 項。看到喜歡的，直接打電話問最快。")
+    ).toBeInTheDocument();
+  });
+
+  // 截斷時 items.length 只是上限，不是實際總數；不顯示「共 N 項」以免與截斷提示矛盾
+  it("truncated 為 true 時副行不顯示共 N 項，只留 UI-SPEC 後半句", async () => {
+    mockFetch.mockResolvedValue(makeResult([makeProduct()], true));
+    renderPage();
+    expect(
+      await screen.findByText("看到喜歡的，直接打電話問最快。")
+    ).toBeInTheDocument();
+    expect(screen.queryByText(/共 \d+ 項/)).toBeNull();
+  });
+
+  it("結尾「找不到想要的？」含電話連結", async () => {
+    mockFetch.mockResolvedValue(makeResult([makeProduct()]));
+    renderPage();
+    expect(
+      await screen.findByRole("heading", { name: "找不到想要的？" })
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("link", { name: "(04) 2279-8787" })
+    ).toHaveAttribute("href", "tel:04-22798787");
+  });
+
+  it("chip 列存在且目前頁 chip 有 aria-current", async () => {
+    mockFetch.mockResolvedValue(makeResult([makeProduct()]));
+    renderPage({}, "/trumpet");
+    await screen.findByText("商品一");
+    const nav = screen.getByRole("navigation", { name: "商品分類" });
+    expect(
+      within(nav).getByRole("link", { name: "擴大機 / 喇叭" })
+    ).toHaveAttribute("aria-current", "page");
+  });
+
+  it("載入中顯示 8 張 aria-hidden 的 skeleton", () => {
+    mockFetch.mockReturnValue(new Promise(() => {}));
+    renderPage();
+    const skeletons = screen.getAllByTestId("product-card-skeleton");
+    expect(skeletons).toHaveLength(8);
+    expect(
+      skeletons.every((el) => el.getAttribute("aria-hidden") === "true")
+    ).toBe(true);
+  });
+});
+
+describe("ProductPageTemplate 連到詳情頁", () => {
+  it("列表檢視點卡片導向 /products/{id}，不出現 dialog", async () => {
+    const user = userEvent.setup();
+    mockFetch.mockResolvedValue(
+      makeResult([
+        makeProduct({ id: "a", name: "甲商品" }),
+        makeProduct({ id: "b", name: "乙商品" }),
+      ])
+    );
+    renderPageWithDetailRoute();
+    await screen.findByText("甲商品");
+    await user.click(screen.getByRole("button", { name: "列表檢視" }));
+    await user.click(screen.getByText("乙商品"));
+    expect(await screen.findByText("詳情頁 b")).toBeInTheDocument();
+    expect(screen.queryByRole("dialog")).toBeNull();
+  });
+
+  it("每張卡的連結 href 對應各自的 id", async () => {
+    mockFetch.mockResolvedValue(
+      makeResult([
+        makeProduct({ id: "a", name: "甲商品" }),
+        makeProduct({ id: "b", name: "乙商品" }),
+      ])
+    );
+    renderPage();
+    await screen.findByText("甲商品");
+    // 精確比對：每張卡的連結名稱只含商品名稱與價格文字
+    const links = [
+      screen.getByRole("link", { name: "甲商品 價格請來電" }),
+      screen.getByRole("link", { name: "乙商品 價格請來電" }),
+    ];
+    expect(links.map((el) => el.getAttribute("href"))).toEqual([
+      "/products/a",
+      "/products/b",
+    ]);
   });
 });

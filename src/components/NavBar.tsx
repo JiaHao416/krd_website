@@ -1,273 +1,151 @@
-import { useEffect, useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useEffect, useRef, useState } from "react";
+import { Link, useLocation } from "react-router-dom";
 import { NAV_ITEMS } from "../config/navigation";
+import { CONTACT } from "../config/contact";
+import { CloseIcon, MenuIcon, PhoneIcon } from "./icons";
+
+/** 導覽連結共用樣式（主選單與行動版面板） */
+const NAV_LINK_CLASS =
+  "inline-flex h-11 items-center rounded-pill px-4 text-body text-ink transition-colors duration-150 hover:bg-block-2";
+
+/** 導覽連結選中時追加的樣式 */
+const NAV_LINK_ACTIVE_CLASS = "bg-block-2 font-semibold";
+
+interface NavLinkItem {
+  title: string;
+  path: string;
+  isActive: boolean;
+}
 
 const NavBar = () => {
-  const navigate = useNavigate();
-  const location = useLocation();
+  const { pathname } = useLocation();
   // Logo 載入失敗時改顯示文字
   const [logoFailed, setLogoFailed] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
-  const [activeHover, setActiveHover] = useState<string | null>(null);
+  const containerRef = useRef<HTMLElement>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
 
+  // 「逛商品」在任一分類頁或商品詳情頁都算選中
+  const isShopActive =
+    NAV_ITEMS.some((item) => item.path === pathname) ||
+    pathname.startsWith("/products/");
+  const isAboutActive = pathname === "/abouts";
+
+  const links: NavLinkItem[] = [
+    { title: "逛商品", path: "/all-products", isActive: isShopActive },
+    { title: "關於我們", path: "/abouts", isActive: isAboutActive },
+  ];
+
+  // 面板開啟時才監聽 Esc 與點外側；關閉或卸載時移除，避免監聽洩漏
   useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 20);
+    if (!isMenuOpen) return;
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setIsMenuOpen(false);
+        buttonRef.current?.focus();
+      }
     };
 
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+    const handlePointerDown = (event: PointerEvent) => {
+      if (!containerRef.current?.contains(event.target as Node)) {
+        setIsMenuOpen(false);
+      }
+    };
 
-  const handleNavigation = (path: string) => {
-    navigate(path);
-    setIsMenuOpen(false);
-  };
+    document.addEventListener("keydown", handleKeyDown);
+    document.addEventListener("pointerdown", handlePointerDown);
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+      document.removeEventListener("pointerdown", handlePointerDown);
+    };
+  }, [isMenuOpen]);
 
-  const isActivePath = (path: string) => location.pathname === path;
+  /**
+   * 產生導覽連結
+   * @param onClick - 點擊後的額外動作（行動版用來關閉面板）
+   */
+  const renderLinks = (onClick?: () => void) =>
+    links.map(({ title, path, isActive }) => (
+      <Link
+        key={path}
+        to={path}
+        aria-current={
+          // 完全符合目前路徑才是 page；只是屬於該區段（如分類頁）時用 true
+          pathname === path ? "page" : isActive ? "true" : undefined
+        }
+        className={
+          isActive ? `${NAV_LINK_CLASS} ${NAV_LINK_ACTIVE_CLASS}` : NAV_LINK_CLASS
+        }
+        onClick={onClick}
+      >
+        {title}
+      </Link>
+    ));
 
   return (
-    <>
-      {/* Main Navigation */}
-      <nav
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-          scrolled
-            ? "backdrop-blur-2xl bg-slate-950/90 border-b border-white/10 shadow-2xl shadow-blue-500/5"
-            : "backdrop-blur-lg bg-slate-950/70 border-b border-white/5"
-        }`}
+    <header ref={containerRef} className="relative">
+      <div className="flex items-center justify-between gap-4 rounded-pill bg-surface-raised py-1 pr-1 pl-4 shadow-bar-sm md:py-2 md:pr-2 md:pl-6 md:shadow-bar">
+        <Link to="/" className="inline-flex items-center">
+          {!logoFailed ? (
+            // 原始 Logo 為深灰單色圖，放在深色頂列上看不見，以濾鏡轉成白色
+            <img
+              src="/brand-logo.png"
+              width={800}
+              height={235}
+              onError={() => setLogoFailed(true)}
+              alt="KRD MICGO Logo"
+              className="h-[26px] w-auto brightness-0 invert md:h-[30px]"
+            />
+          ) : (
+            // 每頁已有自己的 h1，備援文字不可用標題元素
+            <span className="text-body font-semibold text-ink">KRD MICGO</span>
+          )}
+        </Link>
+
+        {/* md 以上的主選單 */}
+        <nav aria-label="主選單" className="hidden items-center gap-2 md:flex">
+          {renderLinks()}
+        </nav>
+
+        {/* md 以上的電話按鈕；手機改由固定撥號列提供 */}
+        <a
+          href={`tel:${CONTACT.phoneHref}`}
+          className="hidden h-11 items-center gap-2 rounded-pill bg-accent px-6 text-body font-semibold text-accent-ink transition-colors duration-150 hover:bg-accent-hover md:inline-flex"
+        >
+          <PhoneIcon className="h-[18px] w-[18px]" />
+          打電話問問
+        </a>
+
+        {/* 手機選單鈕 */}
+        <button
+          ref={buttonRef}
+          type="button"
+          className="inline-flex h-11 w-11 items-center justify-center rounded-pill bg-block-3 text-ink md:hidden"
+          aria-expanded={isMenuOpen}
+          aria-controls="mobile-menu"
+          aria-label={isMenuOpen ? "關閉選單" : "開啟選單"}
+          onClick={() => setIsMenuOpen((open) => !open)}
+        >
+          {isMenuOpen ? (
+            <CloseIcon className="h-6 w-6" />
+          ) : (
+            <MenuIcon className="h-6 w-6" />
+          )}
+        </button>
+      </div>
+
+      {/* 行動版面板：一律渲染，讓 aria-controls 永遠指得到元素 */}
+      <div
+        id="mobile-menu"
+        hidden={!isMenuOpen}
+        className="absolute inset-x-0 top-full z-30 mt-2 rounded-block bg-surface-raised p-2 shadow-float md:hidden"
       >
-        {/* Top accent line */}
-        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-blue-500 to-transparent opacity-50"></div>
-
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="flex justify-between items-center h-20">
-            {/* Logo Section - 增強版 */}
-            <div
-              className="flex items-center cursor-pointer group relative"
-              onClick={() => handleNavigation("/")}
-            >
-              {!logoFailed ? (
-                <div className="relative">
-                  {/* 白色背景容器讓 Logo 更清晰 */}
-                  <div className="bg-white/95 backdrop-blur-sm rounded-2xl p-3 border-2 border-blue-400/50 group-hover:border-blue-500 transition-all duration-300 group-hover:shadow-lg group-hover:shadow-blue-500/30">
-                    <img
-                      src="/brand-logo.png"
-                      width={800}
-                      height={235}
-                      onError={() => setLogoFailed(true)}
-                      alt="KRD MICGO Logo"
-                      className="h-7 sm:h-8 md:h-9 lg:h-10 w-auto transition-all duration-300 group-hover:scale-105"
-                      style={{
-                        filter: "brightness(1.1) contrast(1.1) saturate(1.2)",
-                      }}
-                    />
-                  </div>
-
-                  {/* 發光效果 */}
-                  <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-2xl blur-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10"></div>
-                </div>
-              ) : (
-                <div className="relative">
-                  <h1 className="text-2xl font-black text-white group-hover:text-blue-300 transition-colors duration-300">
-                    KRD MICGO
-                  </h1>
-                  <div className="absolute -bottom-1 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 rounded-full"></div>
-                </div>
-              )}
-            </div>
-
-            {/* Desktop Navigation */}
-            <div className="hidden lg:flex items-center space-x-2">
-              {NAV_ITEMS.map((item) => (
-                <div key={item.path} className="relative">
-                  <button
-                    onClick={() => handleNavigation(item.path)}
-                    onMouseEnter={() => setActiveHover(item.path)}
-                    onMouseLeave={() => setActiveHover(null)}
-                    className={`relative px-5 py-2.5 font-medium text-sm transition-all duration-300 rounded-xl group ${
-                      isActivePath(item.path)
-                        ? "text-white bg-gradient-to-r from-blue-500/20 to-purple-500/20 backdrop-blur-sm border border-blue-500/30"
-                        : "text-gray-300 hover:text-white hover:bg-white/5"
-                    }`}
-                  >
-                    <span className="relative z-10">{item.title}</span>
-
-                    {/* Active indicator */}
-                    {isActivePath(item.path) && (
-                      <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-purple-500/10 rounded-xl"></div>
-                    )}
-
-                    {/* Hover effect */}
-                    <div
-                      className={`absolute inset-0 bg-gradient-to-r from-blue-500/5 to-purple-500/5 rounded-xl transition-opacity duration-200 ${
-                        activeHover === item.path &&
-                        !isActivePath(item.path)
-                          ? "opacity-100"
-                          : "opacity-0"
-                      }`}
-                    ></div>
-
-                    {/* Bottom indicator */}
-                    <div
-                      className={`absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-0.5 bg-gradient-to-r from-blue-500 to-purple-500 transition-all duration-300 ${
-                        isActivePath(item.path)
-                          ? "w-3/4"
-                          : activeHover === item.path
-                          ? "w-1/2"
-                          : "w-0"
-                      }`}
-                    ></div>
-                  </button>
-                </div>
-              ))}
-
-              {/* Separator */}
-              <div className="h-8 w-px bg-gradient-to-b from-transparent via-white/20 to-transparent mx-4"></div>
-
-              {/* About Button */}
-              <button
-                onClick={() => handleNavigation("/abouts")}
-                className={`relative px-6 py-2.5 font-semibold text-sm rounded-full transition-all duration-300 transform hover:scale-105 group overflow-hidden ${
-                  isActivePath("/abouts")
-                    ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg shadow-blue-500/25"
-                    : "bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white shadow-lg hover:shadow-xl hover:shadow-blue-500/20"
-                }`}
-              >
-                <span className="relative z-10 flex items-center space-x-2">
-                  <span>商店介紹</span>
-                  <svg
-                    className="w-4 h-4 group-hover:translate-x-0.5 transition-transform"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M13 7l5 5m0 0l-5 5m5-5H6"
-                    />
-                  </svg>
-                </span>
-                <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
-              </button>
-            </div>
-
-            {/* Mobile Menu Button */}
-            <button
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="lg:hidden relative p-3 rounded-xl transition-all duration-300 hover:bg-white/10 group"
-            >
-              <div className="w-6 h-5 relative flex flex-col justify-between">
-                <span
-                  className={`w-full h-0.5 bg-gradient-to-r from-blue-400 to-purple-400 transition-all duration-300 origin-left ${
-                    isMenuOpen ? "rotate-45 translate-y-0.5" : ""
-                  }`}
-                ></span>
-                <span
-                  className={`w-full h-0.5 bg-gradient-to-r from-purple-400 to-pink-400 transition-all duration-300 ${
-                    isMenuOpen ? "opacity-0 scale-0" : ""
-                  }`}
-                ></span>
-                <span
-                  className={`w-full h-0.5 bg-gradient-to-r from-pink-400 to-blue-400 transition-all duration-300 origin-left ${
-                    isMenuOpen ? "-rotate-45 -translate-y-0.5" : ""
-                  }`}
-                ></span>
-              </div>
-            </button>
-          </div>
-
-          {/* Mobile Menu */}
-          <div
-            className={`lg:hidden transition-all duration-500 ease-in-out overflow-hidden ${
-              isMenuOpen ? "max-h-[40rem] opacity-100" : "max-h-0 opacity-0"
-            }`}
-          >
-            <div className="py-6 space-y-2 border-t border-white/10">
-              {NAV_ITEMS.map((item) => (
-                <button
-                  key={item.path}
-                  onClick={() => handleNavigation(item.path)}
-                  className={`flex items-center w-full px-4 py-3 text-left rounded-xl transition-all duration-300 group ${
-                    isActivePath(item.path)
-                      ? "text-blue-400 bg-gradient-to-r from-blue-500/10 to-purple-500/10 pl-6 border-l-2 border-blue-400"
-                      : "text-gray-300 hover:text-white hover:bg-white/5 hover:pl-6"
-                  }`}
-                >
-                  <div
-                    className={`w-2 h-2 rounded-full mr-4 transition-all duration-300 ${
-                      isActivePath(item.path)
-                        ? "bg-gradient-to-r from-blue-400 to-purple-400 scale-100"
-                        : "bg-gray-500 group-hover:bg-gradient-to-r group-hover:from-blue-400 group-hover:to-purple-400 group-hover:scale-100 scale-75"
-                    }`}
-                  ></div>
-                  <span className="font-medium">{item.title}</span>
-                  <svg
-                    className={`w-4 h-4 ml-auto transition-all duration-300 ${
-                      isActivePath(item.path)
-                        ? "text-blue-400 translate-x-0"
-                        : "text-gray-500 group-hover:text-blue-400 group-hover:translate-x-1"
-                    }`}
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M9 5l7 7-7 7"
-                    />
-                  </svg>
-                </button>
-              ))}
-
-              <div className="h-px bg-gradient-to-r from-transparent via-white/20 to-transparent my-4"></div>
-
-              <button
-                onClick={() => handleNavigation("/abouts")}
-                className={`flex items-center w-full px-4 py-3 text-left rounded-xl font-semibold transition-all duration-300 group ${
-                  isActivePath("/abouts")
-                    ? "text-white bg-gradient-to-r from-blue-500/20 to-purple-500/20 pl-6 border-l-2 border-blue-400"
-                    : "text-blue-400 hover:text-blue-300 hover:bg-gradient-to-r hover:from-blue-500/10 hover:to-purple-500/10 hover:pl-6"
-                }`}
-              >
-                <div
-                  className={`w-2 h-2 rounded-full mr-4 bg-gradient-to-r from-blue-400 to-purple-400 transition-all duration-300 ${
-                    isActivePath("/abouts")
-                      ? "scale-100"
-                      : "scale-75 group-hover:scale-100"
-                  }`}
-                ></div>
-                <span>商店介紹</span>
-                <svg
-                  className={`w-4 h-4 ml-auto transition-all duration-300 ${
-                    isActivePath("/abouts")
-                      ? "text-blue-400 translate-x-0"
-                      : "text-blue-500 group-hover:translate-x-1"
-                  }`}
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M13 7l5 5m0 0l-5 5m5-5H6"
-                  />
-                </svg>
-              </button>
-            </div>
-          </div>
-        </div>
-      </nav>
-
-      {/* Spacer to prevent content from hiding behind navbar */}
-      <div className="h-20"></div>
-    </>
+        <nav aria-label="行動版選單" className="flex flex-col gap-1">
+          {renderLinks(() => setIsMenuOpen(false))}
+        </nav>
+      </div>
+    </header>
   );
 };
 

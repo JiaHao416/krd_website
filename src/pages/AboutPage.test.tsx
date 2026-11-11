@@ -3,6 +3,7 @@ import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import AboutPage from "./AboutPage";
+import { CONTACT } from "../config/contact";
 
 // Layout 內有導覽元件，測試一律以假元件取代
 vi.mock("../components/Layout", () => ({
@@ -35,10 +36,10 @@ describe("AboutPage 服務圖卡", () => {
     expect(sources).toEqual(EXPECTED.map(({ src }) => src));
   });
 
-  it("圖卡標題 h4 依序為 卡拉OK／KTV／酒店／PUB／遊覽車／維修", () => {
+  it("圖卡標題 h3 依序為 卡拉OK／KTV／酒店／PUB／遊覽車／維修", () => {
     renderPage();
     const titles = screen
-      .getAllByRole("heading", { level: 4 })
+      .getAllByRole("heading", { level: 3 })
       .map((el) => el.textContent)
       .filter((text) => EXPECTED.some(({ name }) => name === text));
     expect(titles).toEqual(EXPECTED.map(({ name }) => name));
@@ -46,6 +47,29 @@ describe("AboutPage 服務圖卡", () => {
 
   it("不再顯示載入骨架", () => {
     const { container } = renderPage();
-    expect(container.querySelectorAll(".glass-card.animate-pulse")).toHaveLength(0);
+    expect(container.querySelectorAll(".animate-pulse")).toHaveLength(0);
+  });
+});
+
+describe("AboutPage 版面與聯絡資訊", () => {
+  it("h1 為關於我們", () => {
+    renderPage();
+    expect(
+      screen.getByRole("heading", { level: 1, name: "關於我們" })
+    ).toBeInTheDocument();
+  });
+
+  it("聯絡區顯示 CONTACT.address 與營業時間", () => {
+    renderPage();
+    expect(
+      screen.getByRole("heading", { name: "有空來店裡坐坐" })
+    ).toBeInTheDocument();
+    expect(screen.getByText(CONTACT.address)).toBeInTheDocument();
+    expect(screen.getByText(CONTACT.businessHours, { exact: false })).toBeInTheDocument();
+  });
+
+  it("不含舊電話格式 (04) 22798787", () => {
+    renderPage();
+    expect(screen.queryByText(/\(04\) 22798787/)).toBeNull();
   });
 });

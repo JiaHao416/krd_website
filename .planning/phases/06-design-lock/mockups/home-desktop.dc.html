@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<title>KRD 首頁・C5a 炭灰藍・淺一階</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+a{color:#F0A04B}a:hover{color:#F6BC7C}
+</style>
+</helmet>
+<div style="width: 1280px; height: 1560px; box-sizing: border-box; background: #27303B; color: #EEF1F5; font-family: 'PingFang TC', 'Microsoft JhengHei', '微軟正黑體', 'Noto Sans TC', system-ui, sans-serif; font-size: 17px; line-height: 1.6; display: flex; flex-direction: column; gap: 64px; padding: 24px 64px 32px">
+
+  <header style="background: #323C49; border-radius: 9999px; padding: 8px 8px 8px 24px; display: flex; align-items: center; gap: 24px; box-shadow: 0 6px 0 #3A4553">
+    <img src="/_blob/695e3cc6992961f7402c7287abc08b37" alt="KRD" style="height: 30px; width: auto">
+    <nav aria-label="主選單" style="display: flex; gap: 8px; flex-grow: 1">
+      <a href="#" style="height: 44px; padding: 0 16px; display: inline-flex; align-items: center; border-radius: 9999px; color: #EEF1F5; text-decoration: none">逛商品</a>
+      <a href="#" style="height: 44px; padding: 0 16px; display: inline-flex; align-items: center; border-radius: 9999px; color: #EEF1F5; text-decoration: none">關於我們</a>
+    </nav>
+    <a href="#" style="height: 48px; padding: 0 24px; display: inline-flex; align-items: center; gap: 8px; background: #F0A04B; color: #1C232C; border-radius: 9999px; font-weight: 600; text-decoration: none"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"></path></svg>打電話問問</a>
+  </header>
+
+  <section style="display: grid; grid-template-columns: 6fr 5fr; gap: 64px; align-items: center">
+    <div style="display: flex; flex-direction: column; gap: 24px">
+      <span style="align-self: flex-start; background: #2C4258; border-radius: 9999px; padding: 4px 16px; font-size: 15px; font-weight: 600">台中太平・實體門市</span>
+      <h1 style="margin: 0; font-size: 56px; line-height: 1.2; font-weight: 600">找麥克風、喇叭？<br><span style="position: relative; display: inline-block">來問我們<svg width="230" height="20" viewBox="0 0 230 20" fill="none" aria-hidden="true" style="position: absolute; left: 0; bottom: -10px"><path d="M3 14c30-9 60-9 90-3s70 4 134-8" stroke="#F0B43C" stroke-width="7" stroke-linecap="round"></path></svg></span>就對了。</h1>
+      <p style="margin: 0; font-size: 19px; color: #B9C2CD; max-width: 520px">我們是在太平開店的音響盤商，有線、無線麥克風到擴大機都有。不確定要選哪一款？打個電話來問就好。</p>
+      <div style="display: flex; gap: 16px; align-items: center">
+        <a href="#" style="height: 56px; padding: 0 32px; display: inline-flex; align-items: center; background: #EEF1F5; color: #323C49; border-radius: 9999px; font-weight: 600; text-decoration: none">逛逛商品 →</a>
+        <a href="#" style="height: 56px; padding: 0 8px; display: inline-flex; align-items: center; color: #F0A04B; font-weight: 600; text-decoration: none; border-bottom: 2px dashed #F0A04B">(04) 2279-8787</a>
+      </div>
+    </div>
+    <div style="position: relative; height: 420px">
+      <div role="img" aria-label="店面照片（待提供）" style="position: absolute; inset: 0 24px 24px 0; background: #3A4553; border-radius: 40px; transform: rotate(2deg); display: flex; align-items: center; justify-content: center; color: #B9C2CD; font-size: 15px; border: 3px dashed #5A6676">店面照片（待提供）</div>
+      <div style="position: absolute; left: -32px; bottom: 0; width: 148px; height: 148px; border-radius: 9999px; background: #5A4A1E; transform: rotate(-10deg); display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; box-shadow: 0 6px 0 #3A300F">
+        <span style="font-weight: 600; font-size: 20px">營業中</span>
+        <span style="font-size: 15px">週一至週六<br>09:00–17:30</span>
+      </div>
+    </div>
+  </section>
+
+  <section aria-label="商品分類" style="display: flex; flex-direction: column; gap: 24px">
+    <h2 style="margin: 0; font-size: 32px; line-height: 1.2; font-weight: 600">想找什麼？</h2>
+    <div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 32px">
+      <sc-for list="{{ cats }}" as="c" hint-placeholder-count="4">
+        <a href="#" style="background: {{ c.bg }}; border-radius: 28px; padding: 24px; min-height: 180px; box-sizing: border-box; display: flex; flex-direction: column; justify-content: space-between; text-decoration: none; color: #EEF1F5; transform: rotate({{ c.tilt }}); box-shadow: 0 6px 0 rgba(0,0,0,0.3)">
+          <span style="width: 64px; height: 64px; border-radius: 9999px; background: #323C49; display: flex; align-items: center; justify-content: center">
+            <sc-if value="{{ c.isMic }}" hint-placeholder-val="{{ true }}"><svg width="34" height="34" viewBox="0 0 64 64" fill="none" stroke="#EEF1F5" stroke-width="3.5" stroke-linecap="round" aria-hidden="true"><path d="M25 8c4-3 11-3 14 1 2 3 2 16 1 22-1 5-14 5-16 0-2-6-3-19 1-23z"></path><path d="M17 27c0 10 7 15 15 15s15-6 15-15"></path><path d="M32 43v12M23 57h18"></path></svg></sc-if>
+            <sc-if value="{{ c.isWireless }}" hint-placeholder-val="{{ false }}"><svg width="34" height="34" viewBox="0 0 64 64" fill="none" stroke="#EEF1F5" stroke-width="3.5" stroke-linecap="round" aria-hidden="true"><path d="M26 18c3-3 9-3 12 0 2 3 1 16 0 20-1 4-11 4-12 0-1-5-2-17 0-20z"></path><path d="M32 42v14M15 15c-5 7-5 15 0 22M49 15c5 7 5 15 0 22"></path></svg></sc-if>
+            <sc-if value="{{ c.isSpeaker }}" hint-placeholder-val="{{ false }}"><svg width="34" height="34" viewBox="0 0 64 64" fill="none" stroke="#EEF1F5" stroke-width="3.5" stroke-linecap="round" aria-hidden="true"><path d="M18 7c9-1 20-1 28 0 2 14 2 36 0 50-9 1-20 1-28 0-2-15-2-35 0-50z"></path><circle cx="32" cy="38" r="9"></circle><circle cx="32" cy="18" r="3.5"></circle></svg></sc-if>
+            <sc-if value="{{ c.isAcc }}" hint-placeholder-val="{{ false }}"><svg width="34" height="34" viewBox="0 0 64 64" fill="none" stroke="#EEF1F5" stroke-width="3.5" stroke-linecap="round" aria-hidden="true"><path d="M10 32c0-10 8-18 18-18M54 32c0 10-8 18-18 18"></path><path d="M28 14l-4-6M36 50l4 6M22 40l20-16"></path></svg></sc-if>
+          </span>
+          <span style="display: flex; justify-content: space-between; align-items: baseline"><span style="font-size: 22px; font-weight: 600">{{ c.name }}</span><span style="font-size: 15px">看看 →</span></span>
+        </a>
+      </sc-for>
+    </div>
+  </section>
+
+  <section aria-label="熱銷商品" style="display: flex; flex-direction: column; gap: 24px">
+    <div style="display: flex; justify-content: space-between; align-items: center">
+      <h2 style="margin: 0; font-size: 32px; line-height: 1.2; font-weight: 600">這陣子大家都在問</h2>
+      <div style="display: flex; gap: 8px">
+        <button aria-label="上一組" style="width: 48px; height: 48px; border-radius: 9999px; border: 2px solid #EEF1F5; background: transparent; display: flex; align-items: center; justify-content: center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#EEF1F5" stroke-width="2.5" aria-hidden="true"><path d="M15 18l-6-6 6-6"></path></svg></button>
+        <button aria-label="下一組" style="width: 48px; height: 48px; border-radius: 9999px; border: none; background: #EEF1F5; display: flex; align-items: center; justify-content: center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#323C49" stroke-width="2.5" aria-hidden="true"><path d="M9 18l6-6-6-6"></path></svg></button>
+      </div>
+    </div>
+    <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 40px; padding-top: 16px">
+      <sc-for list="{{ picks }}" as="p" hint-placeholder-count="3">
+        <a href="#" style="position: relative; background: #323C49; border-radius: 20px; padding: 20px; display: flex; flex-direction: column; gap: 12px; text-decoration: none; color: #EEF1F5; transform: rotate({{ p.tilt }}); box-shadow: 0 6px 0 #3A4553">
+          <span aria-hidden="true" style="position: absolute; top: -14px; left: 50%; width: 96px; height: 28px; margin-left: -48px; background: #F0B43CCC; transform: rotate(-4deg)"></span>
+          <div style="height: 200px; background: #FFFFFF; border-radius: 14px; display: flex; align-items: center; justify-content: center"><svg width="110" height="110" viewBox="0 0 64 64" fill="none" stroke="#C9B8A6" stroke-width="1.5" aria-hidden="true"><rect x="24" y="6" width="16" height="28" rx="8"></rect><path d="M18 26v2a14 14 0 0 0 28 0v-2"></path><path d="M32 42v10M24 56h16"></path></svg></div>
+          <span style="font-size: 15px; color: #B9C2CD">{{ p.brand }}</span>
+          <span style="font-size: 20px; font-weight: 600; line-height: 1.3">{{ p.name }}</span>
+          <span style="display: flex; justify-content: space-between; align-items: center"><span style="background: #3A4A5E; border-radius: 9999px; padding: 2px 12px; font-size: 15px">價格請來電</span><span style="color: #F0A04B; font-weight: 600">查看詳情 →</span></span>
+        </a>
+      </sc-for>
+    </div>
+  </section>
+
+  <section aria-label="聯絡我們" style="background: #3A4A5E; border-radius: 40px; padding: 48px; display: grid; grid-template-columns: 5fr 4fr; gap: 48px; align-items: center">
+    <div style="display: flex; flex-direction: column; gap: 16px">
+      <h2 style="margin: 0; font-size: 32px; line-height: 1.2; font-weight: 600">有空來店裡坐坐</h2>
+      <p style="margin: 0">411 台中市太平區永平路二段320之1號<br>週一至週六 09:00 - 17:30（週日及國定假日休息）</p>
+      <a href="#" style="align-self: flex-start; height: 56px; padding: 0 32px; display: inline-flex; align-items: center; gap: 8px; background: #F0A04B; color: #1C232C; border-radius: 9999px; font-weight: 600; font-size: 20px; text-decoration: none">(04) 2279-8787</a>
+    </div>
+    <div role="img" aria-label="地圖（待嵌入）" style="height: 220px; border-radius: 28px; background: #323C49; border: 3px dashed #5A6676; display: flex; align-items: center; justify-content: center; color: #B9C2CD; font-size: 15px; transform: rotate(-1.5deg)">地圖（待嵌入）</div>
+  </section>
+
+  <p style="margin: 0; text-align: center; font-size: 15px; color: #B9C2CD">© KRD・謝謝你逛到這裡</p>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":1560}}'>
+class Component extends DCLogic {
+renderVals() {
+  const cats = [
+    { name: '有線麥克風', bg: '#2C4258', tilt: '-2deg', k: 'mic' },
+    { name: '無線麥克風', bg: '#3A4A5E', tilt: '1.5deg', k: 'wireless' },
+    { name: '擴大機 / 喇叭', bg: '#5A4A1E', tilt: '-1deg', k: 'speaker' },
+    { name: '配件', bg: '#323C49', tilt: '2deg', k: 'acc' },
+  ].map((c) => ({ ...c, isMic: c.k === 'mic', isWireless: c.k === 'wireless', isSpeaker: c.k === 'speaker', isAcc: c.k === 'acc' }));
+  const picks = [
+    { brand: 'MICGO', name: 'UHF 雙頻無線手持麥克風組', tilt: '-1.5deg' },
+    { brand: 'KRD', name: '有線動圈麥克風', tilt: '1deg' },
+    { brand: 'KRD', name: '號角喇叭 30W', tilt: '-0.5deg' },
+  ];
+  return { cats, picks };
+}
+}
+</script>
+</body>
+</html>

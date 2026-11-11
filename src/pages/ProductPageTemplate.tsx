@@ -1,8 +1,10 @@
 import { useState } from "react";
-import type { ReactNode } from "react";
 import Layout from "../components/Layout";
-import ImageModal from "../components/ImageModal";
 import ProductCard from "../components/ProductCard";
+import ProductCardSkeleton from "../components/ProductCardSkeleton";
+import CategoryChips from "../components/CategoryChips";
+import { AlertIcon, PhoneIcon } from "../components/icons";
+import { CONTACT } from "../config/contact";
 import { useProducts } from "../hooks/useProducts";
 import { PRODUCT_LIMIT } from "../services/catalog";
 import type { ProductPageQuery } from "../services/catalog";
@@ -11,8 +13,8 @@ import { getErrorMessage } from "../services/errors";
 
 interface ProductPageProps {
   title: string;
+  /** 保留給呼叫端展開設定用；新版面不顯示描述 */
   description?: string;
-  icon?: ReactNode;
   query: ProductPageQuery;
 }
 
@@ -21,35 +23,32 @@ interface ErrorCardProps {
   onRetry: () => void;
 }
 
+// 載入骨架張數：約兩列 grid，讓首屏高度接近載入完成後
+const SKELETON_COUNT = 8;
+
+// 主按鈕共用外觀（accent 底＋實色陰影，按下時陰影變淺）
+const PRIMARY_BUTTON_CLASS =
+  "items-center rounded-pill bg-accent px-6 text-body font-semibold text-accent-ink shadow-btn transition-colors duration-150 hover:bg-accent-hover active:shadow-btn-pressed";
+
+// 檢視切換鈕外觀；選中加 block-2 底與粗體
+const VIEW_BUTTON_CLASS =
+  "inline-flex h-11 items-center gap-2 rounded-pill border border-dash px-4 text-body text-ink transition-colors duration-150 hover:bg-surface-raised";
+const VIEW_BUTTON_ACTIVE_CLASS = "bg-block-2 font-semibold";
+
 // 載入失敗卡片：文字只來自 getErrorMessage，不顯示後端原始訊息
 const ErrorCard = ({ error, onRetry }: ErrorCardProps) => {
   const handleRetry = () => onRetry();
   return (
-    <div role="alert" className="text-center py-20">
-      <div className="w-32 h-32 max-sm:w-24 max-sm:h-24 rounded-full bg-red-500/10 mx-auto mb-8 flex items-center justify-center">
-        <svg
-          className="w-16 h-16 text-red-400"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-          aria-hidden="true"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"
-          />
-        </svg>
-      </div>
-      <h3 className="text-3xl font-semibold text-gray-300 mb-4">
+    <div role="alert" className="rounded-block bg-surface-raised p-8 text-center">
+      <AlertIcon className="mx-auto h-12 w-12 text-danger" />
+      <h2 className="mt-4 text-heading font-semibold text-danger">
         無法載入商品
-      </h3>
-      <p className="text-gray-400 text-base">{getErrorMessage(error)}</p>
+      </h2>
+      <p className="mt-2 text-body text-ink-muted">{getErrorMessage(error)}</p>
       <button
         type="button"
         onClick={handleRetry}
-        className="mt-8 bg-blue-500 hover:bg-blue-600 text-white text-sm font-semibold px-6 py-2 min-h-[44px] rounded-full transition-colors focus-visible:ring-2 ring-blue-400 ring-offset-2 ring-offset-slate-900"
+        className={`mt-6 inline-flex h-11 ${PRIMARY_BUTTON_CLASS}`}
       >
         重新載入
       </button>
@@ -57,16 +56,38 @@ const ErrorCard = ({ error, onRetry }: ErrorCardProps) => {
   );
 };
 
-const ProductPageTemplate = ({
-  title,
-  description,
-  icon,
-  query,
-}: ProductPageProps) => {
+// 空狀態：查詢成功但分類內沒有商品
+const EmptyState = () => (
+  <div className="rounded-block bg-block-2 p-8 text-center">
+    <h2 className="text-heading font-semibold text-ink">這裡還沒有商品</h2>
+    <p className="mt-2 text-body text-ink-muted">
+      這個分類暫時沒東西，過幾天再來看看，或直接打電話問我們。
+    </p>
+  </div>
+);
+
+// 結尾詢問區：base 由固定撥號列承擔撥號，故按鈕只在 md 以上顯示
+const AskUsSection = () => (
+  <section className="mt-8 rounded-block bg-block-2 px-8 py-6 md:flex md:items-center md:justify-between md:gap-6">
+    <div>
+      <h2 className="text-heading font-semibold text-ink">找不到想要的？</h2>
+      <p className="mt-1 text-body text-ink-muted">
+        我們店裡還有很多沒放上來，打個電話問最快。
+      </p>
+    </div>
+    <a
+      href={`tel:${CONTACT.phoneHref}`}
+      className={`mt-4 hidden h-14 shrink-0 gap-2 md:mt-0 md:inline-flex ${PRIMARY_BUTTON_CLASS}`}
+    >
+      <PhoneIcon className="h-5 w-5" />
+      {CONTACT.phone}
+    </a>
+  </section>
+);
+
+const ProductPageTemplate = ({ title, query }: ProductPageProps) => {
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [sortBy, setSortBy] = useState<ProductSort>("name");
-  const [selectedImage, setSelectedImage] = useState<string>("");
-  const [showImageModal, setShowImageModal] = useState(false);
 
   // 頁面鎖定排序（如 /new-products）時不顯示下拉，也不送使用者排序
   const sortLocked = query.sort !== undefined;
@@ -77,215 +98,120 @@ const ProductPageTemplate = ({
   const isInitialLoading = status === "loading" && items.length === 0;
   // 已有舊列表時重新載入：保留列表並淡化
   const isRefreshing = status === "loading" && items.length > 0;
+  const hasItems = status !== "error" && items.length > 0;
 
-  const handleImageClick = (imageUrl: string) => {
-    setSelectedImage(imageUrl);
-    setShowImageModal(true);
-  };
+  const listLayoutClass =
+    viewMode === "grid"
+      ? "grid grid-cols-2 items-stretch gap-4 py-4 md:grid-cols-3 md:gap-6 xl:grid-cols-4 xl:gap-8"
+      : "flex flex-col gap-4 py-4";
 
-  const handleCloseModal = () => {
-    setShowImageModal(false);
-    setSelectedImage("");
-  };
-
-  if (isInitialLoading) {
-    return (
-      <Layout title={title} showSideMenu={true}>
-        <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 flex items-center justify-center">
-          <div className="text-center">
-            <div className="relative">
-              <div className="w-20 h-20 border-4 border-blue-500/30 rounded-full animate-spin"></div>
-              <div className="absolute top-2 left-2 w-16 h-16 border-4 border-t-blue-500 rounded-full animate-spin"></div>
-            </div>
-            <p className="text-gray-400 mt-6 text-lg">正在載入產品資訊...</p>
+  // 列表區：依狀態顯示骨架、錯誤卡、空狀態或商品
+  const renderProducts = () => {
+    if (isInitialLoading) {
+      return (
+        <>
+          <p aria-live="polite" className="mt-6 text-label text-ink-muted">
+            正在載入產品資訊...
+          </p>
+          <div className={listLayoutClass}>
+            {Array.from({ length: SKELETON_COUNT }, (_, i) => (
+              <ProductCardSkeleton key={i} variant={viewMode} />
+            ))}
           </div>
-        </div>
-      </Layout>
+        </>
+      );
+    }
+    if (status === "error") {
+      return <ErrorCard error={error} onRetry={retry} />;
+    }
+    if (status === "success" && items.length === 0) {
+      return <EmptyState />;
+    }
+    return (
+      <div
+        aria-busy={isRefreshing}
+        className={`transition-opacity duration-200 ${
+          isRefreshing ? "pointer-events-none opacity-60" : ""
+        } ${listLayoutClass}`}
+      >
+        {items.map((product, i) => (
+          <ProductCard
+            key={product.id}
+            product={product}
+            variant={viewMode}
+            index={i}
+          />
+        ))}
+      </div>
     );
-  }
+  };
 
   return (
-    <Layout title={title} showSideMenu={true}>
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 relative">
-        {/* 背景裝飾 */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute top-20 right-20 w-64 h-64 bg-blue-500/5 rounded-full blur-3xl"></div>
-          <div className="absolute bottom-20 left-20 w-64 h-64 bg-purple-500/5 rounded-full blur-3xl"></div>
-        </div>
-
-        {/* Header Section */}
-        <div className="relative border-b border-white/10">
-          <div className="max-w-7xl mx-auto px-6 py-20">
-            <div className="flex items-start justify-between">
-              <div className="flex-1">
-                <div className="flex items-center space-x-6 mb-6">
-                  {icon && (
-                    <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-500 rounded-2xl flex items-center justify-center shadow-lg">
-                      {icon}
-                    </div>
-                  )}
-                  <div>
-                    <h1 className="text-5xl md:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400 mb-2">
-                      {title}
-                    </h1>
-                    <div className="h-1.5 w-40 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full"></div>
-                  </div>
-                </div>
-
-                {description && (
-                  <p className="text-xl text-gray-300 max-w-3xl leading-relaxed">
-                    {description}
-                  </p>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* 控制欄 */}
-        <div className="max-w-7xl mx-auto px-6 py-8">
-          <div
-            className={`flex flex-col sm:flex-row items-center gap-4 ${
-              sortLocked ? "sm:justify-end" : "justify-between"
-            }`}
-          >
-            {!sortLocked && (
-              <div className="flex items-center space-x-4">
-                <span className="text-gray-400">排序方式：</span>
-                <select
-                  value={sortBy}
-                  onChange={(e) => setSortBy(e.target.value as ProductSort)}
-                  disabled={isRefreshing}
-                  className="bg-slate-800 text-white border border-white/20 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500"
-                >
-                  <option value="name">依名稱</option>
-                  <option value="newest">最新優先</option>
-                </select>
-              </div>
-            )}
-
-            <div className="flex items-center space-x-2">
-              <span className="text-gray-400 text-sm">檢視方式：</span>
-              <div className="flex bg-slate-800 rounded-lg p-1">
-                <button
-                  type="button"
-                  onClick={() => setViewMode("grid")}
-                  aria-label="格狀檢視"
-                  aria-pressed={viewMode === "grid"}
-                  className={`p-2 rounded-md transition-all ${
-                    viewMode === "grid"
-                      ? "bg-blue-500 text-white"
-                      : "text-gray-400 hover:text-white"
-                  }`}
-                >
-                  <svg
-                    className="w-4 h-4"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"
-                    />
-                  </svg>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setViewMode("list")}
-                  aria-label="列表檢視"
-                  aria-pressed={viewMode === "list"}
-                  className={`p-2 rounded-md transition-all ${
-                    viewMode === "list"
-                      ? "bg-blue-500 text-white"
-                      : "text-gray-400 hover:text-white"
-                  }`}
-                >
-                  <svg
-                    className="w-4 h-4"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M4 6h16M4 10h16M4 14h16M4 18h16"
-                    />
-                  </svg>
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Products Section */}
-        <div className="max-w-7xl mx-auto px-6 pb-12">
-          {status === "error" ? (
-            <ErrorCard error={error} onRetry={retry} />
-          ) : status === "success" && items.length === 0 ? (
-            <div className="text-center py-20">
-              <div className="w-32 h-32 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-8">
-                <svg
-                  className="w-16 h-16 text-gray-400"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2 2m16-7V9a2 2 0 00-2-2H6a2 2 0 00-2 2v4"
-                  />
-                </svg>
-              </div>
-              <h3 className="text-3xl font-semibold text-gray-300 mb-4">
-                目前沒有商品
-              </h3>
-              <p className="text-gray-500 text-base">
-                此分類目前沒有上架的商品
-              </p>
-            </div>
-          ) : (
-            <div
-              aria-busy={isRefreshing}
-              className={`transition-opacity duration-200 ${
-                isRefreshing ? "opacity-50 pointer-events-none" : ""
-              } ${
-                viewMode === "grid"
-                  ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8"
-                  : "space-y-6"
-              }`}
-            >
-              {items.map((product) => (
-                <ProductCard
-                  key={product.id}
-                  product={product}
-                  variant={viewMode}
-                  onImageClick={handleImageClick}
-                />
-              ))}
-            </div>
-          )}
-
-          {status === "success" && truncated && (
-            <p className="text-sm text-gray-500 text-center mt-8">
-              {`僅顯示前 ${PRODUCT_LIMIT} 項商品`}
+    <Layout footer="thanks">
+      {/* 標題區：左側 h1＋副行，右側檢視切換與排序 */}
+      <div className="flex flex-col gap-4 pt-8 md:flex-row md:items-end md:justify-between xl:pt-16">
+        <div>
+          <h1 className="text-display font-semibold text-ink">{title}</h1>
+          {hasItems && (
+            <p className="mt-2 text-body text-ink-muted">
+              {/* 截斷時 items.length 只是上限，不顯示數量以免與頁底截斷提示矛盾 */}
+              {!truncated && `共 ${items.length} 項。`}
+              看到喜歡的，直接打電話問最快。
             </p>
           )}
         </div>
-
-        {/* Image Modal */}
-        <ImageModal
-          show={showImageModal}
-          onHide={handleCloseModal}
-          img={selectedImage}
-        />
+        <div className="flex flex-wrap items-center gap-2">
+          <button
+            type="button"
+            onClick={() => setViewMode("grid")}
+            aria-label="格狀檢視"
+            aria-pressed={viewMode === "grid"}
+            className={`${VIEW_BUTTON_CLASS} ${
+              viewMode === "grid" ? VIEW_BUTTON_ACTIVE_CLASS : ""
+            }`}
+          >
+            格狀
+          </button>
+          <button
+            type="button"
+            onClick={() => setViewMode("list")}
+            aria-label="列表檢視"
+            aria-pressed={viewMode === "list"}
+            className={`${VIEW_BUTTON_CLASS} ${
+              viewMode === "list" ? VIEW_BUTTON_ACTIVE_CLASS : ""
+            }`}
+          >
+            列表
+          </button>
+          {!sortLocked && (
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value as ProductSort)}
+              disabled={isRefreshing}
+              aria-label="排序方式"
+              className="h-11 rounded-pill border border-dash bg-surface-raised px-4 text-body text-ink"
+            >
+              <option value="name">依名稱</option>
+              <option value="newest">最新優先</option>
+            </select>
+          )}
+        </div>
       </div>
+
+      {/* 分類 chip 列（取代舊側邊選單） */}
+      <div className="mt-6">
+        <CategoryChips />
+      </div>
+
+      {renderProducts()}
+
+      {status === "success" && truncated && (
+        <p className="mt-4 text-center text-label text-ink-muted">
+          {`僅顯示前 ${PRODUCT_LIMIT} 項商品`}
+        </p>
+      )}
+
+      {hasItems && <AskUsSection />}
     </Layout>
   );
 };

@@ -1,7 +1,8 @@
 import type { ReactNode } from "react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, within } from "@testing-library/react";
-import { MemoryRouter } from "react-router-dom";
+import userEvent from "@testing-library/user-event";
+import { MemoryRouter, Route, Routes, useParams } from "react-router-dom";
 import HomePage from "./HomePage";
 import { fetchProducts } from "../services/products";
 import type { ProductListResult } from "../services/products";
@@ -52,11 +53,36 @@ function renderPage() {
   );
 }
 
-/** 以標題文字找到該組輪播所在的區塊 */
-function getSection(title: string): HTMLElement {
-  const section = screen.getByText(title).closest("div.space-y-8");
-  if (!section) throw new Error(`找不到區塊：${title}`);
-  return section as HTMLElement;
+/** 以 role=group 的名稱找到該組輪播所在的區塊 */
+function getSection(name: string): HTMLElement {
+  return screen.getByRole("group", { name });
+}
+
+/** 詳情頁探針：顯示路由參數，用來斷言導向路徑 */
+const DetailProbe = () => {
+  const { id } = useParams();
+  return <p>詳情頁 {id}</p>;
+};
+
+/** 以首頁＋詳情探針路由渲染，可斷言點便條卡後的路徑 */
+function renderPageWithDetailRoute() {
+  return render(
+    <MemoryRouter initialEntries={["/"]}>
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/products/:id" element={<DetailProbe />} />
+      </Routes>
+    </MemoryRouter>
+  );
+}
+
+/** 兩組熱銷各回一筆：featured=1 為熱銷一號（a）、featured=2 為熱銷二號（b） */
+function mockTwoGroups() {
+  mockFetch.mockImplementation(async (params) =>
+    params.featured === "1"
+      ? makeResult([makeProduct({ id: "a", name: "熱銷一號" })])
+      : makeResult([makeProduct({ id: "b", name: "熱銷二號" })])
+  );
 }
 
 beforeEach(() => {
@@ -88,13 +114,17 @@ describe("HomePage 熱銷輪播資料來源", () => {
     expect(within(hot).queryByText("熱銷二號")).toBeNull();
   });
 
-  it("首頁不顯示價格與價格洽詢", async () => {
+  it("便條卡有價顯示 priceText、無價顯示價格請來電，且不出現價格洽詢", async () => {
     mockFetch.mockResolvedValue(
-      makeResult([makeProduct({ priceMin: 100, priceText: "NT$ 9,999" })])
+      makeResult([
+        makeProduct({ id: "a", priceMin: 100, priceText: "NT$ 9,999" }),
+        makeProduct({ id: "b", name: "無價商品" }),
+      ])
     );
     renderPage();
     await screen.findAllByText("商品一");
-    expect(screen.queryByText(/9,999/)).toBeNull();
+    expect(screen.getAllByText("NT$ 9,999").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("價格請來電").length).toBeGreaterThan(0);
     expect(screen.queryByText("價格洽詢")).toBeNull();
   });
 
@@ -138,7 +168,102 @@ describe("HomePage 兩組輪播互相獨立", () => {
     mockFetch.mockResolvedValue(makeResult([]));
     renderPage();
     expect(await screen.findAllByText("目前沒有精選商品")).toHaveLength(2);
-    expect(screen.getByText("熱門推薦系列")).toBeInTheDocument();
-    expect(screen.getByText("頂級精選系列")).toBeInTheDocument();
+    expect(
+      screen.getByRole("group", { name: "熱門推薦系列" })
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("group", { name: "頂級精選系列" })
+    ).toBeInTheDocument();
+  });
+});
+
+describe("HomePage 版面", () => {
+  beforeEach(() => {
+    mockFetch.mockResolvedValue(makeResult([]));
+  });
+
+  it("h1 含來問我們就對了", async () => {
+    renderPage();
+    await screen.findAllByText("目前沒有精選商品");
+    expect(
+      screen.getByRole("heading", { level: 1, name: /來問我們就對了/ })
+    ).toBeInTheDocument();
+  });
+
+  it("逛逛商品連到 /all-products", async () => {
+    renderPage();
+    await screen.findAllByText("目前沒有精選商品");
+    expect(screen.getByRole("link", { name: /逛逛商品/ })).toHaveAttribute(
+      "href",
+      "/all-products"
+    );
+  });
+
+  it("hero 電話連結 href 為 tel:04-22798787", async () => {
+    renderPage();
+    await screen.findAllByText("目前沒有精選商品");
+    const hero = screen.getByRole("region", { name: /來問我們就對了/ });
+    expect(
+      within(hero).getByRole("link", { name: "(04) 2279-8787" })
+    ).toHaveAttribute("href", "tel:04-22798787");
+  });
+
+  it("4 張分類貼紙卡 href 依序為 /wired-micphone、/wireless-micphone、/trumpet、/accessories", async () => {
+    renderPage();
+    await screen.findAllByText("目前沒有精選商品");
+    const categories = screen.getByRole("region", { name: "想找什麼？" });
+    const hrefs = within(categories)
+      .getAllByRole("link")
+      .map((link) => link.getAttribute("href"));
+    expect(hrefs).toEqual([
+      "/wired-micphone",
+      "/wireless-micphone",
+      "/trumpet",
+      "/accessories",
+    ]);
+  });
+
+  it("店面照片預留位 role=img 名稱為店面照片（待提供）", async () => {
+    renderPage();
+    await screen.findAllByText("目前沒有精選商品");
+    expect(
+      screen.getByRole("img", { name: "店面照片（待提供）" })
+    ).toBeInTheDocument();
+  });
+
+  it("熱銷 h2 為這陣子大家都在問", async () => {
+    renderPage();
+    await screen.findAllByText("目前沒有精選商品");
+    expect(
+      screen.getByRole("heading", { level: 2, name: "這陣子大家都在問" })
+    ).toBeInTheDocument();
+  });
+});
+
+describe("HomePage 便條卡連到詳情頁", () => {
+  it("兩組便條卡各自連到對應商品的 /products/{id}", async () => {
+    mockTwoGroups();
+    renderPage();
+    const hot = getSection("熱門推薦系列");
+    const top = getSection("頂級精選系列");
+    expect(
+      await within(hot).findByRole("link", { name: "查看 熱銷一號 詳情" })
+    ).toHaveAttribute("href", "/products/a");
+    expect(
+      await within(top).findByRole("link", { name: "查看 熱銷二號 詳情" })
+    ).toHaveAttribute("href", "/products/b");
+    expect(
+      within(hot).queryByRole("link", { name: "查看 熱銷二號 詳情" })
+    ).toBeNull();
+  });
+
+  it("點便條卡導向詳情頁", async () => {
+    const user = userEvent.setup();
+    mockTwoGroups();
+    renderPageWithDetailRoute();
+    await user.click(
+      await screen.findByRole("link", { name: "查看 熱銷一號 詳情" })
+    );
+    expect(await screen.findByText("詳情頁 a")).toBeInTheDocument();
   });
 });

@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<title>KRD 商品列表・C5a 手機</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+a{color:#F0A04B}a:hover{color:#F6BC7C}
+</style>
+</helmet>
+<div style="width: 390px; height: 1700px; box-sizing: border-box; position: relative; background: #27303B; color: #EEF1F5; font-family: 'PingFang TC', 'Microsoft JhengHei', '微軟正黑體', 'Noto Sans TC', system-ui, sans-serif; font-size: 17px; line-height: 1.6; display: flex; flex-direction: column; gap: 28px; padding: 16px 16px 96px">
+
+  <header style="background: #323C49; border-radius: 9999px; padding: 6px 6px 6px 20px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 4px 0 #3A4553">
+    <img src="/_blob/695e3cc6992961f7402c7287abc08b37" alt="KRD" style="height: 26px; width: auto">
+    <button aria-label="開啟選單" aria-expanded="false" style="width: 44px; height: 44px; border-radius: 9999px; border: none; background: #5A4A1E; display: flex; align-items: center; justify-content: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#EEF1F5" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M5 7h14M5 12h10M5 17h14"></path></svg></button>
+  </header>
+
+  <section style="display: flex; flex-direction: column; gap: 20px">
+    <div style="display: flex; justify-content: space-between; align-items: flex-end; gap: 24px">
+      <div style="display: flex; flex-direction: column; gap: 4px">
+        <h1 style="margin: 0; font-size: 32px; line-height: 1.2; font-weight: 600">所有商品</h1>
+        <span style="color: #B9C2CD">共 20 項。看到喜歡的，直接打電話問最快。</span>
+      </div>
+    </div>
+    <nav aria-label="商品分類" style="display: flex; gap: 8px; overflow-x: auto; margin: 0 -16px; padding: 0 16px 4px; white-space: nowrap">
+      <sc-for list="{{ chips }}" as="c" hint-placeholder-count="8">
+        <sc-if value="{{ c.on }}" hint-placeholder-val="{{ false }}"><a href="#" aria-current="page" style="height: 44px; padding: 0 16px; flex-shrink: 0; display: inline-flex; align-items: center; border-radius: 9999px; background: #F0A04B; color: #1C232C; font-weight: 600; text-decoration: none">{{ c.name }}</a></sc-if>
+        <sc-if value="{{ c.off }}" hint-placeholder-val="{{ true }}"><a href="#" style="height: 44px; padding: 0 16px; flex-shrink: 0; display: inline-flex; align-items: center; border-radius: 9999px; background: #323C49; border: 1px solid #5A6676; color: #EEF1F5; text-decoration: none">{{ c.name }}</a></sc-if>
+      </sc-for>
+    </nav>
+  </section>
+
+  <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px">
+    <sc-for list="{{ items }}" as="p" hint-placeholder-count="8">
+      <a href="#" style="background: #323C49; border-radius: 16px; padding: 10px; display: flex; flex-direction: column; gap: 6px; text-decoration: none; color: #EEF1F5; transform: rotate({{ p.tilt }}); box-shadow: 0 6px 0 rgba(0,0,0,0.3); outline: {{ p.outline }}; outline-offset: 3px">
+        <div style="aspect-ratio: 1 / 1; background: #FFFFFF; border-radius: 14px; display: flex; align-items: center; justify-content: center">
+          <svg width="64" height="64" viewBox="0 0 64 64" fill="none" stroke="#A9B0BA" stroke-width="1.5" aria-hidden="true"><rect x="24" y="6" width="16" height="28" rx="8"></rect><path d="M18 26v2a14 14 0 0 0 28 0v-2"></path><path d="M32 42v10M24 56h16"></path></svg>
+        </div>
+        <span style="font-size: 15px; color: #B9C2CD">{{ p.brand }}</span>
+        <span style="font-size: 16px; font-weight: 600; line-height: 1.35; min-height: 44px">{{ p.name }}</span>
+        <span style="display: flex; flex-wrap: wrap; gap: 8px">
+          <sc-if value="{{ p.noPrice }}" hint-placeholder-val="{{ true }}"><span style="background: #3A4A5E; border-radius: 9999px; padding: 2px 12px; font-size: 15px">價格請來電</span></sc-if>
+          <sc-if value="{{ p.hasPrice }}" hint-placeholder-val="{{ false }}"><span style="font-size: 17px; font-weight: 600">{{ p.price }}</span></sc-if>
+          <sc-if value="{{ p.out }}" hint-placeholder-val="{{ false }}"><span style="background: #5A4A1E; border-radius: 9999px; padding: 2px 12px; font-size: 15px">洽詢交期</span></sc-if>
+        </span>
+      </a>
+    </sc-for>
+  </div>
+
+  
+  <p style="margin: auto 0 0; text-align: center; font-size: 15px; color: #B9C2CD">© KRD・謝謝你逛到這裡</p>
+  <a href="#" style="position: absolute; left: 16px; right: 16px; bottom: 16px; height: 60px; display: flex; align-items: center; justify-content: center; gap: 8px; background: #F0A04B; color: #1C232C; border-radius: 9999px; font-weight: 600; font-size: 18px; text-decoration: none; box-shadow: 0 6px 0 #F6BC7C"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"></path></svg>打電話問問</a>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":1700}}'>
+class Component extends DCLogic {
+renderVals() {
+  const chips = ['所有商品', '最新商品', 'MICGO', 'KRD', '有線麥克風', '無線麥克風', '擴大機 / 喇叭', '配件'].map((name, i) => ({ name, on: i === 0, off: i !== 0 }));
+  const raw = [
+    { brand: 'MICGO', name: 'UHF 雙頻無線手持麥克風組', tilt: '-0.8deg' },
+    { brand: 'KRD', name: '有線動圈麥克風（附 5 公尺線）', tilt: '0.6deg', hover: true },
+    { brand: 'KRD', name: '會議用鵝頸麥克風', tilt: '-0.4deg', out: true },
+    { brand: 'KRD', name: '號角喇叭 30W', tilt: '0.8deg' },
+    { brand: 'MICGO', name: 'PA 擴大機 120W', tilt: '0.5deg', price: 'NT$ 8,800 起' },
+    { brand: 'MICGO', name: '頭戴式無線麥克風', tilt: '-0.7deg', out: true },
+    { brand: 'KRD', name: '麥克風防風罩（5 入）', tilt: '0.4deg' },
+    { brand: 'KRD', name: '壁掛喇叭 20W（一對）', tilt: '-0.6deg' },
+  ];
+  const items = raw.slice(0, 6).map((p) => ({ ...p, noPrice: !p.price, hasPrice: !!p.price, price: p.price || '', out: !!p.out, outline: p.hover ? '2px solid #F0A04B' : 'none' }));
+  return { chips, items };
+}
+}
+</script>
+</body>
+</html>

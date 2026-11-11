@@ -10,7 +10,6 @@
 - Fix approach: 以設定陣列（path/title/tableName/description/icon）`map` 產生路由，圖示抽成獨立元件或檔案。
 
 **其他:**
-- `package.json` 同時有 `tailwindcss ^3.4.0` 與 `@tailwindcss/postcss ^4.1.7`（版本混用），且 `@types/react-router-dom ^5` 與 react-router-dom v6 不符（v6 自帶型別）。
 - `index.html` title 僅 "KRD"，無 meta description。
 - `README.md` 可能仍為 Vite 範本內容；`package.json` version `0.0.0`。
 
@@ -66,11 +65,7 @@
 
 ## Dependencies at Risk
 
-**`@types/react-router-dom ^5.3.3`:**
-- Risk: 與 react-router-dom v6 不相容的過時型別，可能誤導型別。Migration: 移除。
-
-**Tailwind v3 / v4 混用:**
-- Risk: `tailwindcss ^3.4.0` 搭配 `@tailwindcss/postcss`（v4 專用）；`postcss.config.js` 與 `tailwind.config.js` 設定可能不一致，升級時易壞。Migration: 統一至 v4 或 v3。
+- 目前無（兩個未使用的 devDependencies 已於 Phase 6 移除，見 MAINT-01）
 
 ## Missing Critical Features
 

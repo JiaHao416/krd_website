@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<title>KRD 商品列表・C5a 平板</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+a{color:#F0A04B}a:hover{color:#F6BC7C}
+</style>
+</helmet>
+<div style="width: 768px; height: 1500px; box-sizing: border-box; background: #27303B; color: #EEF1F5; font-family: 'PingFang TC', 'Microsoft JhengHei', '微軟正黑體', 'Noto Sans TC', system-ui, sans-serif; font-size: 17px; line-height: 1.6; display: flex; flex-direction: column; gap: 40px; padding: 16px 24px 32px">
+
+  <header style="background: #323C49; border-radius: 9999px; padding: 8px 8px 8px 24px; display: flex; align-items: center; gap: 24px; box-shadow: 0 6px 0 #3A4553">
+    <img src="/_blob/695e3cc6992961f7402c7287abc08b37" alt="KRD" style="height: 30px; width: auto">
+    <nav aria-label="主選單" style="display: flex; gap: 8px; flex-grow: 1">
+      <a href="#" aria-current="page" style="height: 44px; padding: 0 16px; display: inline-flex; align-items: center; border-radius: 9999px; background: #3A4A5E; color: #EEF1F5; font-weight: 600; text-decoration: none">逛商品</a>
+      <a href="#" style="height: 44px; padding: 0 16px; display: inline-flex; align-items: center; border-radius: 9999px; color: #EEF1F5; text-decoration: none">關於我們</a>
+    </nav>
+    <a href="#" style="height: 48px; padding: 0 24px; display: inline-flex; align-items: center; gap: 8px; background: #F0A04B; color: #1C232C; border-radius: 9999px; font-weight: 600; text-decoration: none">打電話問問</a>
+  </header>
+
+  <section style="display: flex; flex-direction: column; gap: 20px">
+    <div style="display: flex; justify-content: space-between; align-items: flex-end; gap: 24px">
+      <div style="display: flex; flex-direction: column; gap: 4px">
+        <h1 style="margin: 0; font-size: 40px; line-height: 1.2; font-weight: 600">所有商品</h1>
+        <span style="color: #B9C2CD">共 20 項。看到喜歡的，直接打電話問最快。</span>
+      </div>
+    </div>
+    <nav aria-label="商品分類" style="display: flex; flex-wrap: wrap; gap: 12px">
+      <sc-for list="{{ chips }}" as="c" hint-placeholder-count="8">
+        <sc-if value="{{ c.on }}" hint-placeholder-val="{{ false }}"><a href="#" aria-current="page" style="height: 44px; padding: 0 20px; display: inline-flex; align-items: center; border-radius: 9999px; background: #F0A04B; color: #1C232C; font-weight: 600; text-decoration: none">{{ c.name }}</a></sc-if>
+        <sc-if value="{{ c.off }}" hint-placeholder-val="{{ true }}"><a href="#" style="height: 44px; padding: 0 20px; display: inline-flex; align-items: center; border-radius: 9999px; background: #323C49; border: 1px solid #5A6676; color: #EEF1F5; text-decoration: none">{{ c.name }}</a></sc-if>
+      </sc-for>
+    </nav>
+  </section>
+
+  <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px">
+    <sc-for list="{{ items }}" as="p" hint-placeholder-count="8">
+      <a href="#" style="background: #323C49; border-radius: 20px; padding: 16px; display: flex; flex-direction: column; gap: 10px; text-decoration: none; color: #EEF1F5; transform: rotate({{ p.tilt }}); box-shadow: 0 6px 0 rgba(0,0,0,0.3); outline: {{ p.outline }}; outline-offset: 3px">
+        <div style="aspect-ratio: 1 / 1; background: #FFFFFF; border-radius: 14px; display: flex; align-items: center; justify-content: center">
+          <svg width="88" height="88" viewBox="0 0 64 64" fill="none" stroke="#A9B0BA" stroke-width="1.5" aria-hidden="true"><rect x="24" y="6" width="16" height="28" rx="8"></rect><path d="M18 26v2a14 14 0 0 0 28 0v-2"></path><path d="M32 42v10M24 56h16"></path></svg>
+        </div>
+        <span style="font-size: 15px; color: #B9C2CD">{{ p.brand }}</span>
+        <span style="font-size: 18px; font-weight: 600; line-height: 1.35; min-height: 48px">{{ p.name }}</span>
+        <span style="display: flex; flex-wrap: wrap; gap: 8px">
+          <sc-if value="{{ p.noPrice }}" hint-placeholder-val="{{ true }}"><span style="background: #3A4A5E; border-radius: 9999px; padding: 2px 12px; font-size: 15px">價格請來電</span></sc-if>
+          <sc-if value="{{ p.hasPrice }}" hint-placeholder-val="{{ false }}"><span style="font-size: 17px; font-weight: 600">{{ p.price }}</span></sc-if>
+          <sc-if value="{{ p.out }}" hint-placeholder-val="{{ false }}"><span style="background: #5A4A1E; border-radius: 9999px; padding: 2px 12px; font-size: 15px">洽詢交期</span></sc-if>
+        </span>
+      </a>
+    </sc-for>
+  </div>
+
+  <section aria-label="聯絡我們" style="margin-top: auto; background: #3A4A5E; border-radius: 32px; padding: 24px; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 24px">
+    <div style="display: flex; flex-direction: column"><span style="font-size: 22px; font-weight: 600">找不到想要的？</span><span style="color: #B9C2CD">我們店裡還有很多沒放上來，打個電話問最快。</span></div>
+    <a href="#" style="height: 56px; padding: 0 32px; display: inline-flex; align-items: center; background: #F0A04B; color: #1C232C; border-radius: 9999px; font-weight: 600; font-size: 20px; text-decoration: none; box-shadow: 0 6px 0 #B5732E">(04) 2279-8787</a>
+  </section>
+  <p style="margin: 0; text-align: center; font-size: 15px; color: #B9C2CD">© KRD・謝謝你逛到這裡</p>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":768,"height":1500}}'>
+class Component extends DCLogic {
+renderVals() {
+  const chips = ['所有商品', '最新商品', 'MICGO', 'KRD', '有線麥克風', '無線麥克風', '擴大機 / 喇叭', '配件'].map((name, i) => ({ name, on: i === 0, off: i !== 0 }));
+  const raw = [
+    { brand: 'MICGO', name: 'UHF 雙頻無線手持麥克風組', tilt: '-0.8deg' },
+    { brand: 'KRD', name: '有線動圈麥克風（附 5 公尺線）', tilt: '0.6deg', hover: true },
+    { brand: 'KRD', name: '會議用鵝頸麥克風', tilt: '-0.4deg', out: true },
+    { brand: 'KRD', name: '號角喇叭 30W', tilt: '0.8deg' },
+    { brand: 'MICGO', name: 'PA 擴大機 120W', tilt: '0.5deg', price: 'NT$ 8,800 起' },
+    { brand: 'MICGO', name: '頭戴式無線麥克風', tilt: '-0.7deg', out: true },
+    { brand: 'KRD', name: '麥克風防風罩（5 入）', tilt: '0.4deg' },
+    { brand: 'KRD', name: '壁掛喇叭 20W（一對）', tilt: '-0.6deg' },
+  ];
+  const items = raw.slice(0, 6).map((p) => ({ ...p, noPrice: !p.price, hasPrice: !!p.price, price: p.price || '', out: !!p.out, outline: p.hover ? '2px solid #F0A04B' : 'none' }));
+  return { chips, items };
+}
+}
+</script>
+</body>
+</html>
