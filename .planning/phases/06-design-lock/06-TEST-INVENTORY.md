@@ -46,6 +46,11 @@ diff <(npx vitest list 2>/dev/null | sed 's/^\[[^]]*\] //' | LC_ALL=C sort) \
 | `src/services/client.test.ts` | unit | 6 | 6 | 0 | 無 |
 | `src/config/navigation.test.ts` | unit | 4 | 4 | 0 | 無 |
 | `src/noAirtable.test.ts` | unit | 7 | 7 | 0 | 無 |
+| `src/pages/ProductPageTemplate.test.tsx` | component | 17 | 16 | 1 | 8、10 |
+| `src/hooks/useProducts.test.tsx` | component | 13 | 13 | 0 | 無 |
+| `src/App.test.tsx` | component | 11 | 11 | 0 | 8 |
+| `src/pages/HomePage.test.tsx` | component | 7 | 6 | 1 | 8 |
+| `src/pages/AboutPage.test.tsx` | component | 3 | 3 | 0 | 8 |
 
 ## 逐條清單：資料層與低影響檔案
 
@@ -195,3 +200,83 @@ diff <(npx vitest list 2>/dev/null | sed 's/^\[[^]]*\] //' | LC_ALL=C sort) \
 | src/noAirtable.test.ts > 原始碼不得含 Airtable 痕跡 > 不含 舊式 API key 格式 | 契約 | 憑證掃描 | 無 | 保留 |  |
 | src/noAirtable.test.ts > 規則與 scripts/check-dist.mjs 一致 > 兩邊的 FORBIDDEN 清單逐條相同（名稱、regex 與 flags） | 契約 | 憑證掃描 | 無 | 保留 |  |
 
+### src/pages/ProductPageTemplate.test.tsx（17 項，component）
+
+| 測試（vitest list 全名） | 分類 | 契約類型 | 影響 phase | 預定處置 | 備註 |
+|---|---|---|---|---|---|
+| src/pages/ProductPageTemplate.test.tsx > ProductPageTemplate 基本載入與卡片 > 請求進行中顯示「正在載入產品資訊...」 | 契約 | 狀態機／計時 | 8 | 調整斷言 | 文案可隨設計調整；新字串由 Phase 8 決定，見〈待 Phase 8 決定〉A2 |
+| src/pages/ProductPageTemplate.test.tsx > ProductPageTemplate 基本載入與卡片 > 顯示兩筆商品名稱 | 契約 | 資料轉換 | 8 | 保留 | 商品名稱顯示 |
+| src/pages/ProductPageTemplate.test.tsx > ProductPageTemplate 基本載入與卡片 > 有圖商品的 img alt 為商品名稱、src 為 imageUrl | 契約 | role、accessible name | 8 | 保留 | img alt 為商品名稱 |
+| src/pages/ProductPageTemplate.test.tsx > ProductPageTemplate 基本載入與卡片 > 點有圖卡片會開燈箱顯示該圖 | 契約 | role、accessible name | 10 | 調整斷言 | Phase 10 依 LINK-01 改為整張卡連到 /products/{id}，燈箱移到詳情頁主圖 |
+| src/pages/ProductPageTemplate.test.tsx > ProductPageTemplate 基本載入與卡片 > 缺圖商品顯示「暫無圖片」佔位圖，點擊不開燈箱 | 契約 | role、accessible name | 10 | 調整斷言 | Phase 10 依 LINK-01 改為整張卡連到 /products/{id}，燈箱移到詳情頁主圖 |
+| src/pages/ProductPageTemplate.test.tsx > ProductPageTemplate 排序 > query 鎖定 newest 時不顯示排序下拉 | 契約 | role、狀態機／計時 | 8 | 保留 |  |
+| src/pages/ProductPageTemplate.test.tsx > ProductPageTemplate 排序 > 一般頁面選「最新優先」會以 sort=newest 重新呼叫後端 | 契約 | role、狀態機／計時 | 8 | 保留 |  |
+| src/pages/ProductPageTemplate.test.tsx > ProductPageTemplate 錯誤、空、淡化與截斷狀態 > rate_limited 顯示錯誤卡片與友善文案，不洩漏後端原文 | 契約 | 錯誤狀態 | 8 | 調整斷言 | 不洩漏後端原文為契約；429 文案可調整，新字串「現在逛的人有點多，等幾秒再試一次。」 |
+| src/pages/ProductPageTemplate.test.tsx > ProductPageTemplate 錯誤、空、淡化與截斷狀態 > 點「重新載入」會再呼叫一次 API | 契約 | 錯誤狀態 | 8 | 保留 | 重新載入 button 為 UI-SPEC 保留的 accessible name；空狀態文案可調整（新字串「這裡還沒有商品」） |
+| src/pages/ProductPageTemplate.test.tsx > ProductPageTemplate 錯誤、空、淡化與截斷狀態 > 查詢成功但沒有商品顯示空狀態，不出現「請稍後再試」 | 契約 | 錯誤狀態 | 8 | 調整斷言 | 文案可隨設計調整；空狀態新字串「這裡還沒有商品」 |
+| src/pages/ProductPageTemplate.test.tsx > ProductPageTemplate 錯誤、空、淡化與截斷狀態 > 切換排序時保留舊列表並淡化，不顯示整頁 spinner | 契約 | aria 狀態、狀態機／計時 | 8 | 保留 | aria-busy 為契約；淡化樣式斷言為呈現成分，可調整 |
+| src/pages/ProductPageTemplate.test.tsx > ProductPageTemplate 錯誤、空、淡化與截斷狀態 > 切換排序後失敗顯示錯誤卡片 | 契約 | 錯誤狀態 | 8 | 保留 |  |
+| src/pages/ProductPageTemplate.test.tsx > ProductPageTemplate 錯誤、空、淡化與截斷狀態 > truncated 為 true 時顯示截斷提示，false 時不顯示 | 契約 | 狀態機／計時 | 8 | 調整斷言 | 截斷提示存在與否為契約；新字串由 Phase 8 決定，見〈待 Phase 8 決定〉A2 |
+| src/pages/ProductPageTemplate.test.tsx > ProductPageTemplate 錯誤、空、淡化與截斷狀態 > network 錯誤顯示連線文案 | 契約 | 錯誤狀態 | 8 | 調整斷言 | 連線文案可隨設計調整；錯誤狀態為契約 |
+| src/pages/ProductPageTemplate.test.tsx > ProductPageTemplate 價格、檢視切換與鍵盤 > 同時顯示有價商品的 priceText 與無價商品的「價格洽詢」 | 呈現 | — | 8 | 調整斷言 | 價格洽詢文字斷言；UI-SPEC 新字串「價格請來電」；priceText（NT$…）保留 |
+| src/pages/ProductPageTemplate.test.tsx > ProductPageTemplate 價格、檢視切換與鍵盤 > 切換列表檢視後 aria-pressed 更新，且仍顯示價格行 | 契約 | role、accessible name、aria 狀態 | 8 | 保留 | 格狀檢視／列表檢視為 UI-SPEC 保留功能；Phase 8 驗證 aria-label 沿用 |
+| src/pages/ProductPageTemplate.test.tsx > ProductPageTemplate 價格、檢視切換與鍵盤 > 有圖卡片以 Enter 開啟燈箱 | 契約 | role、accessible name | 10 | 調整斷言 | Phase 10 依 LINK-01 改為整張卡連到 /products/{id}，燈箱移到詳情頁主圖 |
+
+### src/hooks/useProducts.test.tsx（13 項，component）
+
+| 測試（vitest list 全名） | 分類 | 契約類型 | 影響 phase | 預定處置 | 備註 |
+|---|---|---|---|---|---|
+| src/hooks/useProducts.test.tsx > useProducts > 請求進行中 status 為 loading | 契約 | 狀態機／計時 | 無 | 保留 | 與 UI 無關 |
+| src/hooks/useProducts.test.tsx > useProducts > 成功時回傳商品與 truncated | 契約 | 資料轉換 | 無 | 保留 | 與 UI 無關 |
+| src/hooks/useProducts.test.tsx > useProducts > 失敗時 status 為 error 並保留 ApiError | 契約 | 狀態機／計時 | 無 | 保留 | 與 UI 無關 |
+| src/hooks/useProducts.test.tsx > useProducts > 空結果仍是 success 且 items 為空 | 契約 | 狀態機／計時 | 無 | 保留 | 與 UI 無關 |
+| src/hooks/useProducts.test.tsx > useProducts > retry 會再次呼叫 fetchProducts 並回到 loading | 契約 | 狀態機／計時 | 無 | 保留 | 與 UI 無關 |
+| src/hooks/useProducts.test.tsx > useProducts > retry 後第二次成功會變成 success | 契約 | 狀態機／計時 | 無 | 保留 | 與 UI 無關 |
+| src/hooks/useProducts.test.tsx > useProducts > canceled 錯誤不會讓 status 變成 error | 契約 | 狀態機／計時 | 無 | 保留 | 與 UI 無關 |
+| src/hooks/useProducts.test.tsx > useProducts > 參數改變時重新抓取，等待期間保留舊 items | 契約 | 狀態機／計時 | 無 | 保留 | 與 UI 無關 |
+| src/hooks/useProducts.test.tsx > useProducts > unmount 後前一次請求的 signal 已 abort | 契約 | 狀態機／計時 | 無 | 保留 | 與 UI 無關 |
+| src/hooks/useProducts.test.tsx > useProducts > 以 buildProductParams 的結果呼叫 fetchProducts 且不傳 client | 契約 | 資料轉換 | 無 | 保留 | 與 UI 無關 |
+| src/hooks/useProducts.test.tsx > useProducts > 不快取：同參數重新掛載會再抓一次 | 契約 | 狀態機／計時 | 無 | 保留 | 與 UI 無關 |
+| src/hooks/useProducts.test.tsx > useProducts > 每次 render 傳入內容相同的新 query 物件不會重抓 | 契約 | 狀態機／計時 | 無 | 保留 | 與 UI 無關 |
+| src/hooks/useProducts.test.tsx > useProducts > StrictMode 下最終為 success，且第一次請求已被 abort | 契約 | 狀態機／計時 | 無 | 保留 | 與 UI 無關 |
+
+### src/App.test.tsx（11 項，component）
+
+| 測試（vitest list 全名） | 分類 | 契約類型 | 影響 phase | 預定處置 | 備註 |
+|---|---|---|---|---|---|
+| src/App.test.tsx > App 商品路由 > PRODUCT_PAGES 的路徑集合與舊網址完全相同 | 契約 | 路由／href | 8 | 保留 | 版面改但路由不變 |
+| src/App.test.tsx > App 商品路由 > 每個路徑都有非空 title 的 UI 設定 | 契約 | 路由／href | 8 | 保留 | 版面改但路由不變 |
+| src/App.test.tsx > App 商品路由 > /all-products 顯示頁面標題並以對應查詢呼叫後端 | 契約 | 路由／href | 8 | 保留 | 同一個 it.each；頁面標題文字取自 title，路由不變 |
+| src/App.test.tsx > App 商品路由 > /new-products 顯示頁面標題並以對應查詢呼叫後端 | 契約 | 路由／href | 8 | 保留 | 同一個 it.each；頁面標題文字取自 title，路由不變 |
+| src/App.test.tsx > App 商品路由 > /krd-products 顯示頁面標題並以對應查詢呼叫後端 | 契約 | 路由／href | 8 | 保留 | 同一個 it.each；頁面標題文字取自 title，路由不變 |
+| src/App.test.tsx > App 商品路由 > /micgo-products 顯示頁面標題並以對應查詢呼叫後端 | 契約 | 路由／href | 8 | 保留 | 同一個 it.each；頁面標題文字取自 title，路由不變 |
+| src/App.test.tsx > App 商品路由 > /wireless-micphone 顯示頁面標題並以對應查詢呼叫後端 | 契約 | 路由／href | 8 | 保留 | 同一個 it.each；頁面標題文字取自 title，路由不變 |
+| src/App.test.tsx > App 商品路由 > /wired-micphone 顯示頁面標題並以對應查詢呼叫後端 | 契約 | 路由／href | 8 | 保留 | 同一個 it.each；頁面標題文字取自 title，路由不變 |
+| src/App.test.tsx > App 商品路由 > /trumpet 顯示頁面標題並以對應查詢呼叫後端 | 契約 | 路由／href | 8 | 保留 | 同一個 it.each；頁面標題文字取自 title，路由不變 |
+| src/App.test.tsx > App 商品路由 > /accessories 顯示頁面標題並以對應查詢呼叫後端 | 契約 | 路由／href | 8 | 保留 | 同一個 it.each；頁面標題文字取自 title，路由不變 |
+| src/App.test.tsx > App 商品路由 > 從一個商品頁切到另一個商品頁時排序回到 name | 契約 | 路由／href、狀態機／計時 | 8 | 保留 | 排序控制 combobox；版面改但路由不變 |
+
+### src/pages/HomePage.test.tsx（7 項，component）
+
+| 測試（vitest list 全名） | 分類 | 契約類型 | 影響 phase | 預定處置 | 備註 |
+|---|---|---|---|---|---|
+| src/pages/HomePage.test.tsx > HomePage 熱銷輪播資料來源 > 分別以 featured=1 與 featured=2 呼叫 fetchProducts | 契約 | 資料轉換 | 無 | 保留 | 資料來源契約 |
+| src/pages/HomePage.test.tsx > HomePage 熱銷輪播資料來源 > 兩組區塊各自顯示對應 featured 的商品 | 契約 | 資料轉換 | 8 | 調整斷言 | 區塊標題取得方式隨新標題「這陣子大家都在問」調整，featured 對應的商品內容為契約 |
+| src/pages/HomePage.test.tsx > HomePage 熱銷輪播資料來源 > 首頁不顯示價格與價格洽詢 | 呈現 | — | 8 | 調整斷言 | UI-SPEC 便條卡底列顯示價格或「價格請來電」，與此斷言衝突 |
+| src/pages/HomePage.test.tsx > HomePage 熱銷輪播資料來源 > 沒有圖片的熱銷商品顯示暫無圖片佔位 | 契約 | role、accessible name | 8 | 保留 | UI-SPEC Copywriting Contract 保留「暫無圖片」 |
+| src/pages/HomePage.test.tsx > HomePage 兩組輪播互相獨立 > 一組失敗時另一組仍顯示商品 | 契約 | 錯誤狀態 | 8 | 保留 | role=alert 與空狀態為契約；區塊標題改為「這陣子大家都在問」，需確認查詢區塊的方式 |
+| src/pages/HomePage.test.tsx > HomePage 兩組輪播互相獨立 > 兩組同時 429 時各自在自己的區塊顯示錯誤 | 契約 | 錯誤狀態 | 8 | 保留 | role=alert 與空狀態為契約；區塊標題改為「這陣子大家都在問」，需確認查詢區塊的方式 |
+| src/pages/HomePage.test.tsx > HomePage 兩組輪播互相獨立 > 兩組都沒有商品時各自顯示空狀態 | 契約 | 錯誤狀態 | 8 | 保留 | role=alert 與空狀態為契約；區塊標題改為「這陣子大家都在問」，需確認查詢區塊的方式 |
+
+### src/pages/AboutPage.test.tsx（3 項，component）
+
+| 測試（vitest list 全名） | 分類 | 契約類型 | 影響 phase | 預定處置 | 備註 |
+|---|---|---|---|---|---|
+| src/pages/AboutPage.test.tsx > AboutPage 服務圖卡 > 首屏同步顯示 6 張圖卡，圖片 src 為 /abouts/*.png 且順序正確 | 契約 | 資料轉換 | 8 | 保留 | ABOUT_SERVICES 內容契約 |
+| src/pages/AboutPage.test.tsx > AboutPage 服務圖卡 > 圖卡標題 h4 依序為 卡拉OK／KTV／酒店／PUB／遊覽車／維修 | 契約 | 資料轉換 | 8 | 保留 | ABOUT_SERVICES 內容契約；heading level 為呈現成分，可隨版面調整（D-09） |
+| src/pages/AboutPage.test.tsx > AboutPage 服務圖卡 > 不再顯示載入骨架 | 契約 | 狀態機／計時 | 8 | 保留 | 不再顯示載入骨架（斷言 className，改版後同步調整） |
+
+## 待 Phase 8 決定
+
+- A1：`PRICE_ON_REQUEST` 常數值（目前「價格洽詢」）是否更動 — UI-SPEC 只在卡片顯示「價格請來電」tag；本盤點暫將 `format.test.ts` 常數斷言列為契約保留，Phase 8 決定後更新對應列。
+- A2：列表頁載入中（「正在載入產品資訊...」）與截斷提示（「僅顯示前 100 項商品」）的新字串 UI-SPEC Copywriting Contract 未列；本盤點把字串視為呈現、`aria-busy` 與截斷提示的存在視為契約，新字串由 Phase 8 決定。
