@@ -90,7 +90,7 @@ const ProductPageTemplate = ({
 
   if (isInitialLoading) {
     return (
-      <Layout title={title} showSideMenu={true}>
+      <Layout footer="thanks">
         <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 flex items-center justify-center">
           <div className="text-center">
             <div className="relative">
@@ -105,7 +105,7 @@ const ProductPageTemplate = ({
   }
 
   return (
-    <Layout title={title} showSideMenu={true}>
+    <Layout footer="thanks">
       <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 relative">
         {/* 背景裝飾 */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">

@@ -1,37 +1,38 @@
 import type { ReactNode } from "react";
 import NavBar from "./NavBar";
 import Footer from "./Footer";
-import SideMenu from "./SideMenu";
+import MobileCallBar from "./MobileCallBar";
 
 interface LayoutProps {
   children: ReactNode;
-  showSideMenu?: boolean;
-  title?: string;
+  /** 頁尾文案：首頁與列表用 thanks，其餘頁用 address */
+  footer: "thanks" | "address";
 }
 
-const Layout = ({ children, showSideMenu = false, title }: LayoutProps) => {
-  const MainContent = () => {
-    if (showSideMenu) {
-      return (
-        <div className="flex-1 flex">
-          <div className="max-w-7xl mx-auto w-full flex">
-            <SideMenu title={title} />
-            <main className="flex-1 min-h-screen">{children}</main>
-          </div>
-        </div>
-      );
-    }
-
-    return <main className="flex-1">{children}</main>;
-  };
-
-  return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
+/** 全站骨架：skip link、頂列、主要內容、一行頁尾、base 固定撥號列 */
+const Layout = ({ children, footer }: LayoutProps) => (
+  // base 底部留 96px 給固定撥號列；md 起沒有固定列
+  <div className="flex min-h-screen flex-col pb-24 md:pb-0">
+    {/* skip link：第一個 tab stop，聚焦時顯示為主按鈕樣式 */}
+    <a
+      href="#main"
+      className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:inline-flex focus:h-11 focus:items-center focus:rounded-pill focus:bg-accent focus:px-6 focus:text-body focus:font-semibold focus:text-accent-ink"
+    >
+      跳到主要內容
+    </a>
+    <div className="mx-auto w-full max-w-[1280px] px-4 pt-4 md:px-8 md:pt-6 xl:px-16">
       <NavBar />
-      <MainContent />
-      <Footer />
     </div>
-  );
-};
+    <main
+      id="main"
+      tabIndex={-1}
+      className="mx-auto w-full max-w-[1280px] flex-1 px-4 md:px-8 xl:px-16"
+    >
+      {children}
+    </main>
+    <Footer variant={footer} />
+    <MobileCallBar />
+  </div>
+);
 
 export default Layout;

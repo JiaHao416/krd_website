@@ -4,7 +4,7 @@ import { ABOUT_SERVICES } from "../content/abouts";
 const Abouts = () => {
 
   return (
-    <Layout>
+    <Layout footer="address">
       <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 relative overflow-hidden">
         {/* Background Decorations */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">

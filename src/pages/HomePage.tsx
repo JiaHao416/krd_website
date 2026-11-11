@@ -13,7 +13,7 @@ const Home = () => {
   const featured2 = useProducts(HOME_FEATURED_QUERIES[1]);
 
   return (
-    <Layout showSideMenu={false}>
+    <Layout footer="thanks">
       <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 relative overflow-hidden">
         {/* 背景裝飾 */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">

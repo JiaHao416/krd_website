@@ -7,29 +7,27 @@ import { PRODUCT_PAGE_VIEWS } from "./config/productPageViews";
 
 const App = () => {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
-      <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/abouts" element={<Abouts />} />
-        {/* 商品頁由設定產生；ProductPageTemplate 的 key 讓切換頁面時重設排序與舊列表 */}
-        {PRODUCT_PAGES.map((page) => {
-          const view = PRODUCT_PAGE_VIEWS[page.path];
-          return (
-            <Route
-              key={page.path}
-              path={page.path}
-              element={
-                <ProductPageTemplate
-                  key={page.path}
-                  query={page.query}
-                  {...view}
-                />
-              }
-            />
-          );
-        })}
-      </Routes>
-    </div>
+    <Routes>
+      <Route path="/" element={<HomePage />} />
+      <Route path="/abouts" element={<Abouts />} />
+      {/* 商品頁由設定產生；ProductPageTemplate 的 key 讓切換頁面時重設排序與舊列表 */}
+      {PRODUCT_PAGES.map((page) => {
+        const view = PRODUCT_PAGE_VIEWS[page.path];
+        return (
+          <Route
+            key={page.path}
+            path={page.path}
+            element={
+              <ProductPageTemplate
+                key={page.path}
+                query={page.query}
+                {...view}
+              />
+            }
+          />
+        );
+      })}
+    </Routes>
   );
 };
 
