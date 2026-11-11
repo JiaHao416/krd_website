@@ -223,12 +223,26 @@ describe("HomePage 版面", () => {
     ]);
   });
 
-  it("店面照片預留位 role=img 名稱為店面照片（待提供）", async () => {
+  it("hero 顯示店面照片，取代店面照片預留位", async () => {
     renderPage();
     await screen.findAllByText("目前沒有精選商品");
-    expect(
-      screen.getByRole("img", { name: "店面照片（待提供）" })
-    ).toBeInTheDocument();
+    expect(screen.getByAltText("羽程企業社店面外觀")).toHaveAttribute(
+      "src",
+      "/store/storefront.webp"
+    );
+    expect(screen.queryByRole("img", { name: "店面照片（待提供）" })).toBeNull();
+  });
+
+  it("hero 店面照片在首屏立即載入、object-cover，width/height 與設定一致", async () => {
+    renderPage();
+    await screen.findAllByText("目前沒有精選商品");
+    const photo = screen.getByAltText("羽程企業社店面外觀");
+    expect({
+      loading: photo.getAttribute("loading"),
+      width: photo.getAttribute("width"),
+      height: photo.getAttribute("height"),
+      cover: photo.classList.contains("object-cover"),
+    }).toEqual({ loading: "eager", width: "1200", height: "900", cover: true });
   });
 
   it("聯絡區顯示 3 張店面照片與 Google 地圖", async () => {

@@ -17,6 +17,8 @@ import type { ProductPagePath } from "../services/catalog";
 
 // 營業中戳章的兩行文字，由聯絡資訊單一來源拆出
 const [hoursLine1, hoursLine2] = splitBusinessHours(CONTACT.businessHours);
+// hero 用 storePhotos 第一張（店面外觀），路徑只在 contact.ts 定義一次
+const heroPhoto = CONTACT.storePhotos?.[0];
 
 /** 分類貼紙卡設定：底色與傾斜用靜態 class，避免動態組字讓 Tailwind 掃不到 */
 interface CategoryCard {
@@ -115,14 +117,29 @@ const Home = () => {
           </div>
 
           <div className="relative">
-            {/* 店面照片尚未提供，以預留位正式呈現（D-15） */}
-            <div
-              role="img"
-              aria-label="店面照片（待提供）"
-              className="flex h-[200px] rotate-[1.5deg] items-center justify-center rounded-block border-[3px] border-dashed border-dash bg-sand text-label text-ink-muted md:h-[320px] md:rotate-2 md:rounded-panel xl:h-[420px]"
-            >
-              店面照片（待提供）
-            </div>
+            {heroPhoto ? (
+              // 照片框沿用預留位的高度、圓角與傾斜，避免版面位移；overflow-hidden 只在框本身用於裁圓角
+              // 位於首屏，故 eager 載入
+              <div className="h-[200px] rotate-[1.5deg] overflow-hidden rounded-block border-[3px] border-dash bg-sand md:h-[320px] md:rotate-2 md:rounded-panel xl:h-[420px]">
+                <img
+                  src={heroPhoto.src}
+                  alt="羽程企業社店面外觀"
+                  width={heroPhoto.width}
+                  height={heroPhoto.height}
+                  loading="eager"
+                  className="h-full w-full object-cover"
+                />
+              </div>
+            ) : (
+              // 未設定店面照片時的預留位（D-15）
+              <div
+                role="img"
+                aria-label="店面照片（待提供）"
+                className="flex h-[200px] rotate-[1.5deg] items-center justify-center rounded-block border-[3px] border-dashed border-dash bg-sand text-label text-ink-muted md:h-[320px] md:rotate-2 md:rounded-panel xl:h-[420px]"
+              >
+                店面照片（待提供）
+              </div>
+            )}
             {/* 營業中戳章為裝飾，對輔助科技隱藏；營業時間由聯絡區提供 */}
             <div
               aria-hidden="true"
