@@ -231,6 +231,15 @@ describe("HomePage 版面", () => {
     ).toBeInTheDocument();
   });
 
+  it("聯絡區顯示 3 張店面照片與 Google 地圖", async () => {
+    renderPage();
+    await screen.findAllByText("目前沒有精選商品");
+    for (const alt of ["店面外觀", "正門與招牌", "門口屏風"]) {
+      expect(screen.getByAltText(alt)).toBeInTheDocument();
+    }
+    expect(screen.getByTitle("羽程企業社 Google 地圖").tagName).toBe("IFRAME");
+  });
+
   it("熱銷 h2 為這陣子大家都在問", async () => {
     renderPage();
     await screen.findAllByText("目前沒有精選商品");

@@ -2,6 +2,9 @@ import { CONTACT, hasText } from "../config/contact";
 import type { ContactInfo } from "../config/contact";
 import { PhoneIcon } from "./icons";
 
+// 店面照片卡依序循環的傾斜角度（絕對值 ≤ 2deg）
+const PHOTO_TILTS = ["-rotate-1", "rotate-[1deg]", "-rotate-[0.5deg]"];
+
 interface ContactBlockProps {
   info?: ContactInfo;
 }
@@ -11,6 +14,7 @@ interface ContactBlockProps {
 const ContactBlock = ({ info = CONTACT }: ContactBlockProps) => {
   const showLine = hasText(info.lineUrl);
   const showEmail = hasText(info.email);
+  const photos = info.storePhotos ?? [];
 
   return (
     <section
@@ -93,6 +97,36 @@ const ContactBlock = ({ info = CONTACT }: ContactBlockProps) => {
           </a>
         )}
       </div>
+
+      {/* 店面照片：手機單欄堆疊、md 以上三欄；不用橫向捲動，因其需 overflow 會裁掉傾斜角落與膠帶 */}
+      {/* xl 橫跨資訊＋地圖兩欄；pt-4 給膠帶留空間；ul 與 section 皆不加 overflow-hidden */}
+      {photos.length > 0 && (
+        <ul aria-label="店面照片" className="grid gap-6 pt-4 md:grid-cols-3 xl:col-span-2">
+          {photos.map((photo, index) => (
+            <li
+              key={photo.src}
+              className={`relative rounded-card bg-surface-raised p-2 ${PHOTO_TILTS[index % PHOTO_TILTS.length]}`}
+            >
+              <span
+                aria-hidden="true"
+                className="absolute -top-4 left-1/2 h-7 w-24 -translate-x-1/2 -rotate-[4deg] bg-tape/80"
+              />
+              {/* 固定 4:3 比例框裁切；width/height 讓瀏覽器先預留版位避免 CLS */}
+              <div className="aspect-[4/3] overflow-hidden rounded-image">
+                <img
+                  src={photo.src}
+                  alt={photo.alt}
+                  width={photo.width}
+                  height={photo.height}
+                  loading="lazy"
+                  decoding="async"
+                  className="h-full w-full object-cover"
+                />
+              </div>
+            </li>
+          ))}
+        </ul>
+      )}
     </section>
   );
 };

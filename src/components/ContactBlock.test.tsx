@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
 import ContactBlock from "./ContactBlock";
 import { CONTACT } from "../config/contact";
 
@@ -92,5 +92,49 @@ describe("ContactBlock", () => {
     );
     expect(screen.queryByRole("link", { name: /LINE/ })).toBeNull();
     expect(container.querySelector('a[href^="mailto:"]')).toBeNull();
+  });
+
+  it("預設顯示 3 張店面照片，alt 與 src 依序正確", () => {
+    render(<ContactBlock />);
+    const images = within(
+      screen.getByRole("list", { name: "店面照片" })
+    ).getAllByRole("img");
+    expect(
+      images.map((img) => [img.getAttribute("alt"), img.getAttribute("src")])
+    ).toEqual([
+      ["店面外觀", "/store/storefront.webp"],
+      ["正門與招牌", "/store/entrance.webp"],
+      ["門口屏風", "/store/screen.webp"],
+    ]);
+  });
+
+  it("店面照片皆 lazy、async 解碼、object-cover，width/height 與設定一致", () => {
+    render(<ContactBlock />);
+    const images = within(
+      screen.getByRole("list", { name: "店面照片" })
+    ).getAllByRole("img");
+    expect(
+      images.map((img) => ({
+        loading: img.getAttribute("loading"),
+        decoding: img.getAttribute("decoding"),
+        width: img.getAttribute("width"),
+        height: img.getAttribute("height"),
+        cover: img.classList.contains("object-cover"),
+      }))
+    ).toEqual([
+      { loading: "lazy", decoding: "async", width: "1200", height: "900", cover: true },
+      { loading: "lazy", decoding: "async", width: "1200", height: "939", cover: true },
+      { loading: "lazy", decoding: "async", width: "1200", height: "900", cover: true },
+    ]);
+  });
+
+  it("storePhotos 為空陣列時不渲染照片列", () => {
+    render(<ContactBlock info={{ ...CONTACT, storePhotos: [] }} />);
+    expect(screen.queryByRole("list", { name: "店面照片" })).toBeNull();
+  });
+
+  it("未設定 storePhotos 時不渲染照片列", () => {
+    render(<ContactBlock info={{ ...CONTACT, storePhotos: undefined }} />);
+    expect(screen.queryByRole("list", { name: "店面照片" })).toBeNull();
   });
 });

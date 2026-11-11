@@ -1,6 +1,18 @@
 // 聯絡資訊單一來源（首頁聯絡區、頂列、固定撥號列、頁尾、關於我們、Phase 9 詳情 CTA）
 // 只放店家公開資訊，無任何憑證
 
+/** 店面照片 */
+export interface StorePhoto {
+  /** 圖片路徑（public/ 下，如 /store/storefront.webp） */
+  src: string;
+  /** 替代文字（中文） */
+  alt: string;
+  /** 原檔寬度（像素），用於預留版位避免 CLS */
+  width: number;
+  /** 原檔高度（像素），用於預留版位避免 CLS */
+  height: number;
+}
+
 /** 店家聯絡資訊 */
 export interface ContactInfo {
   /** 地址（必填） */
@@ -21,6 +33,8 @@ export interface ContactInfo {
   mapEmbedUrl?: string;
   /** 在 Google 地圖開啟店家頁的連結（選填，有值才顯示文字連結） */
   mapUrl?: string;
+  /** 店面照片（選填，有內容才在聯絡區顯示） */
+  storePhotos?: readonly StorePhoto[];
 }
 
 /**
@@ -35,6 +49,11 @@ export const CONTACT: ContactInfo = {
   closedNote: "見紅休（週六、週日及國定假日）",
   mapEmbedUrl: `https://maps.google.com/maps?q=${encodeURIComponent("羽程企業社 台中市太平區永平路二段320之1號")}&z=17&output=embed`,
   mapUrl: "https://maps.google.com/?cid=17247239004730587373",
+  storePhotos: [
+    { src: "/store/storefront.webp", alt: "店面外觀", width: 1200, height: 900 },
+    { src: "/store/entrance.webp", alt: "正門與招牌", width: 1200, height: 939 },
+    { src: "/store/screen.webp", alt: "門口屏風", width: 1200, height: 900 },
+  ],
 };
 
 /**

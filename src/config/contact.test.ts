@@ -22,6 +22,14 @@ describe("CONTACT", () => {
     expect(CONTACT.mapUrl).toBe("https://maps.google.com/?cid=17247239004730587373");
   });
 
+  it("storePhotos 依序為店面外觀、正門與招牌、門口屏風", () => {
+    expect(CONTACT.storePhotos).toEqual([
+      { src: "/store/storefront.webp", alt: "店面外觀", width: 1200, height: 900 },
+      { src: "/store/entrance.webp", alt: "正門與招牌", width: 1200, height: 939 },
+      { src: "/store/screen.webp", alt: "門口屏風", width: 1200, height: 900 },
+    ]);
+  });
+
   it("LINE 與 Email 尚未設定", () => {
     expect([CONTACT.lineUrl, CONTACT.email]).toEqual([undefined, undefined]);
   });
