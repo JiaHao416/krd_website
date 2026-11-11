@@ -1,0 +1,48 @@
+// 聯絡資訊單一來源（首頁聯絡區、頂列、固定撥號列、頁尾、關於我們、Phase 9 詳情 CTA）
+// 只放店家公開資訊，無任何憑證
+
+/** 店家聯絡資訊 */
+export interface ContactInfo {
+  /** 地址（必填） */
+  address: string;
+  /** 顯示用電話（必填） */
+  phone: string;
+  /** tel: 連結用電話（必填，純數字與連字號） */
+  phoneHref: string;
+  /** 營業時間主行（必填） */
+  businessHours: string;
+  /** 休息日備註（必填） */
+  closedNote: string;
+  /** LINE 連結（選填，有值才顯示） */
+  lineUrl?: string;
+  /** Email（選填，有值才顯示） */
+  email?: string;
+}
+
+/** KRD 聯絡資訊；LINE 與 Email 尚未提供，故不設定（D-15） */
+export const CONTACT: ContactInfo = {
+  address: "411 台中市太平區永平路二段320之1號",
+  phone: "(04) 2279-8787",
+  phoneHref: "04-22798787",
+  businessHours: "週一至週六 09:00 - 17:30",
+  closedNote: "週日及國定假日休息",
+};
+
+/**
+ * 選填欄位是否有值（undefined、空字串、純空白都視為沒有）
+ * @param value - 欄位值
+ * @returns 是否為非空白字串
+ */
+export function hasText(value: string | undefined): value is string {
+  return typeof value === "string" && value.trim().length > 0;
+}
+
+/**
+ * 營業中戳章用：以第一個空白拆成「日」與「時段」兩行；拆不出來時整句放第一行
+ * @param hours - 營業時間主行
+ * @returns [第一行, 第二行]
+ */
+export function splitBusinessHours(hours: string): [string, string] {
+  const index = hours.indexOf(" ");
+  return index === -1 ? [hours, ""] : [hours.slice(0, index), hours.slice(index + 1)];
+}
