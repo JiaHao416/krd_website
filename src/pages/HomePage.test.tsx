@@ -1,7 +1,8 @@
 import type { ReactNode } from "react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, within } from "@testing-library/react";
-import { MemoryRouter } from "react-router-dom";
+import userEvent from "@testing-library/user-event";
+import { MemoryRouter, Route, Routes, useParams } from "react-router-dom";
 import HomePage from "./HomePage";
 import { fetchProducts } from "../services/products";
 import type { ProductListResult } from "../services/products";
@@ -55,6 +56,33 @@ function renderPage() {
 /** 以 role=group 的名稱找到該組輪播所在的區塊 */
 function getSection(name: string): HTMLElement {
   return screen.getByRole("group", { name });
+}
+
+/** 詳情頁探針：顯示路由參數，用來斷言導向路徑 */
+const DetailProbe = () => {
+  const { id } = useParams();
+  return <p>詳情頁 {id}</p>;
+};
+
+/** 以首頁＋詳情探針路由渲染，可斷言點便條卡後的路徑 */
+function renderPageWithDetailRoute() {
+  return render(
+    <MemoryRouter initialEntries={["/"]}>
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/products/:id" element={<DetailProbe />} />
+      </Routes>
+    </MemoryRouter>
+  );
+}
+
+/** 兩組熱銷各回一筆：featured=1 為熱銷一號（a）、featured=2 為熱銷二號（b） */
+function mockTwoGroups() {
+  mockFetch.mockImplementation(async (params) =>
+    params.featured === "1"
+      ? makeResult([makeProduct({ id: "a", name: "熱銷一號" })])
+      : makeResult([makeProduct({ id: "b", name: "熱銷二號" })])
+  );
 }
 
 beforeEach(() => {
@@ -209,5 +237,33 @@ describe("HomePage 版面", () => {
     expect(
       screen.getByRole("heading", { level: 2, name: "這陣子大家都在問" })
     ).toBeInTheDocument();
+  });
+});
+
+describe("HomePage 便條卡連到詳情頁", () => {
+  it("兩組便條卡各自連到對應商品的 /products/{id}", async () => {
+    mockTwoGroups();
+    renderPage();
+    const hot = getSection("熱門推薦系列");
+    const top = getSection("頂級精選系列");
+    expect(
+      await within(hot).findByRole("link", { name: "查看 熱銷一號 詳情" })
+    ).toHaveAttribute("href", "/products/a");
+    expect(
+      await within(top).findByRole("link", { name: "查看 熱銷二號 詳情" })
+    ).toHaveAttribute("href", "/products/b");
+    expect(
+      within(hot).queryByRole("link", { name: "查看 熱銷二號 詳情" })
+    ).toBeNull();
+  });
+
+  it("點便條卡導向詳情頁", async () => {
+    const user = userEvent.setup();
+    mockTwoGroups();
+    renderPageWithDetailRoute();
+    await user.click(
+      await screen.findByRole("link", { name: "查看 熱銷一號 詳情" })
+    );
+    expect(await screen.findByText("詳情頁 a")).toBeInTheDocument();
   });
 });
