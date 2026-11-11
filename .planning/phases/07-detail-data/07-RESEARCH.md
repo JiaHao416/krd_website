@@ -222,10 +222,12 @@ fixture 建議（手寫，非實測，需標註）：價格非 null 變體 `pric
 | A2 | 非 null 價格、非空 attributes、warranty 0、空 variants 的形狀取自 ARCHITECTURE.md（後端原始碼驗證），production 無此資料未實測 | Real API Samples | 中：若後端 DTO 有差異，fixture 偏離；Phase 9 前上線有價商品時可再 curl 一次補樣本 |
 | A3 | 詳情 `name` 空字串是否也退 brand+model（D-04 只寫 UNNAMED_PRODUCT） | Patterns | 低：planner 擇一並寫測試 |
 
-## Open Questions
+## Open Questions (RESOLVED)
 
 1. 07-API-SAMPLES.md 是否另建？上方「Real API Samples」已含全部 sanitized 樣本，planner 可直接複製為該檔（D-01 要求），第一個 task 可改為「落檔 + 與型別比對」而非重打 curl（避免多耗限流額度；若要重驗再打 ≤3 次）。
+   RESOLVED: 另建 07-API-SAMPLES.md（07-01 Task 1），重驗 curl ≤ 3 次。
 2. transform 詳情測試放既有 `transform.test.ts`（追加）或新檔？建議新檔，降低誤改既有 215 項的風險。
+   RESOLVED: 新檔 `src/services/transformDetail.test.ts`（07-01 Task 2）。
 
 ## Environment Availability
 
