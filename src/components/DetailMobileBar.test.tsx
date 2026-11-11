@@ -50,3 +50,19 @@ describe("DetailMobileBar", () => {
     expect(screen.getByTestId("detail-mobile-bar")).toHaveAttribute("aria-live", "polite");
   });
 });
+
+describe("DetailMobileBar 預留高度", () => {
+  it("顯示失敗訊息時在文件流加一段補高，讓頁尾能捲出固定列", () => {
+    render(<DetailMobileBar status="failed" onCopy={vi.fn()} />);
+    const spacer = screen.getByTestId("detail-mobile-bar-spacer");
+    // 失敗訊息一行（15px × 1.6）加間距 8px 約 32px，補高 40px 留餘裕
+    expect(spacer).toHaveClass("h-10", "md:hidden");
+    expect(spacer).toHaveAttribute("aria-hidden", "true");
+    expect(screen.getByTestId("detail-mobile-bar")).not.toContainElement(spacer);
+  });
+
+  it.each(["idle", "copied"] as const)("狀態為 %s 時不加補高", (status) => {
+    render(<DetailMobileBar status={status} onCopy={vi.fn()} />);
+    expect(screen.queryByTestId("detail-mobile-bar-spacer")).toBeNull();
+  });
+});
