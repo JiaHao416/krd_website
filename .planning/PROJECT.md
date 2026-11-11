@@ -15,7 +15,7 @@ KRD 音響／麥克風盤商的品牌官網（`www.krd.com.tw`），給客戶瀏
 **Goal:** 全站版面重新設計並新增商品詳情頁，在 `redesign` 分支開發、整套完成後再合併回 `main` 上線。
 
 **Target features:**
-- 共用骨架重設計（NavBar、SideMenu、Footer、Layout），一併修正 WR-04（1024px 導覽文字擠壓）
+- 共用骨架重設計（膠囊浮動頂列、分類 chip 列取代 SideMenu、一行頁尾、手機固定撥號列、Layout），一併修正 WR-04（1024px 導覽文字擠壓）
 - 首頁重設計（含熱銷輪播，保留 WCAG 2.2.2 行為）
 - 商品分類頁重設計（8 分類共用 Template，保留 grid/list、排序；整張卡改連到詳情頁，燈箱移到詳情頁主圖）
 - 關於我們頁重設計

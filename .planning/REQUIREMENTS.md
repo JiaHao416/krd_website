@@ -8,14 +8,14 @@
 
 ### 設計基礎（DESIGN）
 
-- [ ] **DESIGN-01**: 視覺方向、設計 token（色彩、字級、間距、圓角、陰影）、字型堆疊與斷點表寫成 UI-SPEC，經使用者確認後才寫 UI 程式碼
+- [x] **DESIGN-01**: 視覺方向、設計 token（色彩、字級、間距、圓角、陰影）、字型堆疊與斷點表寫成 UI-SPEC，經使用者確認後才寫 UI 程式碼
 - [ ] **DESIGN-02**: 全站樣式使用 `tailwind.config.js` 的語意 token，不再散落寫死的色碼
 - [ ] **DESIGN-03**: 中文字型在 Windows、Mac、手機都顯示對應的黑體（字型堆疊補 `PingFang TC`、`Noto Sans TC`，不載入 CJK webfont）
 
 ### 共用骨架（SHELL）
 
 - [ ] **SHELL-01**: 訪客在 320–1440px 各寬度都能正常使用新版 NavBar，1024px 導覽文字不再擠壓或折行（WR-04）
-- [ ] **SHELL-02**: 訪客在商品頁可用新版 SideMenu 切換分類，手機版可開關
+- [ ] **SHELL-02**: 訪客在列表頁可用分類 chip 列切換分類（桌機／平板可換行，手機單列橫向捲動），取代舊 SideMenu
 - [ ] **SHELL-03**: 訪客可以找到地址、電話、營業時間：首頁「有空來店裡坐坐」聯絡區完整呈現三者，其他頁以一行頁尾（地址、營業時間）＋頂列／手機底部固定列的「打電話問問」提供電話（單一來源 `src/config/contact.ts`；LINE／Email 有設定才顯示）
 - [ ] **SHELL-04**: 鍵盤使用者可用 skip link 跳到主內容，所有可互動元素都有清楚的焦點樣式
 
@@ -83,7 +83,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| DESIGN-01 | Phase 6 | Pending |
+| DESIGN-01 | Phase 6 | Complete |
 | TEST-06 | Phase 6 | Complete |
 | MAINT-01 | Phase 6 | Pending |
 | TEST-05 | Phase 7 | Pending |
