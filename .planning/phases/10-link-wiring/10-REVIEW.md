@@ -16,7 +16,7 @@ findings:
   warning: 3
   info: 6
   total: 9
-status: issues_found
+status: fixed
 ---
 
 # Phase 10：程式碼審查報告
@@ -152,3 +152,30 @@ for (const link of screen.getAllByRole("link")) {
 _審查時間：2026-11-11T04:18:45Z_
 _審查者：Claude（gsd-code-reviewer）_
 _深度：standard_
+
+## 修正紀錄
+
+**修正時間：** 2026-11-11
+**範圍：** Warning 全部（WR-01～WR-03）；Info 只處理可單純強化測試者
+**結果：** Warning 3／3 已修正；測試數 538 → 541，`npm test`、`npm run lint`、`npm run build` 皆通過
+
+| 項目 | 結果 | Commit | 說明 |
+|------|------|--------|------|
+| WR-01 | 已修正 | `ea9560d` | Link 以 `useId` 加 `aria-labelledby={nameId priceId}`，名稱只取 `<h3>` 與價格文字，不再因 img alt 念兩次；img `alt={product.name}` 保留 |
+| WR-02 | 已修正 | `ea9560d` | 同上，名稱不再以「暫無圖片」開頭、不含 list 描述；`ImagePlaceholder` 的 `role="img"` `aria-label="暫無圖片"` 不變。「洽詢交期」與 list 描述改走 `aria-describedby` |
+| WR-03 | 已修正 | `ea9560d` | `ProductCard.test.tsx`、`ProductPageTemplate.test.tsx` 改為精確字串比對，新增 grid、list（不含描述）、缺圖三個名稱測試 |
+| IN-01 | 略過 | — | 不在範圍；字串由 UI-SPEC 定案 |
+| IN-02 | 略過 | — | 沒有單純強化斷言的做法：卡片已無燈箱，換成 `queryByRole("dialog")` 一樣不可能失敗；又不得刪除斷言 |
+| IN-03 | 已修正 | `7ad8bfa` | 改用 3 筆資料，逐張檢查連結內沒有可聚焦元素 |
+| IN-04～IN-06 | 略過 | — | 不在範圍 |
+
+修正後的連結 accessible name：
+
+- 有價：`"{name} {priceText}"`，例如 `"商品一 NT$1,200"`
+- 無價：`"{name} 價格請來電"`，例如 `"甲商品 價格請來電"`
+- 缺貨：名稱同上，accessible description 為 `"洽詢交期"`
+- list 有描述：名稱同上，description 含描述文字（缺貨時為 `"洽詢交期 {描述}"`）
+
+`PriceTag` 新增選填 `id` prop 供參照，外觀與 class 不變；首頁便條卡不受影響。
+
+_修正者：Claude（gsd-code-fixer）_
