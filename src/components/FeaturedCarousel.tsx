@@ -1,38 +1,78 @@
 import { useEffect, useRef, useState } from "react";
 import type { UseProductsResult } from "../hooks/useProducts";
 import { usePrefersReducedMotion } from "../hooks/usePrefersReducedMotion";
+import { useMediaQuery } from "../hooks/useMediaQuery";
+import type { Product } from "../services/transform";
 import ImagePlaceholder from "./ImagePlaceholder";
+import PriceTag from "./PriceTag";
+import { AlertIcon, ChevronLeftIcon, ChevronRightIcon } from "./icons";
 import { getErrorMessage } from "../services/errors";
 
 interface FeaturedCarouselProps {
   result: UseProductsResult;
-  accent: "blue" | "purple";
-  intervalMs: number;
+  intervalMs?: number;
 }
 
-// accent 對應的完整 class 字串，必須寫成靜態字串才不會被 Tailwind purge
-const ACCENT_CLASSES = {
-  blue: {
-    overlay: "from-blue-500/30",
-    dot: "from-blue-500",
-    icon: "text-blue-400",
-  },
-  purple: {
-    overlay: "from-purple-500/30",
-    dot: "from-purple-500",
-    icon: "text-purple-400",
-  },
-} as const;
+interface NoteCardProps {
+  product: Product;
+  tilt: string;
+  isFirst: boolean;
+}
 
-// 單組熱銷輪播：自行管理目前投影片與自動播放
-const FeaturedCarousel = ({
-  result,
-  accent,
-  intervalMs,
-}: FeaturedCarouselProps) => {
-  const [currentSlide, setCurrentSlide] = useState(0);
+// 手機寬度斷點（與測試 mock 的字串逐字一致）
+const BASE_QUERY = "(max-width: 767px)";
+// 便條卡依位置輪流傾斜；寫成靜態字串才不會被 Tailwind purge
+const NOTE_TILTS = ["-rotate-[1.5deg]", "rotate-[1deg]", "-rotate-[0.5deg]"] as const;
+
+// 單張便條卡：自行記錄破圖，3 張同時顯示時各自判斷（Phase 8 為非連結 div）
+const NoteCard = ({ product, tilt, isFirst }: NoteCardProps) => {
   // 記錄載入失敗的圖片網址；換成其他網址時自動重新嘗試（比照 ProductCard）
   const [failedImageUrl, setFailedImageUrl] = useState<string | null>(null);
+  const showImage = product.imageUrl && product.imageUrl !== failedImageUrl;
+
+  return (
+    <div
+      className={`relative rounded-card bg-surface-raised p-4 shadow-note-sm md:shadow-note ${tilt}`}
+    >
+      {/* 琥珀色膠帶裝飾 */}
+      <span
+        aria-hidden="true"
+        className="absolute -top-4 left-1/2 h-7 w-24 -translate-x-1/2 -rotate-[4deg] bg-tape/80"
+      />
+      <div className="h-[170px] w-full overflow-hidden rounded-image bg-white md:h-[200px]">
+        {showImage ? (
+          <img
+            src={product.imageUrl ?? undefined}
+            alt={product.name}
+            onError={() => setFailedImageUrl(product.imageUrl)}
+            {...(isFirst ? { fetchPriority: "high" as const } : { loading: "lazy" as const })}
+            className="h-full w-full object-contain"
+          />
+        ) : (
+          <ImagePlaceholder />
+        )}
+      </div>
+      {product.brand && (
+        <p className="mt-2 text-label text-ink-muted">{product.brand}</p>
+      )}
+      <h3 className="mt-1 line-clamp-2 text-body font-semibold leading-card text-ink">
+        {product.name}
+      </h3>
+      <div className="mt-2 flex items-center justify-between gap-2">
+        <PriceTag product={product} />
+        {/* 卡片尚非連結，文字僅為裝飾（Phase 10 整張改為 Link） */}
+        <span aria-hidden="true" className="text-body font-semibold text-accent">
+          <span className="hidden md:inline">查看詳情 →</span>
+          <span className="md:hidden">詳情 →</span>
+        </span>
+      </div>
+    </div>
+  );
+};
+
+// 單組熱銷輪播：自行管理目前投影片與自動播放
+const FeaturedCarousel = ({ result, intervalMs = 5000 }: FeaturedCarouselProps) => {
+  const [currentSlide, setCurrentSlide] = useState(0);
   const { items, status } = result;
 
   const [isHovered, setIsHovered] = useState(false);
@@ -43,8 +83,12 @@ const FeaturedCarousel = ({
   // 不用 :focus-visible 判斷，因為 jsdom 無法區分而無法測試
   const isPointerDownRef = useRef(false);
   const prefersReducedMotion = usePrefersReducedMotion();
-  // 減少動態偏好、滑鼠停留、焦點在輪播內時都不自動切換（WCAG 2.2.2）
-  const isPaused = prefersReducedMotion || isHovered || hasFocusWithin;
+  // 手機寬度改為橫向捲動條，與減少動態同機制停止自動播放
+  const isBase = useMediaQuery(BASE_QUERY);
+  // base 時每張卡的 li，供按鈕與指示點捲動定位
+  const cardRefs = useRef<Array<HTMLLIElement | null>>([]);
+  // 減少動態偏好、手機寬度、滑鼠停留、焦點在輪播內時都不自動切換（WCAG 2.2.2）
+  const isPaused = prefersReducedMotion || isBase || isHovered || hasFocusWithin;
 
   // 只有成功、多於一筆且未暫停時才自動播放；
   // 每次切換（自動或手動）都會因 currentSlide 改變而重新計時
@@ -56,73 +100,38 @@ const FeaturedCarousel = ({
     return () => clearTimeout(timer);
   }, [status, items.length, intervalMs, isPaused, currentSlide]);
 
-  // 非成功輪播的狀態共用同一個框，尺寸與成功狀態一致，避免兩組左右失衡
-  const stateBoxClass =
-    "aspect-video bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl flex items-center justify-center";
-
   if (status === "error") {
     return (
-      <div className={stateBoxClass}>
-        <div role="alert" className="text-center px-6">
-          <svg
-            className="w-12 h-12 text-red-400 mx-auto mb-3"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth={2}
-            viewBox="0 0 24 24"
-            aria-hidden="true"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
-            />
-          </svg>
-          <p className="text-gray-300 text-base">
-            {getErrorMessage(result.error)}
-          </p>
-          <button
-            type="button"
-            onClick={result.retry}
-            className="mt-4 bg-blue-500 hover:bg-blue-600 text-white text-sm font-semibold px-6 py-2 min-h-[44px] rounded-full transition-colors focus-visible:ring-2 ring-blue-400 ring-offset-2 ring-offset-slate-900"
-          >
-            重新載入
-          </button>
-        </div>
+      <div role="alert" className="rounded-card bg-surface-raised p-6 text-center">
+        <AlertIcon className="mx-auto h-12 w-12 text-danger" />
+        <p className="mt-2 text-body text-ink">{getErrorMessage(result.error)}</p>
+        <button
+          type="button"
+          onClick={result.retry}
+          className="mt-4 inline-flex h-11 items-center rounded-pill bg-accent px-6 text-body font-semibold text-accent-ink shadow-btn hover:bg-accent-hover active:shadow-btn-pressed"
+        >
+          重新載入
+        </button>
       </div>
     );
   }
 
   if (status === "success" && items.length === 0) {
-    return (
-      <div className={stateBoxClass}>
-        <div className="text-center">
-          <svg
-            className={`w-12 h-12 mx-auto mb-3 ${ACCENT_CLASSES[accent].icon}`}
-            fill="none"
-            stroke="currentColor"
-            strokeWidth={2}
-            viewBox="0 0 24 24"
-            aria-hidden="true"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-            />
-          </svg>
-          <p className="text-gray-400 text-base">目前沒有精選商品</p>
-        </div>
-      </div>
-    );
+    return <p className="text-body text-ink-muted">目前沒有精選商品</p>;
   }
 
   if (status === "loading") {
     return (
-      <div className={stateBoxClass}>
-        <div className="text-center">
-          <div className="animate-pulse w-16 h-16 bg-white/10 rounded-full mx-auto mb-4"></div>
-          <p className="text-gray-400">載入產品中...</p>
+      <div className="space-y-4">
+        <p aria-live="polite" className="text-label text-ink-muted">
+          載入產品中...
+        </p>
+        <div className="grid gap-8 md:grid-cols-3">
+          {[0, 1, 2].map((key) => (
+            <div key={key} aria-hidden="true" className="rounded-card bg-surface-raised p-4">
+              <div className="h-[170px] rounded-image bg-sand motion-safe:animate-pulse md:h-[200px]" />
+            </div>
+          ))}
         </div>
       </div>
     );
@@ -130,17 +139,38 @@ const FeaturedCarousel = ({
 
   // 商品數變少時避免索引越界
   const activeIndex = currentSlide % items.length;
-  const product = items[activeIndex];
-  const accentClasses = ACCENT_CLASSES[accent];
   const showControls = items.length > 1;
 
-  const goPrev = () =>
+  // base 時把目標卡捲到捲動條起點；block 必須為 nearest，避免整頁垂直跳動
+  const scrollToCard = (target: number) => {
+    if (!isBase) return;
+    cardRefs.current[target]?.scrollIntoView({
+      behavior: prefersReducedMotion ? "auto" : "smooth",
+      block: "nearest",
+      inline: "start",
+    });
+  };
+
+  const goPrev = () => {
+    const target = (activeIndex - 1 + items.length) % items.length;
     setCurrentSlide((activeIndex - 1 + items.length) % items.length);
-  const goNext = () => setCurrentSlide((activeIndex + 1) % items.length);
+    scrollToCard(target);
+  };
+  const goNext = () => {
+    const target = (activeIndex + 1) % items.length;
+    setCurrentSlide((activeIndex + 1) % items.length);
+    scrollToCard(target);
+  };
+
+  // md+ 只渲染視窗內最多 3 張（循環取模，筆數不足 3 不重複）
+  const visible = Array.from(
+    { length: Math.min(3, items.length) },
+    (_, k) => (activeIndex + k) % items.length
+  );
 
   return (
     <div
-      className="relative group"
+      className="space-y-4"
       // 只有滑鼠停留才暫停；觸控裝置點擊會模擬 mouseenter 卻不送 mouseleave，
       // 若用 mouse 事件，手機點過一次後輪播就會黏在暫停狀態
       onPointerEnter={(event) => {
@@ -176,107 +206,89 @@ const FeaturedCarousel = ({
         }
       }}
     >
-      {/* 主要輪播區域 */}
-      <div className="relative overflow-hidden rounded-3xl shadow-2xl">
-        <div className="aspect-video relative">
-          {product.imageUrl && product.imageUrl !== failedImageUrl ? (
-            <img
-              src={product.imageUrl}
-              alt={product.name}
-              onError={() => setFailedImageUrl(product.imageUrl)}
-              className="w-full h-full object-cover transition-all duration-1000 scale-105 group-hover:scale-110"
-            />
-          ) : (
-            <ImagePlaceholder />
-          )}
-
-          {/* 漸變遮罩 */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
-          <div
-            className={`absolute inset-0 bg-gradient-to-tr ${accentClasses.overlay} via-transparent to-purple-500/20`}
-          ></div>
-
-          {/* 產品信息 */}
-          <div className="absolute bottom-0 left-0 right-0 p-8">
-            <div className="max-w-md">
-              <h3 className="text-3xl font-bold text-white mb-3 text-shadow-lg">
-                {product.name}
-              </h3>
-              {product.description && (
-                <p className="text-gray-200 text-sm leading-relaxed">
-                  {product.description}
-                </p>
-              )}
-            </div>
-          </div>
-
-          {showControls && (
-            <>
-              {/* 大型導航箭頭 - 左 */}
-              <button
-                type="button"
-                aria-label="上一張"
-                onClick={goPrev}
-                className="absolute left-2 md:left-4 top-1/2 -translate-y-1/2 w-12 h-12 md:w-16 md:h-16 bg-black/60 hover:bg-black/80 backdrop-blur-md rounded-full flex items-center justify-center transition-all duration-300 md:opacity-0 md:group-hover:opacity-100 hover:scale-110 shadow-xl border border-white/20"
-              >
-                <svg
-                  className="w-6 h-6 md:w-8 md:h-8 text-white ml-1"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  strokeWidth={3}
-                  aria-hidden="true"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M15 19l-7-7 7-7"
-                  />
-                </svg>
-              </button>
-
-              {/* 大型導航箭頭 - 右 */}
-              <button
-                type="button"
-                aria-label="下一張"
-                onClick={goNext}
-                className="absolute right-2 md:right-4 top-1/2 -translate-y-1/2 w-12 h-12 md:w-16 md:h-16 bg-black/60 hover:bg-black/80 backdrop-blur-md rounded-full flex items-center justify-center transition-all duration-300 md:opacity-0 md:group-hover:opacity-100 hover:scale-110 shadow-xl border border-white/20"
-              >
-                <svg
-                  className="w-6 h-6 md:w-8 md:h-8 text-white mr-1"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  strokeWidth={3}
-                  aria-hidden="true"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M9 5l7 7-7 7"
-                  />
-                </svg>
-              </button>
-            </>
-          )}
-        </div>
-      </div>
-
-      {/* 指示器 */}
       {showControls && (
-        <div className="flex justify-center space-x-3 mt-8">
+        <div className="flex justify-end gap-2">
+          <button
+            type="button"
+            aria-label="上一張"
+            onClick={goPrev}
+            className="inline-flex h-11 w-11 items-center justify-center rounded-pill border-2 border-ink text-ink transition-colors duration-150 hover:bg-surface-raised"
+          >
+            <ChevronLeftIcon className="h-5 w-5" />
+          </button>
+          <button
+            type="button"
+            aria-label="下一張"
+            onClick={goNext}
+            className="inline-flex h-11 w-11 items-center justify-center rounded-pill bg-ink text-surface-raised"
+          >
+            <ChevronRightIcon className="h-5 w-5" />
+          </button>
+        </div>
+      )}
+
+      {isBase ? (
+        <>
+          {/* 手機：全部卡片橫向捲動，不自動播放 */}
+          <ul className="-mx-4 flex snap-x snap-mandatory gap-4 overflow-x-auto scroll-pl-4 px-4 pt-4 pb-4">
+            {items.map((item, index) => (
+              <li
+                key={item.id}
+                ref={(el) => {
+                  cardRefs.current[index] = el;
+                }}
+                className="w-[260px] shrink-0 snap-start"
+              >
+                <NoteCard
+                  product={item}
+                  tilt={NOTE_TILTS[index % NOTE_TILTS.length]}
+                  isFirst={index === 0}
+                />
+              </li>
+            ))}
+          </ul>
+          {showControls && (
+            <p className="text-label text-ink-muted">← 左右滑動看更多 →</p>
+          )}
+        </>
+      ) : (
+        <ul className="grid grid-cols-3 gap-8 pt-4">
+          {visible.map((itemIndex, position) => {
+            const item = items[itemIndex];
+            return (
+              <li key={item.id}>
+                <NoteCard
+                  product={item}
+                  tilt={NOTE_TILTS[itemIndex % NOTE_TILTS.length]}
+                  isFirst={position === 0}
+                />
+              </li>
+            );
+          })}
+        </ul>
+      )}
+
+      {/* 指示點：放在 ul 之外，避免混進 listitem */}
+      {showControls && (
+        <div className="flex justify-center">
           {items.map((item, index) => (
             <button
               key={item.id}
               type="button"
               aria-label={`第 ${index + 1} 張`}
-              onClick={() => setCurrentSlide(index)}
-              className={`transition-all duration-300 hover:scale-110 ${
-                index === activeIndex
-                  ? `w-10 h-4 bg-gradient-to-r ${accentClasses.dot} to-purple-500 rounded-full shadow-lg`
-                  : "w-4 h-4 bg-gray-500 hover:bg-gray-400 rounded-full"
-              }`}
-            />
+              aria-current={index === activeIndex ? "true" : undefined}
+              onClick={() => {
+                setCurrentSlide(index);
+                scrollToCard(index);
+              }}
+              className="inline-flex h-11 w-11 items-center justify-center"
+            >
+              <span
+                className={`h-2 w-2 rounded-pill ${
+                  index === activeIndex ? "bg-accent" : "bg-dash"
+                }`}
+              />
+            </button>
           ))}
         </div>
       )}

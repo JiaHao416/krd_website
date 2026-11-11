@@ -98,7 +98,6 @@ const Home = () => {
               </div>
               <FeaturedCarousel
                 result={featured1}
-                accent="blue"
                 intervalMs={5000}
               />
             </div>
@@ -126,7 +125,6 @@ const Home = () => {
               </div>
               <FeaturedCarousel
                 result={featured2}
-                accent="purple"
                 intervalMs={5500}
               />
             </div>
