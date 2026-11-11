@@ -152,7 +152,8 @@ const Home = () => {
                   >
                     <Icon className="h-[34px] w-[34px]" />
                   </span>
-                  <span className="mt-4 flex items-end justify-between gap-2">
+                  {/* 手機卡寬只有約 145px，名稱與「看看 →」改上下排列，避免名稱被擠成直排 */}
+                  <span className="mt-4 flex flex-col items-start gap-1 md:flex-row md:items-end md:justify-between md:gap-2">
                     <span className="text-heading font-semibold">
                       {PRODUCT_PAGE_VIEWS[path].title}
                     </span>

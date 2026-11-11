@@ -85,13 +85,14 @@ const NavBar = () => {
       <div className="flex items-center justify-between gap-4 rounded-pill bg-surface-raised py-1 pr-1 pl-4 shadow-bar-sm md:py-2 md:pr-2 md:pl-6 md:shadow-bar">
         <Link to="/" className="inline-flex items-center">
           {!logoFailed ? (
+            // 原始 Logo 為深灰單色圖，放在深色頂列上看不見，以濾鏡轉成白色
             <img
               src="/brand-logo.png"
               width={800}
               height={235}
               onError={() => setLogoFailed(true)}
               alt="KRD MICGO Logo"
-              className="h-[26px] w-auto md:h-[30px]"
+              className="h-[26px] w-auto brightness-0 invert md:h-[30px]"
             />
           ) : (
             // 每頁已有自己的 h1，備援文字不可用標題元素
