@@ -1,5 +1,0 @@
-/* #root 撐滿視窗；其餘樣式由 Tailwind 提供 */
-#root {
-  min-height: 100vh;
-  width: 100%;
-}
