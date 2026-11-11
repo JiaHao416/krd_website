@@ -3,8 +3,9 @@ gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: UI 重新設計與商品詳情頁
 status: planning
-last_updated: "2026-11-10T09:00:00.000Z"
-last_activity: 2026-11-10
+stopped_at: Phase 6 UI-SPEC approved
+last_updated: "2026-11-11T00:37:22.368Z"
+last_activity: 2026-11-10 — v1.1 roadmap 建立（Phases 6-11）
 progress:
   total_phases: 6
   completed_phases: 0
@@ -81,9 +82,9 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-11-10
-Stopped at: v1.1 roadmap 建立完成，待使用者核准
-Resume file: None
+Last session: 2026-11-11T00:37:22.363Z
+Stopped at: Phase 6 UI-SPEC approved
+Resume file: .planning/phases/06-design-lock/06-UI-SPEC.md
 
 ## Operator Next Steps
 
