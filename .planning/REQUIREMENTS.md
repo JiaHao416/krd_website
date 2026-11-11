@@ -40,8 +40,8 @@
 
 ### 連結接線（LINK）
 
-- [ ] **LINK-01**: 訪客點分類頁的商品卡片進入該商品詳情頁（整張卡為單一連結，列表頁不再有燈箱）
-- [ ] **LINK-02**: 訪客可從熱銷輪播進入商品詳情頁，輪播暫停行為不受影響
+- [x] **LINK-01**: 訪客點分類頁的商品卡片進入該商品詳情頁（整張卡為單一連結，列表頁不再有燈箱）
+- [x] **LINK-02**: 訪客可從熱銷輪播進入商品詳情頁，輪播暫停行為不受影響
 
 ### 品質與維護（TEST／MAINT）
 
@@ -106,8 +106,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 | PROD-14 | Phase 9 | Complete |
 | PROD-15 | Phase 9 | Complete |
 | PROD-16 | Phase 9 | Complete |
-| LINK-01 | Phase 10 | Pending |
-| LINK-02 | Phase 10 | Pending |
+| LINK-01 | Phase 10 | Complete |
+| LINK-02 | Phase 10 | Complete |
 | REL-03 | Phase 11 | Pending |
 | REL-04 | Phase 11 | Pending |
 
