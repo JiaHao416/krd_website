@@ -80,13 +80,21 @@ describe("NavBar 主選單", () => {
     );
   });
 
-  it.each(["/all-products", "/trumpet", "/products/abc"])(
-    "逛商品在 %s 有 aria-current=page",
+  it("逛商品在 /all-products 有 aria-current=page", () => {
+    renderBar("/all-products");
+    expect(
+      within(getMainNav()).getByRole("link", { name: "逛商品" })
+    ).toHaveAttribute("aria-current", "page");
+  });
+
+  // 分類頁與詳情頁只是屬於「逛商品」區段，不是連結指向的頁面
+  it.each(["/trumpet", "/products/abc"])(
+    "逛商品在 %s 有 aria-current=true",
     (path) => {
       renderBar(path);
       expect(
         within(getMainNav()).getByRole("link", { name: "逛商品" })
-      ).toHaveAttribute("aria-current", "page");
+      ).toHaveAttribute("aria-current", "true");
     }
   );
 

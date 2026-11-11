@@ -70,7 +70,10 @@ const NavBar = () => {
       <Link
         key={path}
         to={path}
-        aria-current={isActive ? "page" : undefined}
+        aria-current={
+          // 完全符合目前路徑才是 page；只是屬於該區段（如分類頁）時用 true
+          pathname === path ? "page" : isActive ? "true" : undefined
+        }
         className={
           isActive ? `${NAV_LINK_CLASS} ${NAV_LINK_ACTIVE_CLASS}` : NAV_LINK_CLASS
         }
