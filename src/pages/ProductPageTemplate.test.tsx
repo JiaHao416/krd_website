@@ -366,3 +366,37 @@ describe("ProductPageTemplate 改版版面", () => {
     ).toBe(true);
   });
 });
+
+describe("ProductPageTemplate 連到詳情頁", () => {
+  it("列表檢視點卡片導向 /products/{id}，不出現 dialog", async () => {
+    const user = userEvent.setup();
+    mockFetch.mockResolvedValue(
+      makeResult([
+        makeProduct({ id: "a", name: "甲商品" }),
+        makeProduct({ id: "b", name: "乙商品" }),
+      ])
+    );
+    renderPageWithDetailRoute();
+    await screen.findByText("甲商品");
+    await user.click(screen.getByRole("button", { name: "列表檢視" }));
+    await user.click(screen.getByText("乙商品"));
+    expect(await screen.findByText("詳情頁 b")).toBeInTheDocument();
+    expect(screen.queryByRole("dialog")).toBeNull();
+  });
+
+  it("每張卡的連結 href 對應各自的 id", async () => {
+    mockFetch.mockResolvedValue(
+      makeResult([
+        makeProduct({ id: "a", name: "甲商品" }),
+        makeProduct({ id: "b", name: "乙商品" }),
+      ])
+    );
+    renderPage();
+    await screen.findByText("甲商品");
+    const links = screen.getAllByRole("link", { name: /甲商品|乙商品/ });
+    expect(links.map((el) => el.getAttribute("href"))).toEqual([
+      "/products/a",
+      "/products/b",
+    ]);
+  });
+});
