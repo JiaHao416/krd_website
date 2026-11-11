@@ -28,6 +28,7 @@ findings:
   info: 5
   total: 8
 status: issues_found
+fix_status: warnings_fixed
 ---
 
 # Phase 9: Code Review Report
@@ -46,6 +47,9 @@ status: issues_found
 ## Warnings
 
 ### WR-01: 複製狀態不隨商品 id 重置，舊請求的結果會套到新商品
+
+**Status:** fixed（`ff3b85d`）：`useCopyInquiry` 在文字改變時於 render 階段重置狀態、清除還原計時器，並以嘗試編號丟棄過期寫入的結果；補 3 個 hook 測試。
+
 
 **File:** `src/pages/ProductDetailPage.tsx:41-48`、`src/hooks/useCopyInquiry.ts:47-79`
 **Issue:** `useCopyInquiry` 掛在 `ProductDetailPage`（沒有 key，路由 `/products/:id` 切換 id 時不重掛），只有 `ProductDetailView` 會因 `key` 重置。從商品 A 切到商品 B（同一路由元件，例如之後加了相關商品連結，或 history 在兩個詳情頁之間前進後退）時有兩個問題：
@@ -86,11 +90,17 @@ const copy = useCallback(() => {
 
 ### WR-02: 連續複製失敗時 aria-live 不會再次朗讀
 
+**Status:** fixed（`4ab1bbb`）：寫入發出後同步回到 `idle`，每次嘗試都會讓即時區域內容變動；補 2 個 hook 測試與 1 個頁面測試（失敗訊息節點被重新插入）。
+
+
 **File:** `src/hooks/useCopyInquiry.ts:64-78`、`src/components/DetailCta.tsx:25,55`、`src/components/DetailMobileBar.tsx:25-30`
 **Issue:** 第二次點擊時狀態從 `"failed"` 再設成 `"failed"`，React 不更新 DOM，live region 內容沒變，螢幕閱讀器使用者按了按鈕卻沒有任何回饋（看起來像沒反應）。同理，`"copied"` 期間再按一次（重新計時）也不會再次朗讀。
 **Fix:** 在 `copy()` 一開始、`writeText` 呼叫之後同步 `setStatus("idle")`（setState 不會消耗使用者手勢，寫入仍在同一個 tick 內發出），讓每次嘗試都產生一次 DOM 變化；或在訊息節點加上嘗試次數作為 `key` 強制重建。補一個「連續兩次失敗，訊息節點被重新插入」的測試。
 
 ### WR-03: 手機固定列顯示失敗訊息後超出 Layout 預留高度，遮住頁尾
+
+**Status:** fixed（`71b5c2f`）：失敗時 `DetailMobileBar` 在文件流加 40px 補高（`h-10 md:hidden`、`aria-hidden`），總預留 136px ≥ 列高約 120px；未採用絕對定位方案，因為浮在列上方的訊息仍會落在 96px 預留區之外而遮住頁尾。補 3 個測試。
+
 
 **File:** `src/components/DetailMobileBar.tsx:26-30`、`src/components/Layout.tsx:21`（`pb-24`）
 **Issue:** Layout 在 base 固定預留 96px（`pb-24`）。雙鈕列本身是 `p-4`＋`h-14`＝88px，失敗訊息出現後多了一行 `text-label` 加 `gap-2`，列高大約 120px 以上，比預留空間多出 24px 以上，最底部的頁尾地址會被固定列蓋住而無法捲出來。失敗狀態會一直維持，所以遮擋不是暫時的。
@@ -99,6 +109,9 @@ const copy = useCallback(() => {
 ## Info
 
 ### IN-01: 載入中與錯誤狀態沒有設定分頁標題
+
+**Status:** deferred：UI-SPEC 沒有錯誤狀態的分頁標題文案，且既有測試斷言錯誤狀態維持站名「KRD」；需先在 UI-SPEC 決定文案。
+
 
 **File:** `src/pages/ProductDetailPage.tsx:59,73-95`
 **Issue:** loading 和 error 分支沒有 `<title>`，分頁標題退回 `index.html` 的「KRD」。D-04 沒有規定這兩個狀態，但錯誤頁的分頁上沒有任何提示，和 notFound 分支的作法不一致。
