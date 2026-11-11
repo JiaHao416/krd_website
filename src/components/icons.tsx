@@ -68,6 +68,21 @@ export const AlertIcon = ({ className }: IconProps) => (
   </svg>
 );
 
+/** 複製（兩個重疊的方框） */
+export const CopyIcon = ({ className }: IconProps) => (
+  <svg {...UI_ICON_PROPS} stroke="currentColor" className={className}>
+    <rect x="9" y="9" width="13" height="13" rx="2" />
+    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+  </svg>
+);
+
+/** 勾選（複製成功） */
+export const CheckIcon = ({ className }: IconProps) => (
+  <svg {...UI_ICON_PROPS} stroke="currentColor" className={className}>
+    <path d="M20 6L9 17l-5-5" />
+  </svg>
+);
+
 /** 分類：有線麥克風 */
 export const WiredMicIcon = ({ className }: IconProps) => (
   <svg {...CATEGORY_ICON_PROPS} stroke="currentColor" className={className}>

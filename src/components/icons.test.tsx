@@ -11,6 +11,8 @@ import {
   WirelessMicIcon,
   SpeakerIcon,
   AccessoryIcon,
+  CopyIcon,
+  CheckIcon,
 } from "./icons";
 
 const ICONS = [
@@ -24,6 +26,8 @@ const ICONS = [
   ["WirelessMicIcon", WirelessMicIcon],
   ["SpeakerIcon", SpeakerIcon],
   ["AccessoryIcon", AccessoryIcon],
+  ["CopyIcon", CopyIcon],
+  ["CheckIcon", CheckIcon],
 ] as const;
 
 describe("icons", () => {
