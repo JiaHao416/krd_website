@@ -21,7 +21,7 @@
 
 ### 盤點清單的形式
 - **D-01:** 盤點寫成單一文件 `.planning/phases/06-design-lock/06-TEST-INVENTORY.md`，**不在測試程式碼內加標記**（不改 describe／it 名稱、不加註解）。理由：本 phase 不動程式碼；測試名稱在 Phase 8/10 會因改寫而變動，程式內標記反而會漂移。
-- **D-02:** 顆粒度為**逐條 `it`**，依測試檔分節。`it.each` 列一列並註明展開數。每列欄位：測試名稱（原文）、分類（契約／呈現）、契約類型（role・accessible name・aria 狀態・路由／href・錯誤狀態・狀態機／計時・資料轉換・憑證掃描）、預計受影響的 phase（7/8/9/10/無）、預定處置（保留／調整斷言／改寫為新元件同語意測試）。
+- **D-02:** 顆粒度為**逐條測試**，依測試檔分節。`it.each` **每個展開項各一列**（研究後修訂，與 D-03 一致；備註欄可註明來自同一個 `it.each`）。第一欄固定為與 `npx vitest list` 同一行一致的完整名稱（`檔案 > describe > 測試名稱`，去掉 `[project]` 前綴），以便 diff 驗證。每列欄位：測試名稱（完整名稱）、分類（契約／呈現）、契約類型（role・accessible name・aria 狀態・路由／href・錯誤狀態・狀態機／計時・資料轉換・憑證掃描）、預計受影響的 phase（7/8/9/10/無）、預定處置（保留／調整斷言／改寫為新元件同語意測試）。
 - **D-03:** 清單以 `npx vitest list`（或 JSON reporter）產出的實際測試名稱為來源，**文件列數展開後必須等於 215**，避免手抄漏列。
 - **D-04:** 文件另附一節「accessible name 契約清單」，列出所有被測試引用的 `aria-label`／role+name（例如 `上一張`、`下一張`、`第 N 張`、`暫無圖片`、`開啟選單`、`重新載入`），標明 UI-SPEC 是否保留原字串；有改名的列出新字串與改在哪個 phase。
 
@@ -47,7 +47,7 @@
 ### 依賴移除（MAINT-01）
 - **D-14:** 兩個獨立 commit，順序為先 `@tailwindcss/postcss`、後 `@types/react-router-dom`，皆用 `npm uninstall`（同步更新 `package-lock.json`）。每個 commit 前都跑 `npm test`、`npm run lint`、`npm run build`。
 - **D-15:** 移除 `@tailwindcss/postcss` 時，另外比對移除前後 `dist/assets/*.css` 的內容（hash 或 diff）必須相同，證明樣式產出不受影響（`postcss.config.js` 只用 v3 的 `tailwindcss` 與 `autoprefixer`）。比對只在本機進行，不 commit 產物。
-- **D-16:** 同一個 commit 內一併更新描述這兩個套件的文件：`CLAUDE.md`（Key Dependencies 段落第 43–44 行）與 `.planning/codebase/STACK.md`，避免文件說「已安裝但未使用」而實際已移除。
+- **D-16:** 同一個 commit 內一併更新描述這兩個套件的文件：`CLAUDE.md`（Key Dependencies 段落第 43–44 行）、`.planning/codebase/STACK.md` 與 `.planning/codebase/CONCERNS.md`（研究後納入，第 13、69–73 行一帶），避免文件說「已安裝但未使用」而實際已移除。每個 commit 只改自己那個套件相關的行。
 
 ### Phase 結尾
 - **D-17:** 依 milestone 共通限制，phase 結束時把 `main` 合併進 `redesign`（目前 `main` 預期沒有新 commit，若無變動則記錄「無需合併」）。
