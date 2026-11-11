@@ -24,15 +24,15 @@ created: 2026-11-11
 ## 需求 → 測試對照
 | 需求 | 行為 | 類型 | 自動化指令 | 檔案存在？ |
 |------|------|------|------------|------------|
-| PROD-08 | 名稱、品牌·型號、分類 tag、說明 pre-line、保固 null 隱藏 | component | `npx vitest run src/pages/ProductDetailPage.test.tsx src/components/SpecTable.test.tsx` | ❌ 新增 |
-| PROD-09 | radiogroup 只在 ≥2 時出現、預設選中、方向鍵與 Home/End、切換後價格／現貨／SKU／主圖同步 | component | `npx vitest run src/components/VariantSelector.test.tsx src/pages/ProductDetailPage.test.tsx` | ❌ |
+| PROD-08 | 名稱、品牌·型號、分類 tag、說明 pre-line、保固 null 隱藏 | component | `npx vitest run src/components/ProductDetailView.test.tsx src/pages/ProductDetailPage.test.tsx src/components/SpecTable.test.tsx` | ❌ 新增 |
+| PROD-09 | radiogroup 只在 ≥2 時出現、預設選中、方向鍵與 Home/End、切換後價格／現貨／SKU／主圖同步 | component | `npx vitest run src/components/VariantSelector.test.tsx src/components/ProductDetailView.test.tsx` | ❌ |
 | PROD-10 | 無價顯示價格請來電 + 說明；有價顯示 priceText + 含稅；無變體視為無價；CTA 保留 | component | `npx vitest run src/components/PriceBlock.test.tsx` | ❌ |
-| PROD-11 | 主圖 button 開啟 dialog「商品大圖」；無圖時為 `img` 暫無圖片，沒有 button | component | `npx vitest run src/pages/ProductDetailPage.test.tsx` | ❌ |
-| PROD-12 | 麵包屑 href；直接開網址時備援 Link 指向分類 path；站內進入時按鈕 navigate(-1) | component | 同上 | ❌ |
+| PROD-11 | 主圖 button 開啟 dialog「商品大圖」；無圖時為 `img` 暫無圖片，沒有 button | component | `npx vitest run src/components/ProductDetailView.test.tsx` | ❌ |
+| PROD-12 | 麵包屑 href；直接開網址時備援 Link 指向分類 path；站內進入時按鈕 navigate(-1) | component | `npx vitest run src/components/ProductDetailView.test.tsx` | ❌ |
 | PROD-12 | findCategoryPage 對應與退回 | unit | `npx vitest run src/config/categoryPage.test.ts` | ❌ |
 | PROD-13 | notFound 顯示商品版 NotFoundState；非 UUID 不發請求；error 時 role=alert + retry 被呼叫；429 文案 | component | `npx vitest run src/pages/ProductDetailPage.test.tsx src/components/NotFoundState.test.tsx` | ❌ |
 | PROD-14 | 複製文字格式（有／無型號）、成功→已複製→2 秒還原、失敗文案、卸載清除計時器 | unit + component | `npx vitest run src/pages/productDetailText.test.ts src/hooks/useCopyInquiry.test.tsx src/components/DetailCta.test.tsx src/components/DetailMobileBar.test.tsx` | ❌ |
-| PROD-15 | 標題／description 正確，卸載後回到 KRD；notFound 標題；全域標題 | component | `npx vitest run src/pages/ProductDetailPage.test.tsx src/pages/NotFoundPage.test.tsx` | ❌ |
+| PROD-15 | 標題／description 正確，卸載後回到 KRD；notFound 標題；全域標題 | component | `npx vitest run src/components/ProductDetailView.test.tsx src/pages/ProductDetailPage.test.tsx src/pages/NotFoundPage.test.tsx` | ❌ |
 | PROD-16 | 未知路徑、`/products` 顯示「找不到這一頁」；舊路由不受影響 | component | `npx vitest run src/App.test.tsx` | ✅ 擴充 |
 | D-11 | Layout 預設單鈕列，傳入 slot 時取代 | component | `npx vitest run src/components/Layout.test.tsx` | ✅ 擴充 |
 | D-12 | 詳情頁不呼叫 fetchProducts；不使用 innerHTML | component + 原始碼掃描 | App.test 斷言 `fetchProducts` 未被呼叫；可選：比照 noAirtable.test 用 `import.meta.glob` 掃描 `ProductDetailPage.tsx` 不含 `dangerouslySetInnerHTML` | 部分 |

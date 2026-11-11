@@ -606,12 +606,12 @@ export function buildMetaDescription(p: Pick<ProductDetail, "description" | "bra
 ## Open Questions
 
 1. **非 success 狀態使用哪一種固定列？** — **RESOLVED：** loading／notFound／error 使用預設單鈕 `MobileCallBar`，只有 success 使用雙鈕列。理由：UI-SPEC 規定 NotFound 用單鈕列；商品不存在時沒有可以複製的內容。
-2. **base 的複製失敗訊息放在哪裡？** — **留給 planner（建議）：** 放在 DetailMobileBar 內、按鈕上方，跨兩欄（`col-span-2`），一起包在 `aria-live` 容器裡。代價是失敗時固定列會增高約 32px，可能暫時遮住頁尾一行；可接受，或讓 ProductDetailPage 成功態額外加 `pb-8` 補償。UAT 需要檢查 320 寬時的遮擋情況。
+2. **base 的複製失敗訊息放在哪裡？** — **RESOLVED（planner 採建議）：** 失敗訊息放在 DetailMobileBar 內、按鈕上方 `col-span-2`，同在 `aria-live` 容器；成功態根元素加 `pb-8 md:pb-0` 補償（09-03、09-04），UAT 檢查 320 寬遮擋。原建議： 放在 DetailMobileBar 內、按鈕上方，跨兩欄（`col-span-2`），一起包在 `aria-live` 容器裡。代價是失敗時固定列會增高約 32px，可能暫時遮住頁尾一行；可接受，或讓 ProductDetailPage 成功態額外加 `pb-8` 補償。UAT 需要檢查 320 寬時的遮擋情況。
 3. **NotFoundState 標題的層級** — **RESOLVED：** 使用 `<h1>`，字級為 `text-heading`（理由見 Pattern 7）。
 4. **loading／error 是否設定頁面標題？** — **RESOLVED：** 不設定（維持 KRD），因為 Copywriting 沒有定義。
 5. **ImageModal 關閉鈕 label** — **RESOLVED：** 現有 label 已經是 `關閉圖片`，不需要修改，也不會連動 ProductPageTemplate 的測試。
 6. **新增 CopyIcon／CheckIcon** — **RESOLVED：** 加到 `icons.tsx`，並把對應項目加進 `icons.test.tsx` 的 `ICONS` 陣列（每個 +1 項測試）。ZoomIcon 可選（「放大看」pill 在示意稿中有 gap，暗示有圖示），由 planner 決定。
-7. **production 沒有多變體、有價格的商品，UAT 如何驗證？** — **留給 planner：** 變體切換與有價格的版面以元件測試涵蓋；UAT 中若 20 筆商品都只有單一變體且價格為 null，就把這兩項標為 human-needed（待後端有資料時再驗）。
+7. **production 沒有多變體、有價格的商品，UAT 如何驗證？** — **RESOLVED（planner）：** 由 VariantSelector／PriceBlock／ProductDetailView 元件測試涵蓋；UAT（09-05）無資料時這兩項標 human-needed。原說明： 變體切換與有價格的版面以元件測試涵蓋；UAT 中若 20 筆商品都只有單一變體且價格為 null，就把這兩項標為 human-needed（待後端有資料時再驗）。
 8. **index.css IN-01 要不要在本 phase 修？** — **RESOLVED（建議修）：** 本 phase 第一次出現 roving tabindex，正是 IN-01 預告的情境。只改一行 CSS，放在 Plan 02。
 
 ## 環境可用性
