@@ -34,8 +34,8 @@
     outline-offset: 3px;
   }
 
-  /* skip link 目標 main 的程式化焦點不需外框（非可互動元素） */
-  [tabindex="-1"]:focus {
+  /* 只有 skip link 目標 main 的程式化焦點不需外框；其他 tabindex=-1 元素（如變體 chip）保留焦點環 */
+  main[tabindex="-1"]:focus {
     outline: none;
   }
 

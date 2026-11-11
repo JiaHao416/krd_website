@@ -53,4 +53,36 @@ describe("Layout", () => {
       )
     ).toBeInTheDocument();
   });
+
+  it("未傳 mobileBar 時顯示預設單鈕撥號列", () => {
+    render(
+      <MemoryRouter initialEntries={["/"]}>
+        <Layout footer="thanks">
+          <p>頁面內容</p>
+        </Layout>
+      </MemoryRouter>
+    );
+    const callLinks = screen.getAllByRole("link", { name: "打電話問問" });
+    expect(callLinks.some((link) => link.closest(".fixed") !== null)).toBe(
+      true
+    );
+  });
+
+  it("傳入 mobileBar 時取代預設列", () => {
+    render(
+      <MemoryRouter initialEntries={["/"]}>
+        <Layout
+          footer="thanks"
+          mobileBar={<div data-testid="custom-bar">自訂列</div>}
+        >
+          <p>頁面內容</p>
+        </Layout>
+      </MemoryRouter>
+    );
+    expect(screen.getByTestId("custom-bar")).toBeInTheDocument();
+    const callLinks = screen.queryAllByRole("link", { name: "打電話問問" });
+    expect(callLinks.every((link) => link.closest(".fixed") === null)).toBe(
+      true
+    );
+  });
 });
