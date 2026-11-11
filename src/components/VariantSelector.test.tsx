@@ -116,11 +116,12 @@ describe("VariantSelector", () => {
     expect(radios[0]).toHaveFocus();
   });
 
-  it("選項文字為屬性值組合，缺貨選項附洽詢交期", () => {
+  it("選項文字為屬性值組合，缺貨選項不附洽詢交期", () => {
     render(<Harness variants={VARIANTS} />);
     const radios = screen.getAllByRole("radio");
     expect(radios[0]).toHaveTextContent("黑色 / 手持 ×2");
     expect(radios[0]).not.toHaveTextContent("洽詢交期");
-    expect(radios[2]).toHaveTextContent("洽詢交期");
+    expect(radios[2]).toHaveTextContent(/^紅色$/);
+    expect(radios[2]).not.toHaveTextContent("洽詢交期");
   });
 });

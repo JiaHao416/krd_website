@@ -253,8 +253,8 @@ describe("ProductCard 圖片與連結", () => {
     const link = screen.getByRole("link");
     expect(link).toHaveAccessibleName("商品一 NT$1,200");
     expect(link).not.toHaveAccessibleName(/^暫無圖片/);
-    // 缺貨的「洽詢交期」改作補充說明，讀屏仍聽得到
-    expect(link).toHaveAccessibleDescription("洽詢交期");
+    // 已移除「洽詢交期」，缺貨卡不再有補充說明
+    expect(link).not.toHaveAttribute("aria-describedby");
     expect(screen.getByRole("img", { name: "暫無圖片" })).toBeInTheDocument();
   });
 
@@ -403,24 +403,24 @@ describe("ProductCard 描述與其他欄位", () => {
     expect(screen.queryByText("洽詢交期")).toBeNull();
   });
 
-  it("inStock=false 時 grid 顯示洽詢交期", () => {
+  it("缺貨時 grid 不顯示洽詢交期", () => {
     render(
       <ProductCard
         product={makeProduct({ inStock: false })}
         variant="grid"
       />
     );
-    expect(screen.getByText("洽詢交期")).toHaveClass("bg-block-3");
+    expect(screen.queryByText("洽詢交期")).toBeNull();
   });
 
-  it("list 也顯示洽詢交期", () => {
+  it("缺貨時 list 也不顯示洽詢交期", () => {
     render(
       <ProductCard
         product={makeProduct({ inStock: false })}
         variant="list"
       />
     );
-    expect(screen.getByText("洽詢交期")).toBeInTheDocument();
+    expect(screen.queryByText("洽詢交期")).toBeNull();
   });
 
   it("img 有 loading=lazy 與 decoding=async", () => {

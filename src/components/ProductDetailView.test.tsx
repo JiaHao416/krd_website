@@ -181,14 +181,13 @@ describe("ProductDetailView 變體", () => {
     expect(screen.getByRole("img", { name: MULTI.name })).toHaveAttribute("src", VARIANT_IMAGE);
   });
 
-  it("切換到缺貨且無圖的變體時顯示洽詢交期並回到商品圖", async () => {
+  it("切換到缺貨且無圖的變體時不顯示洽詢交期與有現貨，並回到商品圖", async () => {
     const user = userEvent.setup();
     renderView(MULTI);
     await user.click(screen.getAllByRole("radio")[1]);
     await user.click(screen.getAllByRole("radio")[2]);
-    const stock = within(screen.getByTestId("stock-status"));
-    expect(stock.getByText("洽詢交期")).toBeInTheDocument();
-    expect(stock.queryByText("有現貨")).not.toBeInTheDocument();
+    expect(screen.queryByText("洽詢交期")).toBeNull();
+    expect(screen.queryByText("有現貨")).toBeNull();
     expect(screen.getByRole("img", { name: MULTI.name })).toHaveAttribute("src", PRODUCT_IMAGE);
   });
 

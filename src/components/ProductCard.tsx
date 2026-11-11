@@ -20,10 +20,6 @@ const CARD_TILTS = [
   "rotate-[0.8deg]",
 ] as const;
 
-// 「洽詢交期」標籤：只在沒有現貨時顯示
-const LEAD_TIME_TAG_CLASS =
-  "inline-flex items-center rounded-pill bg-block-3 px-4 py-1 text-label text-ink";
-
 // 商品卡片：grid／list 兩種版型，整張卡為連到詳情頁的單一連結；只依 Product 型別，不含資料抓取
 const ProductCard = ({
   product,
@@ -41,14 +37,10 @@ const ProductCard = ({
   // 連結名稱只取商品名稱與價格文字，避免圖片 alt、「暫無圖片」佔位與描述併入名稱（WR-01／WR-02）
   const nameId = useId();
   const priceId = useId();
-  const leadTimeId = useId();
   const descId = useId();
-  // 缺貨標籤與 list 描述改作補充說明（aria-describedby），讀屏仍可取得
-  const descriptionIds: string[] = [];
-  if (!product.inStock) descriptionIds.push(leadTimeId);
-  if (variant === "list" && product.description) descriptionIds.push(descId);
+  // list 描述改作補充說明（aria-describedby），讀屏仍可取得
   const describedBy =
-    descriptionIds.length > 0 ? descriptionIds.join(" ") : undefined;
+    variant === "list" && product.description ? descId : undefined;
   const linkA11yProps = {
     "aria-labelledby": `${nameId} ${priceId}`,
     "aria-describedby": describedBy,
@@ -69,15 +61,10 @@ const ProductCard = ({
     <ImagePlaceholder size={variant === "list" ? "sm" : "lg"} />
   );
 
-  // 標籤列：價格（文字或「價格請來電」）＋缺貨時的「洽詢交期」
+  // 標籤列：價格
   const tagRow = (
     <div className="mt-2 flex flex-wrap items-center gap-2">
       <PriceTag product={product} id={priceId} />
-      {!product.inStock && (
-        <span id={leadTimeId} className={LEAD_TIME_TAG_CLASS}>
-          洽詢交期
-        </span>
-      )}
     </div>
   );
 
