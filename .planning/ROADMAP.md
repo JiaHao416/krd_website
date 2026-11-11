@@ -158,7 +158,20 @@ Plans:
   2. 使用者明確確認後才 push `main`（push 即 production 部署），未經確認不會合併
   3. 上線後於 production 實測：詳情頁深連結重新整理可正常顯示、不存在的商品與路由顯示對應的找不到畫面、8 條舊網址正常、熱銷輪播行為正確、各螢幕寬度版面正常
 
-**Plans**: TBD
+**Plans**: 3 plans
+
+Plans:
+**Wave 1**
+
+- [ ] 11-01-PLAN.md — 合併前檢查（main 同步、全綠、測試數 ≥ 541、dist grep）與本機 production bundle preflight（REL-03）
+
+**Wave 2** *(blocked on Wave 1 completion)*
+
+- [ ] 11-02-PLAN.md — 本地 main `--no-ff` 合併、使用者明確同意後 push、等 Cloudflare 部署完成（REL-03）
+
+**Wave 3** *(blocked on Wave 2 completion)*
+
+- [ ] 11-03-PLAN.md — production 實測 11-UAT.md 與回滾判定（REL-04）
 
 ## Progress
 
@@ -174,4 +187,4 @@ Plans:
 | 8. Tokens、共用骨架與既有頁面改版 | v1.1 | 8/8 | Complete    | 2026-11-11 |
 | 9. 商品詳情頁 UI、路由與 NotFound | v1.1 | 5/5 | Complete    | 2026-11-11 |
 | 10. 連結接線 | v1.1 | 3/3 | Complete    | 2026-11-11 |
-| 11. 收尾驗證與合併上線 | v1.1 | 0/TBD | Not started | - |
+| 11. 收尾驗證與合併上線 | v1.1 | 0/3 | Planned | - |
