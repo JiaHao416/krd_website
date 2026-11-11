@@ -144,7 +144,7 @@ Plans:
 
 Plans:
 - [x] 10-01-PLAN.md — 商品卡改為單一 Link、列表頁移除燈箱（LINK-01）
-- [ ] 10-02-PLAN.md — 熱銷便條卡改為 Link，輪播狀態機不動（LINK-02）
+- [x] 10-02-PLAN.md — 熱銷便條卡改為 Link，輪播狀態機不動（LINK-02）
 - [ ] 10-03-PLAN.md — 收尾總檢、瀏覽器 UAT、main 同步
 
 ### Phase 11: 收尾驗證與合併上線
@@ -173,5 +173,5 @@ Plans:
 | 7. 詳情資料層 | v1.1 | 3/3 | Complete    | 2026-11-11 |
 | 8. Tokens、共用骨架與既有頁面改版 | v1.1 | 8/8 | Complete    | 2026-11-11 |
 | 9. 商品詳情頁 UI、路由與 NotFound | v1.1 | 5/5 | Complete    | 2026-11-11 |
-| 10. 連結接線 | v1.1 | 1/3 | In Progress|  |
+| 10. 連結接線 | v1.1 | 2/3 | In Progress|  |
 | 11. 收尾驗證與合併上線 | v1.1 | 0/TBD | Not started | - |
