@@ -43,8 +43,9 @@ const ContactBlock = ({ info = CONTACT }: ContactBlockProps) => {
         )}
         <p className="mt-2 text-body text-ink">
           {info.businessHours}
-          <span className="block text-label text-ink-muted md:inline md:text-body md:text-ink">
-            （{info.closedNote}）
+          {/* 備註自帶括號，這裡不再外包；md+ 為 inline，以 md:ml-2 與營業時間隔開 */}
+          <span className="block text-label text-ink-muted md:ml-2 md:inline md:text-body md:text-ink">
+            {info.closedNote}
           </span>
         </p>
         {/* 手機寬度由固定撥號列承擔，這裡只在 md+ 顯示 */}

@@ -17,8 +17,13 @@ describe("ContactBlock", () => {
 
   it("顯示營業時間與休息備註", () => {
     render(<ContactBlock />);
-    expect(screen.getByText(/週一至週六 09:00 - 17:30/)).toBeInTheDocument();
-    expect(screen.getByText(/週日及國定假日休息/)).toBeInTheDocument();
+    expect(screen.getByText(/週一至週五 09:00 - 17:30/)).toBeInTheDocument();
+    expect(screen.getByText(/見紅休（週六、週日及國定假日）/)).toBeInTheDocument();
+  });
+
+  it("休息備註自帶括號，不再外包一層（不出現雙層括號）", () => {
+    const { container } = render(<ContactBlock />);
+    expect(container.textContent).not.toContain("（見紅休");
   });
 
   it("電話連結名稱為顯示電話、href 為 tel:", () => {

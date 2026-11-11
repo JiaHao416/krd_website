@@ -24,8 +24,8 @@ export const CONTACT: ContactInfo = {
   address: "411 台中市太平區永平路二段320之1號",
   phone: "(04) 2279-8787",
   phoneHref: "04-22798787",
-  businessHours: "週一至週六 09:00 - 17:30",
-  closedNote: "週日及國定假日休息",
+  businessHours: "週一至週五 09:00 - 17:30",
+  closedNote: "見紅休（週六、週日及國定假日）",
 };
 
 /**
