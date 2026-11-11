@@ -62,7 +62,7 @@ Plans:
 
 **Wave 2** *(blocked on Wave 1 completion)*
 
-- [ ] 06-03-PLAN.md — MAINT-01：兩個獨立 commit 移除未使用依賴（含 CSS sha256 比對與文件同步）
+- [x] 06-03-PLAN.md — MAINT-01：兩個獨立 commit 移除未使用依賴（含 CSS sha256 比對與文件同步）
 
 **Wave 3** *(blocked on Wave 2 completion)*
 
@@ -151,7 +151,7 @@ Plans:
 | 3. 靜態內容固化與移除 Airtable | v1.0 | 4/4 | Complete | 2026-11-10 |
 | 4. 上線驗證與撤銷 token | v1.0 | 3/3 | Complete | 2026-11-10 |
 | 5. 清理技術債 | v1.0 | 5/5 | Complete | 2026-11-10 |
-| 6. 設計鎖定與測試盤點 | v1.1 | 2/4 | In Progress|  |
+| 6. 設計鎖定與測試盤點 | v1.1 | 3/4 | In Progress|  |
 | 7. 詳情資料層 | v1.1 | 0/TBD | Not started | - |
 | 8. Tokens、共用骨架與既有頁面改版 | v1.1 | 0/TBD | Not started | - |
 | 9. 商品詳情頁 UI、路由與 NotFound | v1.1 | 0/TBD | Not started | - |
