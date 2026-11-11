@@ -41,6 +41,14 @@ export function useProductDetail(id: string | undefined): UseProductDetailResult
 
   const requestKey = validId === null ? "" : validId + "#" + reloadToken;
 
+  // 請求鍵改變（切換 id、retry，含 A→B→A 切回舊 id）時，在 render 階段就清掉已存結果，
+  // 讓第一次 render 必為 loading，避免殘留先前載入的舊資料（D-11 不快取）
+  const [prevKey, setPrevKey] = useState(requestKey);
+  if (prevKey !== requestKey) {
+    setPrevKey(requestKey);
+    setStored(null);
+  }
+
   useEffect(() => {
     if (validId === null) return;
     const key = validId + "#" + reloadToken;

@@ -146,6 +146,39 @@ describe("useProductDetail", () => {
     });
   });
 
+  it("A→B→A（B 未完成）切回 A 的第一個 render 為 loading 且重新請求", async () => {
+    const a1 = createDeferred<ProductDetail>();
+    const b = createDeferred<ProductDetail>();
+    const a2 = createDeferred<ProductDetail>();
+    mockFetch
+      .mockReturnValueOnce(a1.promise)
+      .mockReturnValueOnce(b.promise)
+      .mockReturnValueOnce(a2.promise);
+    const { result, rerender } = renderHook(({ id }) => useProductDetail(id), {
+      initialProps: { id: ID_A },
+    });
+    await act(async () => {
+      a1.resolve(makeDetail(ID_A));
+    });
+    expect(result.current.status).toBe("success");
+
+    // 切到 B，B 尚未完成就切回 A
+    rerender({ id: ID_B });
+    rerender({ id: ID_A });
+    // 不可殘留先前 A 的成功結果（D-11 不快取）
+    expect(result.current.status).toBe("loading");
+    expect(mockFetch).toHaveBeenCalledTimes(3);
+    expect(mockFetch.mock.calls[2][0]).toBe(ID_A);
+
+    await act(async () => {
+      a2.resolve(makeDetail(ID_A));
+    });
+    expect(result.current).toMatchObject({
+      status: "success",
+      product: { id: ID_A },
+    });
+  });
+
   it("舊 id 的結果晚到不會覆蓋新 id", async () => {
     const a = createDeferred<ProductDetail>();
     const b = createDeferred<ProductDetail>();
