@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router-dom";
 import ProductPageTemplate from "./ProductPageTemplate";
@@ -44,10 +44,13 @@ function makeResult(items: Product[], truncated = false): ProductListResult {
   return { items, total: items.length, truncated };
 }
 
-/** 渲染商品頁（分類 chip 列需要 Router） */
-function renderPage(query: ProductPageQuery = {}) {
+/** 渲染商品頁（分類 chip 列需要 Router）；initialPath 決定目前頁 chip */
+function renderPage(
+  query: ProductPageQuery = {},
+  initialPath = "/all-products"
+) {
   return render(
-    <MemoryRouter initialEntries={["/all-products"]}>
+    <MemoryRouter initialEntries={[initialPath]}>
       <ProductPageTemplate
         title="測試分類"
         description="測試描述"
@@ -171,15 +174,19 @@ describe("ProductPageTemplate 錯誤、空、淡化與截斷狀態", () => {
       .mockResolvedValueOnce(makeResult([]));
     renderPage();
     await user.click(await screen.findByRole("button", { name: "重新載入" }));
-    expect(await screen.findByText("目前沒有商品")).toBeInTheDocument();
+    expect(await screen.findByText("這裡還沒有商品")).toBeInTheDocument();
     expect(mockFetch).toHaveBeenCalledTimes(2);
   });
 
   it("查詢成功但沒有商品顯示空狀態，不出現「請稍後再試」", async () => {
     mockFetch.mockResolvedValue(makeResult([]));
     renderPage();
-    expect(await screen.findByText("目前沒有商品")).toBeInTheDocument();
-    expect(screen.getByText("此分類目前沒有上架的商品")).toBeInTheDocument();
+    expect(await screen.findByText("這裡還沒有商品")).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        "這個分類暫時沒東西，過幾天再來看看，或直接打電話問我們。"
+      )
+    ).toBeInTheDocument();
     expect(screen.queryByText(/請稍後再試/)).toBeNull();
   });
 
@@ -289,5 +296,51 @@ describe("ProductPageTemplate 價格、檢視切換與鍵盤", () => {
       "src",
       "https://img.krd.com.tw/x.jpg"
     );
+  });
+});
+
+describe("ProductPageTemplate 改版版面", () => {
+  it("h1 下方副行顯示共 N 項", async () => {
+    mockFetch.mockResolvedValue(
+      makeResult([
+        makeProduct({ id: "a", name: "甲商品" }),
+        makeProduct({ id: "b", name: "乙商品" }),
+      ])
+    );
+    renderPage();
+    expect(
+      await screen.findByText("共 2 項。看到喜歡的，直接打電話問最快。")
+    ).toBeInTheDocument();
+  });
+
+  it("結尾「找不到想要的？」含電話連結", async () => {
+    mockFetch.mockResolvedValue(makeResult([makeProduct()]));
+    renderPage();
+    expect(
+      await screen.findByRole("heading", { name: "找不到想要的？" })
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("link", { name: "(04) 2279-8787" })
+    ).toHaveAttribute("href", "tel:04-22798787");
+  });
+
+  it("chip 列存在且目前頁 chip 有 aria-current", async () => {
+    mockFetch.mockResolvedValue(makeResult([makeProduct()]));
+    renderPage({}, "/trumpet");
+    await screen.findByText("商品一");
+    const nav = screen.getByRole("navigation", { name: "商品分類" });
+    expect(
+      within(nav).getByRole("link", { name: "擴大機 / 喇叭" })
+    ).toHaveAttribute("aria-current", "page");
+  });
+
+  it("載入中顯示 8 張 aria-hidden 的 skeleton", () => {
+    mockFetch.mockReturnValue(new Promise(() => {}));
+    renderPage();
+    const skeletons = screen.getAllByTestId("product-card-skeleton");
+    expect(skeletons).toHaveLength(8);
+    expect(
+      skeletons.every((el) => el.getAttribute("aria-hidden") === "true")
+    ).toBe(true);
   });
 });
