@@ -52,11 +52,9 @@ function renderPage() {
   );
 }
 
-/** 以標題文字找到該組輪播所在的區塊 */
-function getSection(title: string): HTMLElement {
-  const section = screen.getByText(title).closest("div.space-y-8");
-  if (!section) throw new Error(`找不到區塊：${title}`);
-  return section as HTMLElement;
+/** 以 role=group 的名稱找到該組輪播所在的區塊 */
+function getSection(name: string): HTMLElement {
+  return screen.getByRole("group", { name });
 }
 
 beforeEach(() => {
@@ -142,7 +140,74 @@ describe("HomePage 兩組輪播互相獨立", () => {
     mockFetch.mockResolvedValue(makeResult([]));
     renderPage();
     expect(await screen.findAllByText("目前沒有精選商品")).toHaveLength(2);
-    expect(screen.getByText("熱門推薦系列")).toBeInTheDocument();
-    expect(screen.getByText("頂級精選系列")).toBeInTheDocument();
+    expect(
+      screen.getByRole("group", { name: "熱門推薦系列" })
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("group", { name: "頂級精選系列" })
+    ).toBeInTheDocument();
+  });
+});
+
+describe("HomePage 版面", () => {
+  beforeEach(() => {
+    mockFetch.mockResolvedValue(makeResult([]));
+  });
+
+  it("h1 含來問我們就對了", async () => {
+    renderPage();
+    await screen.findAllByText("目前沒有精選商品");
+    expect(
+      screen.getByRole("heading", { level: 1, name: /來問我們就對了/ })
+    ).toBeInTheDocument();
+  });
+
+  it("逛逛商品連到 /all-products", async () => {
+    renderPage();
+    await screen.findAllByText("目前沒有精選商品");
+    expect(screen.getByRole("link", { name: /逛逛商品/ })).toHaveAttribute(
+      "href",
+      "/all-products"
+    );
+  });
+
+  it("hero 電話連結 href 為 tel:04-22798787", async () => {
+    renderPage();
+    await screen.findAllByText("目前沒有精選商品");
+    const hero = screen.getByRole("region", { name: /來問我們就對了/ });
+    expect(
+      within(hero).getByRole("link", { name: "(04) 2279-8787" })
+    ).toHaveAttribute("href", "tel:04-22798787");
+  });
+
+  it("4 張分類貼紙卡 href 依序為 /wired-micphone、/wireless-micphone、/trumpet、/accessories", async () => {
+    renderPage();
+    await screen.findAllByText("目前沒有精選商品");
+    const categories = screen.getByRole("region", { name: "想找什麼？" });
+    const hrefs = within(categories)
+      .getAllByRole("link")
+      .map((link) => link.getAttribute("href"));
+    expect(hrefs).toEqual([
+      "/wired-micphone",
+      "/wireless-micphone",
+      "/trumpet",
+      "/accessories",
+    ]);
+  });
+
+  it("店面照片預留位 role=img 名稱為店面照片（待提供）", async () => {
+    renderPage();
+    await screen.findAllByText("目前沒有精選商品");
+    expect(
+      screen.getByRole("img", { name: "店面照片（待提供）" })
+    ).toBeInTheDocument();
+  });
+
+  it("熱銷 h2 為這陣子大家都在問", async () => {
+    renderPage();
+    await screen.findAllByText("目前沒有精選商品");
+    expect(
+      screen.getByRole("heading", { level: 2, name: "這陣子大家都在問" })
+    ).toBeInTheDocument();
   });
 });
