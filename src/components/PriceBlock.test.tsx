@@ -3,12 +3,10 @@ import { render, screen } from "@testing-library/react";
 import PriceBlock from "./PriceBlock";
 
 describe("PriceBlock", () => {
-  it("沒有標價時顯示來電文案與說明，不顯示含稅", () => {
-    render(<PriceBlock priceText={null} />);
-    expect(screen.getByText("價格請來電")).toBeInTheDocument();
-    expect(
-      screen.getByText("這個商品沒有標價，打個電話問，我們直接報給你。")
-    ).toBeInTheDocument();
+  it("沒有標價時整個價格區塊不渲染", () => {
+    const { container } = render(<PriceBlock priceText={null} />);
+    expect(container).toBeEmptyDOMElement();
+    expect(screen.queryByText(/這個商品沒有標價/)).not.toBeInTheDocument();
     expect(screen.queryByText("含稅")).not.toBeInTheDocument();
   });
 

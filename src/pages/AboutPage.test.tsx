@@ -68,6 +68,14 @@ describe("AboutPage 版面與聯絡資訊", () => {
     expect(screen.getByText(CONTACT.businessHours, { exact: false })).toBeInTheDocument();
   });
 
+  it("聯絡區顯示 3 張店面照片與 Google 地圖", () => {
+    renderPage();
+    for (const alt of ["店面外觀", "正門與招牌", "門口屏風"]) {
+      expect(screen.getByAltText(alt)).toBeInTheDocument();
+    }
+    expect(screen.getByTitle("羽程企業社 Google 地圖").tagName).toBe("IFRAME");
+  });
+
   it("不含舊電話格式 (04) 22798787", () => {
     renderPage();
     expect(screen.queryByText(/\(04\) 22798787/)).toBeNull();

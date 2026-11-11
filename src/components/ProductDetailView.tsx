@@ -32,9 +32,6 @@ const CRUMB_LINK_CLASS = "text-accent transition-colors duration-150 hover:text-
 // 主圖相框：白底、粗邊、微傾斜（文字區不傾斜）
 const FRAME_CLASS =
   "relative block aspect-square w-full -rotate-[1.2deg] overflow-hidden rounded-block border-8 border-surface-raised bg-white shadow-card-lg md:border-[16px]";
-// 「洽詢交期」標籤（與商品卡一致）
-const LEAD_TIME_TAG_CLASS =
-  "inline-flex items-center rounded-pill bg-block-3 px-4 py-1 text-label text-ink";
 
 // 商品詳情成功態：標題與 description、麵包屑、返回、主圖燈箱與資訊欄
 const ProductDetailView = ({ product, copyStatus, onCopy }: ProductDetailViewProps) => {
@@ -160,16 +157,15 @@ const ProductDetailView = ({ product, copyStatus, onCopy }: ProductDetailViewPro
             onSelect={setSelectedId}
           />
 
-          <div data-testid="stock-status" className="flex">
-            {inStock ? (
+          {/* 只在有現貨時顯示；缺貨不渲染任何元素，避免 flex-col 留下空白間距 */}
+          {inStock && (
+            <div data-testid="stock-status" className="flex">
               <p className="inline-flex items-center gap-2 text-label text-success">
                 <span aria-hidden="true" className="h-[10px] w-[10px] rounded-pill bg-success" />
                 有現貨
               </p>
-            ) : (
-              <span className={`self-start ${LEAD_TIME_TAG_CLASS}`}>洽詢交期</span>
-            )}
-          </div>
+            </div>
+          )}
 
           <DetailCta status={copyStatus} onCopy={onCopy} />
 

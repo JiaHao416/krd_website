@@ -114,7 +114,7 @@ describe("HomePage 熱銷輪播資料來源", () => {
     expect(within(hot).queryByText("熱銷二號")).toBeNull();
   });
 
-  it("便條卡有價顯示 priceText、無價顯示價格請來電，且不出現價格洽詢", async () => {
+  it("便條卡有價顯示 priceText、無價不顯示價格請來電，且不出現價格洽詢", async () => {
     mockFetch.mockResolvedValue(
       makeResult([
         makeProduct({ id: "a", priceMin: 100, priceText: "NT$ 9,999" }),
@@ -124,7 +124,7 @@ describe("HomePage 熱銷輪播資料來源", () => {
     renderPage();
     await screen.findAllByText("商品一");
     expect(screen.getAllByText("NT$ 9,999").length).toBeGreaterThan(0);
-    expect(screen.getAllByText("價格請來電").length).toBeGreaterThan(0);
+    expect(screen.queryByText("價格請來電")).toBeNull();
     expect(screen.queryByText("價格洽詢")).toBeNull();
   });
 
@@ -223,12 +223,35 @@ describe("HomePage 版面", () => {
     ]);
   });
 
-  it("店面照片預留位 role=img 名稱為店面照片（待提供）", async () => {
+  it("hero 顯示店面照片，取代店面照片預留位", async () => {
     renderPage();
     await screen.findAllByText("目前沒有精選商品");
-    expect(
-      screen.getByRole("img", { name: "店面照片（待提供）" })
-    ).toBeInTheDocument();
+    expect(screen.getByAltText("羽程企業社店面外觀")).toHaveAttribute(
+      "src",
+      "/store/storefront.webp"
+    );
+    expect(screen.queryByRole("img", { name: "店面照片（待提供）" })).toBeNull();
+  });
+
+  it("hero 店面照片在首屏立即載入、object-cover，width/height 與設定一致", async () => {
+    renderPage();
+    await screen.findAllByText("目前沒有精選商品");
+    const photo = screen.getByAltText("羽程企業社店面外觀");
+    expect({
+      loading: photo.getAttribute("loading"),
+      width: photo.getAttribute("width"),
+      height: photo.getAttribute("height"),
+      cover: photo.classList.contains("object-cover"),
+    }).toEqual({ loading: "eager", width: "1200", height: "900", cover: true });
+  });
+
+  it("聯絡區顯示 3 張店面照片與 Google 地圖", async () => {
+    renderPage();
+    await screen.findAllByText("目前沒有精選商品");
+    for (const alt of ["店面外觀", "正門與招牌", "門口屏風"]) {
+      expect(screen.getByAltText(alt)).toBeInTheDocument();
+    }
+    expect(screen.getByTitle("羽程企業社 Google 地圖").tagName).toBe("IFRAME");
   });
 
   it("熱銷 h2 為這陣子大家都在問", async () => {

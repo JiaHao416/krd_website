@@ -49,7 +49,7 @@ describe("Layout", () => {
     renderLayout("address");
     expect(
       screen.getByText(
-        "© KRD・411 台中市太平區永平路二段320之1號・週一至週六 09:00 - 17:30"
+        "© KRD・411 台中市太平區永平路二段320之1號・週一至週五 09:00 - 18:00"
       )
     ).toBeInTheDocument();
   });

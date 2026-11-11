@@ -17,8 +17,6 @@ const CHIP_BASE_CLASS =
   "inline-flex h-11 items-center gap-2 rounded-pill bg-surface-raised px-4 text-body transition-colors duration-150";
 const CHIP_SELECTED_CLASS = "border-2 border-accent font-semibold text-accent";
 const CHIP_IDLE_CLASS = "border border-dash text-ink";
-// 缺貨選項內的小標籤
-const LEAD_TIME_TAG_CLASS = "rounded-pill bg-block-3 px-2 text-label text-ink";
 
 /**
  * 依按鍵算出下一個要選中的索引；不處理的按鍵回傳 null
@@ -74,7 +72,6 @@ const VariantSelector = ({ variants, selectedId, onSelect }: VariantSelectorProp
               className={`${CHIP_BASE_CLASS} ${selected ? CHIP_SELECTED_CLASS : CHIP_IDLE_CLASS}`}
             >
               {variantLabel(variant)}
-              {!variant.inStock && <span className={LEAD_TIME_TAG_CLASS}>洽詢交期</span>}
             </button>
           );
         })}

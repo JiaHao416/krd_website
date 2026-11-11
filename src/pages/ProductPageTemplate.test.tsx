@@ -251,7 +251,7 @@ describe("ProductPageTemplate 錯誤、空、淡化與截斷狀態", () => {
 });
 
 describe("ProductPageTemplate 價格、檢視切換與鍵盤", () => {
-  it("同時顯示有價商品的 priceText 與無價商品的「價格請來電」", async () => {
+  it("顯示有價商品的 priceText，無價商品不顯示價格元素", async () => {
     mockFetch.mockResolvedValue(
       makeResult([
         makeProduct({
@@ -267,7 +267,8 @@ describe("ProductPageTemplate 價格、檢視切換與鍵盤", () => {
     renderPage();
     await screen.findByText("有價商品");
     expect(screen.getAllByText("NT$1,200").length).toBeGreaterThanOrEqual(1);
-    expect(screen.getByText("價格請來電")).toBeInTheDocument();
+    expect(screen.queryByText("價格請來電")).toBeNull();
+    expect(screen.queryByText("價格洽詢")).toBeNull();
   });
 
   it("切換列表檢視後 aria-pressed 更新，且仍顯示價格行", async () => {
@@ -304,8 +305,8 @@ describe("ProductPageTemplate 價格、檢視切換與鍵盤", () => {
       ])
     );
     renderPageWithDetailRoute();
-    // 精確比對：連結名稱只含商品名稱與價格文字
-    const card = await screen.findByRole("link", { name: "甲商品 價格請來電" });
+    // 精確比對：無價商品的連結名稱只含商品名稱
+    const card = await screen.findByRole("link", { name: "甲商品" });
     card.focus();
     await user.keyboard("{Enter}");
     expect(await screen.findByText("詳情頁 a")).toBeInTheDocument();
@@ -394,10 +395,10 @@ describe("ProductPageTemplate 連到詳情頁", () => {
     );
     renderPage();
     await screen.findByText("甲商品");
-    // 精確比對：每張卡的連結名稱只含商品名稱與價格文字
+    // 精確比對：無價商品卡的連結名稱只含商品名稱
     const links = [
-      screen.getByRole("link", { name: "甲商品 價格請來電" }),
-      screen.getByRole("link", { name: "乙商品 價格請來電" }),
+      screen.getByRole("link", { name: "甲商品" }),
+      screen.getByRole("link", { name: "乙商品" }),
     ];
     expect(links.map((el) => el.getAttribute("href"))).toEqual([
       "/products/a",

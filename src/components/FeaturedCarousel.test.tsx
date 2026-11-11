@@ -389,7 +389,7 @@ describe("FeaturedCarousel 便條卡", () => {
     expect(screen.getAllByRole("listitem")).toHaveLength(2);
   });
 
-  it("便條卡無價顯示價格請來電、有價顯示 priceText", () => {
+  it("便條卡有價顯示 priceText、無價不顯示價格元素", () => {
     renderCarousel(
       makeResult({
         items: [
@@ -399,7 +399,9 @@ describe("FeaturedCarousel 便條卡", () => {
       })
     );
     expect(screen.getByText("NT$ 1,234")).toBeInTheDocument();
-    expect(screen.getByText("價格請來電")).toBeInTheDocument();
+    expect(screen.queryByText("價格請來電")).toBeNull();
+    // 無價便條卡的「查看詳情 →」提示仍在
+    expect(screen.getAllByText("查看詳情 →")).toHaveLength(2);
   });
 });
 

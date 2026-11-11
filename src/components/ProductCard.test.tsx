@@ -100,14 +100,14 @@ describe("ProductCard 價格顯示", () => {
     expect(screen.getAllByText("NT$1,500")).toHaveLength(1);
   });
 
-  it("grid 無價：顯示價格請來電，不出現價格洽詢", () => {
+  it("grid 無價：不顯示任何價格元素（無價格請來電、無價格洽詢）", () => {
     render(
       <ProductCard
         product={makeNoPrice()}
         variant="grid"
       />
     );
-    expect(screen.getByText("價格請來電")).toBeInTheDocument();
+    expect(screen.queryByText("價格請來電")).toBeNull();
     expect(screen.queryByText(PRICE_ON_REQUEST)).toBeNull();
   });
 
@@ -120,36 +120,35 @@ describe("ProductCard 價格顯示", () => {
     expect(container.querySelector(".product-badge")).toBeNull();
   });
 
-  it("list 無價：顯示價格請來電", () => {
+  it("list 無價：不顯示任何價格元素", () => {
     render(
       <ProductCard
         product={makeNoPrice()}
         variant="list"
       />
     );
-    expect(screen.getByText("價格請來電")).toBeInTheDocument();
+    expect(screen.queryByText("價格請來電")).toBeNull();
+    expect(screen.queryByText(PRICE_ON_REQUEST)).toBeNull();
   });
 
-  it("價格請來電 tag 使用 block-2 底而非 accent", () => {
-    render(
+  it("無價時卡片內沒有 block-2 價格 tag", () => {
+    const { container } = render(
       <ProductCard
         product={makeNoPrice()}
         variant="grid"
       />
     );
-    const tag = screen.getByText("價格請來電");
-    expect(tag).toHaveClass("bg-block-2");
-    expect(tag).not.toHaveClass("bg-accent");
+    expect(container.querySelector(".bg-block-2")).toBeNull();
   });
 
-  it("無價判斷看 priceMin/priceMax 皆 null（priceText 不是 PRICE_ON_REQUEST 也一樣）", () => {
+  it("無價判斷看 priceMin/priceMax 皆 null：priceText 有值但兩者皆 null 時仍不顯示價格", () => {
     render(
       <ProductCard
-        product={makeNoPrice({ priceText: "" })}
+        product={makeNoPrice({ priceText: "NT$999" })}
         variant="grid"
       />
     );
-    expect(screen.getByText("價格請來電")).toBeInTheDocument();
+    expect(screen.queryByText("NT$999")).toBeNull();
   });
 });
 
@@ -224,11 +223,20 @@ describe("ProductCard 圖片與連結", () => {
 
   it("grid 卡 accessible name 不因圖片 alt 重複念商品名稱", () => {
     render(<ProductCard product={makeNoPrice()} variant="grid" />);
-    expect(screen.getByRole("link")).toHaveAccessibleName(
-      "商品一 價格請來電"
-    );
+    expect(screen.getByRole("link")).toHaveAccessibleName("商品一");
     // 圖片 alt 契約不變
     expect(screen.getByAltText("商品一")).toBeInTheDocument();
+  });
+
+  it("無價卡連結的 aria-labelledby 只含一個 id，且指向存在的名稱 h3", () => {
+    const { container } = render(
+      <ProductCard product={makeNoPrice()} variant="grid" />
+    );
+    const ids = (
+      screen.getByRole("link").getAttribute("aria-labelledby") ?? ""
+    ).split(" ");
+    expect(ids).toHaveLength(1);
+    expect(container.ownerDocument.getElementById(ids[0])?.tagName).toBe("H3");
   });
 
   it("list 卡 accessible name 不含描述，描述改作補充說明", () => {
@@ -253,8 +261,8 @@ describe("ProductCard 圖片與連結", () => {
     const link = screen.getByRole("link");
     expect(link).toHaveAccessibleName("商品一 NT$1,200");
     expect(link).not.toHaveAccessibleName(/^暫無圖片/);
-    // 缺貨的「洽詢交期」改作補充說明，讀屏仍聽得到
-    expect(link).toHaveAccessibleDescription("洽詢交期");
+    // 已移除「洽詢交期」，缺貨卡不再有補充說明
+    expect(link).not.toHaveAttribute("aria-describedby");
     expect(screen.getByRole("img", { name: "暫無圖片" })).toBeInTheDocument();
   });
 
@@ -348,28 +356,22 @@ describe("ProductCard 描述與其他欄位", () => {
     );
   });
 
-  it("價格行位於標籤列（flex-wrap gap-2）：無價", () => {
-    const { unmount } = render(
+  it("無價時 grid 與 list 都不渲染空的標籤列", () => {
+    const { container, unmount } = render(
       <ProductCard
         product={makeNoPrice()}
         variant="grid"
       />
     );
-    expect(screen.getByText("價格請來電").parentElement).toHaveClass(
-      "flex-wrap",
-      "gap-2"
-    );
+    expect(container.querySelector(".flex-wrap.gap-2")).toBeNull();
     unmount();
-    render(
+    const { container: listContainer } = render(
       <ProductCard
         product={makeNoPrice()}
         variant="list"
       />
     );
-    expect(screen.getByText("價格請來電").parentElement).toHaveClass(
-      "flex-wrap",
-      "gap-2"
-    );
+    expect(listContainer.querySelector(".flex-wrap.gap-2")).toBeNull();
   });
 
   it("圖片容器為 aspect-square 白底、名稱 line-clamp-2、無『點擊查看大圖』", () => {
@@ -403,24 +405,24 @@ describe("ProductCard 描述與其他欄位", () => {
     expect(screen.queryByText("洽詢交期")).toBeNull();
   });
 
-  it("inStock=false 時 grid 顯示洽詢交期", () => {
+  it("缺貨時 grid 不顯示洽詢交期", () => {
     render(
       <ProductCard
         product={makeProduct({ inStock: false })}
         variant="grid"
       />
     );
-    expect(screen.getByText("洽詢交期")).toHaveClass("bg-block-3");
+    expect(screen.queryByText("洽詢交期")).toBeNull();
   });
 
-  it("list 也顯示洽詢交期", () => {
+  it("缺貨時 list 也不顯示洽詢交期", () => {
     render(
       <ProductCard
         product={makeProduct({ inStock: false })}
         variant="list"
       />
     );
-    expect(screen.getByText("洽詢交期")).toBeInTheDocument();
+    expect(screen.queryByText("洽詢交期")).toBeNull();
   });
 
   it("img 有 loading=lazy 與 decoding=async", () => {

@@ -1,4 +1,5 @@
 import type { Product } from "../services/transform";
+import { hasListedPrice } from "./price";
 
 interface PriceTagProps {
   product: Pick<Product, "priceMin" | "priceMax" | "priceText">;
@@ -8,20 +9,10 @@ interface PriceTagProps {
 
 /**
  * 商品卡片與便條卡共用的價格呈現。
- * 最低、最高價皆為 null 才視為無價（D-01），改顯示「價格請來電」標籤。
+ * 最低、最高價皆為 null 才視為無價（D-01），無價時不渲染任何元素。
  */
 const PriceTag = ({ product, id }: PriceTagProps) => {
-  const isPriceOnRequest = product.priceMin === null && product.priceMax === null;
-
-  if (isPriceOnRequest) {
-    return (
-      <span
-        id={id}
-        className="inline-flex items-center rounded-pill bg-block-2 px-4 py-1 text-label text-ink">
-        價格請來電
-      </span>
-    );
-  }
+  if (!hasListedPrice(product)) return null;
 
   return (
     <span id={id} className="text-body font-semibold text-ink">
