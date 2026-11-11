@@ -540,10 +540,18 @@ describe("FeaturedCarousel 便條卡連結", () => {
   });
 
   it("便條卡內沒有巢狀互動元素", () => {
-    renderCarousel(makeResult({ items: makeItems(1) }));
-    expect(screen.getAllByRole("link")).toHaveLength(1);
-    expect(screen.queryAllByRole("button")).toHaveLength(0);
-    expect(screen.getByText("查看詳情 →").closest('[aria-hidden="true"]')).not.toBeNull();
+    // 用 3 筆讓輪播控制鈕也渲染，再逐一檢查每張便條卡連結內部
+    renderCarousel(makeResult({ items: makeItems(3) }));
+    const links = screen.getAllByRole("link");
+    expect(links).toHaveLength(3);
+    for (const link of links) {
+      expect(
+        link.querySelector("a, button, input, select, textarea, [tabindex]")
+      ).toBeNull();
+    }
+    for (const hint of screen.getAllByText("查看詳情 →")) {
+      expect(hint.closest('[aria-hidden="true"]')).not.toBeNull();
+    }
   });
 
   it("鍵盤聚焦便條卡連結時不自動切換，焦點離開後恢復", () => {
