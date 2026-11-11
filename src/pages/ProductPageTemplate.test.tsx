@@ -229,7 +229,7 @@ describe("ProductPageTemplate 錯誤、空、淡化與截斷狀態", () => {
 });
 
 describe("ProductPageTemplate 價格、檢視切換與鍵盤", () => {
-  it("同時顯示有價商品的 priceText 與無價商品的「價格洽詢」", async () => {
+  it("同時顯示有價商品的 priceText 與無價商品的「價格請來電」", async () => {
     mockFetch.mockResolvedValue(
       makeResult([
         makeProduct({
@@ -245,7 +245,7 @@ describe("ProductPageTemplate 價格、檢視切換與鍵盤", () => {
     renderPage();
     await screen.findByText("有價商品");
     expect(screen.getAllByText("NT$1,200").length).toBeGreaterThanOrEqual(1);
-    expect(screen.getByText("價格洽詢")).toBeInTheDocument();
+    expect(screen.getByText("價格請來電")).toBeInTheDocument();
   });
 
   it("切換列表檢視後 aria-pressed 更新，且仍顯示價格行", async () => {

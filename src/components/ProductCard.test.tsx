@@ -37,12 +37,12 @@ function makeNoPrice(overrides: Partial<Product> = {}): Product {
 }
 
 describe("ProductCard 價格顯示", () => {
-  it("grid 有價：徽章與價格行各顯示一次 priceText，不出現價格洽詢", () => {
+  it("grid 有價：priceText 只顯示一次，不出現價格洽詢", () => {
     const product = makeProduct();
     render(
       <ProductCard product={product} variant="grid" onImageClick={vi.fn()} />
     );
-    expect(screen.getAllByText(product.priceText)).toHaveLength(2);
+    expect(screen.getAllByText(product.priceText)).toHaveLength(1);
     expect(screen.queryByText(PRICE_ON_REQUEST)).not.toBeInTheDocument();
   });
 
@@ -56,30 +56,30 @@ describe("ProductCard 價格顯示", () => {
       <ProductCard product={product} variant="grid" onImageClick={vi.fn()} />
     );
     expect(screen.getAllByText(formatPriceRange(120000, 150000))).toHaveLength(
-      2
+      1
     );
   });
 
-  it("只有 priceMax 有值時 grid 仍顯示價格徽章", () => {
+  it("只有 priceMax 有值時 grid 仍顯示價格文字", () => {
     const product = makeProduct({
       priceMin: null,
       priceMax: 150000,
       priceText: formatPriceRange(null, 150000),
     });
     render(<ProductCard product={product} variant="grid" onImageClick={vi.fn()} />);
-    expect(screen.getAllByText("NT$1,500")).toHaveLength(2);
+    expect(screen.getAllByText("NT$1,500")).toHaveLength(1);
   });
 
-  it("grid 無價：顯示價格洽詢且沒有徽章", () => {
-    const { container } = render(
+  it("grid 無價：顯示價格請來電，不出現價格洽詢", () => {
+    render(
       <ProductCard
         product={makeNoPrice()}
         variant="grid"
         onImageClick={vi.fn()}
       />
     );
-    expect(screen.getAllByText(PRICE_ON_REQUEST)).toHaveLength(1);
-    expect(container.querySelector(".product-badge")).toBeNull();
+    expect(screen.getByText("價格請來電")).toBeInTheDocument();
+    expect(screen.queryByText(PRICE_ON_REQUEST)).toBeNull();
   });
 
   it("list 有價：只顯示一次 priceText 且沒有徽章", () => {
@@ -91,7 +91,7 @@ describe("ProductCard 價格顯示", () => {
     expect(container.querySelector(".product-badge")).toBeNull();
   });
 
-  it("list 無價：顯示價格洽詢", () => {
+  it("list 無價：顯示價格請來電", () => {
     render(
       <ProductCard
         product={makeNoPrice()}
@@ -99,10 +99,10 @@ describe("ProductCard 價格顯示", () => {
         onImageClick={vi.fn()}
       />
     );
-    expect(screen.getByText(PRICE_ON_REQUEST)).toBeInTheDocument();
+    expect(screen.getByText("價格請來電")).toBeInTheDocument();
   });
 
-  it("價格洽詢使用灰色而非 accent 色", () => {
+  it("價格請來電 tag 使用 block-2 底而非 accent", () => {
     render(
       <ProductCard
         product={makeNoPrice()}
@@ -110,7 +110,20 @@ describe("ProductCard 價格顯示", () => {
         onImageClick={vi.fn()}
       />
     );
-    expect(screen.getByText(PRICE_ON_REQUEST)).toHaveClass("text-gray-500");
+    const tag = screen.getByText("價格請來電");
+    expect(tag).toHaveClass("bg-block-2");
+    expect(tag).not.toHaveClass("bg-accent");
+  });
+
+  it("無價判斷看 priceMin/priceMax 皆 null（priceText 不是 PRICE_ON_REQUEST 也一樣）", () => {
+    render(
+      <ProductCard
+        product={makeNoPrice({ priceText: "" })}
+        variant="grid"
+        onImageClick={vi.fn()}
+      />
+    );
+    expect(screen.getByText("價格請來電")).toBeInTheDocument();
   });
 });
 
@@ -238,7 +251,7 @@ describe("ProductCard 描述與其他欄位", () => {
     expect(screen.queryByTestId("product-description")).toBeNull();
   });
 
-  it("grid 描述只顯示一行（line-clamp-1），避免卡片溢出", () => {
+  it("grid 不渲染說明段落", () => {
     render(
       <ProductCard
         product={makeProduct({ description: "這是描述" })}
@@ -246,9 +259,8 @@ describe("ProductCard 描述與其他欄位", () => {
         onImageClick={vi.fn()}
       />
     );
-    const description = screen.getByTestId("product-description");
-    expect(description).toHaveClass("line-clamp-1");
-    expect(description).not.toHaveClass("line-clamp-2");
+    expect(screen.queryByTestId("product-description")).toBeNull();
+    expect(screen.queryByText("這是描述")).toBeNull();
   });
 
   it("list 描述維持兩行（line-clamp-2）", () => {
@@ -264,40 +276,40 @@ describe("ProductCard 描述與其他欄位", () => {
     expect(description).not.toHaveClass("line-clamp-1");
   });
 
-  it("grid 資訊區使用縮小的內距 py-4 px-5", () => {
-    const { container } = render(
+  it("grid 卡內距 p-2 md:p-4", () => {
+    render(
       <ProductCard
         product={makeProduct()}
         variant="grid"
         onImageClick={vi.fn()}
       />
     );
-    const info = container.querySelector(".product-info");
-    expect(info).toHaveClass("py-4", "px-5");
+    expect(screen.getByRole("button", { name: /查看/ })).toHaveClass(
+      "p-2",
+      "md:p-4"
+    );
   });
 
-  it("grid 價格行間距為 mb-1，list 價格行維持 mb-2（有價）", () => {
+  it("價格行位於標籤列（flex-wrap gap-2）：有價", () => {
     const product = makeProduct();
-    const { container, unmount } = render(
+    const { unmount } = render(
       <ProductCard product={product} variant="grid" onImageClick={vi.fn()} />
     );
-    // 徽章也含 priceText，取不在 .product-badge 內的價格行
-    const gridPrice = screen
-      .getAllByText(product.priceText)
-      .find((el) => !el.closest(".product-badge"));
-    expect(container.querySelector(".product-badge")).not.toBeNull();
-    expect(gridPrice).toHaveClass("mb-1");
-    expect(gridPrice).not.toHaveClass("mb-2");
+    expect(screen.getByText(product.priceText).parentElement).toHaveClass(
+      "flex-wrap",
+      "gap-2"
+    );
     unmount();
     render(
       <ProductCard product={product} variant="list" onImageClick={vi.fn()} />
     );
-    const listPrice = screen.getByText(product.priceText);
-    expect(listPrice).toHaveClass("mb-2");
-    expect(listPrice).not.toHaveClass("mb-1");
+    expect(screen.getByText(product.priceText).parentElement).toHaveClass(
+      "flex-wrap",
+      "gap-2"
+    );
   });
 
-  it("grid 價格洽詢行間距為 mb-1，list 為 mb-2", () => {
+  it("價格行位於標籤列（flex-wrap gap-2）：無價", () => {
     const { unmount } = render(
       <ProductCard
         product={makeNoPrice()}
@@ -305,7 +317,10 @@ describe("ProductCard 描述與其他欄位", () => {
         onImageClick={vi.fn()}
       />
     );
-    expect(screen.getByText(PRICE_ON_REQUEST)).toHaveClass("mb-1");
+    expect(screen.getByText("價格請來電").parentElement).toHaveClass(
+      "flex-wrap",
+      "gap-2"
+    );
     unmount();
     render(
       <ProductCard
@@ -314,29 +329,29 @@ describe("ProductCard 描述與其他欄位", () => {
         onImageClick={vi.fn()}
       />
     );
-    expect(screen.getByText(PRICE_ON_REQUEST)).toHaveClass("mb-2");
+    expect(screen.getByText("價格請來電").parentElement).toHaveClass(
+      "flex-wrap",
+      "gap-2"
+    );
   });
 
-  it("grid 長名稱＋有價＋長描述：卡片 h-96、圖片 h-64、名稱兩行截斷皆不變，提示仍存在", () => {
+  it("圖片容器為 aspect-square 白底、名稱 line-clamp-2、無『點擊查看大圖』", () => {
+    const product = makeProduct({
+      name: "這是一個非常非常長的商品名稱需要佔滿兩行甚至更多行的空間來測試",
+      description: "這是很長的描述".repeat(20),
+    });
     const { container } = render(
-      <ProductCard
-        product={makeProduct({
-          name: "這是一個非常非常長的商品名稱需要佔滿兩行甚至更多行的空間來測試",
-          description: "這是很長的描述".repeat(20),
-        })}
-        variant="grid"
-        onImageClick={vi.fn()}
-      />
+      <ProductCard product={product} variant="grid" onImageClick={vi.fn()} />
     );
-    expect(container.querySelector(".product-card-new")).toHaveClass("h-96");
-    expect(container.querySelector(".product-image-container")).toHaveClass(
-      "h-64"
+    expect(screen.getByAltText(product.name).parentElement).toHaveClass(
+      "aspect-square",
+      "bg-white"
     );
     expect(container.querySelector("h3")).toHaveClass("line-clamp-2");
-    expect(screen.getByText("點擊查看大圖")).toBeInTheDocument();
+    expect(screen.queryByText("點擊查看大圖")).toBeNull();
   });
 
-  it("有描述時顯示，且不顯示品牌、型號、現貨", () => {
+  it("有描述時顯示說明與品牌，不顯示型號；現貨商品不顯示洽詢交期", () => {
     render(
       <ProductCard
         product={makeProduct({ description: "這是描述" })}
@@ -344,9 +359,43 @@ describe("ProductCard 描述與其他欄位", () => {
         onImageClick={vi.fn()}
       />
     );
-    expect(screen.getByText("這是描述")).toBeInTheDocument();
-    expect(screen.queryByText("品牌甲")).not.toBeInTheDocument();
-    expect(screen.queryByText("型號乙")).not.toBeInTheDocument();
-    expect(screen.queryByText(/現貨/)).not.toBeInTheDocument();
+    expect(screen.getByTestId("product-description")).toHaveTextContent(
+      "這是描述"
+    );
+    expect(screen.getByText("品牌甲")).toBeInTheDocument();
+    expect(screen.queryByText("型號乙")).toBeNull();
+    expect(screen.queryByText("洽詢交期")).toBeNull();
+  });
+
+  it("inStock=false 時 grid 顯示洽詢交期", () => {
+    render(
+      <ProductCard
+        product={makeProduct({ inStock: false })}
+        variant="grid"
+        onImageClick={vi.fn()}
+      />
+    );
+    expect(screen.getByText("洽詢交期")).toHaveClass("bg-block-3");
+  });
+
+  it("list 也顯示洽詢交期", () => {
+    render(
+      <ProductCard
+        product={makeProduct({ inStock: false })}
+        variant="list"
+        onImageClick={vi.fn()}
+      />
+    );
+    expect(screen.getByText("洽詢交期")).toBeInTheDocument();
+  });
+
+  it("img 有 loading=lazy 與 decoding=async", () => {
+    const product = makeProduct();
+    render(
+      <ProductCard product={product} variant="grid" onImageClick={vi.fn()} />
+    );
+    const img = screen.getByAltText(product.name);
+    expect(img).toHaveAttribute("loading", "lazy");
+    expect(img).toHaveAttribute("decoding", "async");
   });
 });

@@ -1,22 +1,40 @@
 import { useState } from "react";
 import type { KeyboardEvent } from "react";
 import ImagePlaceholder from "./ImagePlaceholder";
-import { PRICE_ON_REQUEST } from "../services/format";
+import PriceTag from "./PriceTag";
+import { ChevronRightIcon } from "./icons";
 import type { Product } from "../services/transform";
 
 interface ProductCardProps {
   product: Product;
   variant: "grid" | "list";
   onImageClick: (imageUrl: string) => void;
+  /** 在列表中的位置，只用來挑 grid 卡的傾斜角度 */
+  index?: number;
 }
 
+// grid 卡依位置輪流傾斜（UI-SPEC ±0.4–0.8deg）；用靜態陣列讓 Tailwind 掃得到 class
+const CARD_TILTS = [
+  "-rotate-[0.8deg]",
+  "rotate-[0.6deg]",
+  "-rotate-[0.4deg]",
+  "rotate-[0.8deg]",
+] as const;
+
+// 「洽詢交期」標籤：只在沒有現貨時顯示
+const LEAD_TIME_TAG_CLASS =
+  "inline-flex items-center rounded-pill bg-block-3 px-4 py-1 text-label text-ink";
+
 // 商品卡片：grid／list 兩種版型，只依 Product 型別，不含資料抓取
-const ProductCard = ({ product, variant, onImageClick }: ProductCardProps) => {
+const ProductCard = ({
+  product,
+  variant,
+  onImageClick,
+  index = 0,
+}: ProductCardProps) => {
   // 記錄載入失敗的網址；換成新網址時自動重新嘗試
   const [failedImageUrl, setFailedImageUrl] = useState<string | null>(null);
 
-  // 與 formatPriceRange 語意一致：只要有顯示價格文字（含只有 priceMax）就算有價
-  const hasPrice = product.priceText !== PRICE_ON_REQUEST;
   const showImage =
     product.imageUrl !== null && product.imageUrl !== failedImageUrl;
 
@@ -44,76 +62,60 @@ const ProductCard = ({ product, variant, onImageClick }: ProductCardProps) => {
       }
     : {};
 
-  // 價格行間距：grid 卡片高度固定，縮為 mb-1；list 維持 mb-2
-  const priceMarginClass = variant === "grid" ? "mb-1" : "mb-2";
-
-  // 價格行：有價用 accent 色，無價低調灰色
-  const priceLine = (
-    <p
-      className={`text-sm ${priceMarginClass} ${
-        hasPrice ? "font-semibold text-blue-400" : "text-gray-500"
-      }`}
-    >
-      {product.priceText}
-    </p>
+  // 圖片區：有圖顯示 img，缺圖或破圖顯示佔位
+  const imageContent = showImage ? (
+    <img
+      src={product.imageUrl as string}
+      alt={product.name}
+      onError={handleImageError}
+      loading="lazy"
+      decoding="async"
+      className="h-full w-full object-contain"
+      draggable={false}
+    />
+  ) : (
+    <ImagePlaceholder size={variant === "list" ? "sm" : "lg"} />
   );
+
+  // 標籤列：價格（文字或「價格請來電」）＋缺貨時的「洽詢交期」
+  const tagRow = (
+    <div className="mt-2 flex flex-wrap items-center gap-2">
+      <PriceTag product={product} />
+      {!product.inStock && <span className={LEAD_TIME_TAG_CLASS}>洽詢交期</span>}
+    </div>
+  );
+
+  const brandLine = product.brand && (
+    <p className="mt-1 text-label text-ink-muted">{product.brand}</p>
+  );
+
+  const cursorClass = showImage ? "cursor-pointer" : "cursor-default";
 
   if (variant === "list") {
     return (
       <div
         {...interactiveProps}
-        className={`glass-card overflow-hidden p-6 hover:border-blue-500/50 transition-all duration-300 group ${
-          showImage ? "cursor-pointer" : "cursor-default"
-        }`}
+        className={`flex items-center gap-4 rounded-card bg-surface-raised p-4 shadow-card transition-colors duration-150 hover:ring-2 hover:ring-inset hover:ring-accent ${cursorClass}`}
       >
-        <div className="flex items-center space-x-6">
-          <div className="w-24 h-24 rounded-xl overflow-hidden bg-gradient-to-br from-blue-500/10 to-purple-500/10 flex-shrink-0">
-            {showImage ? (
-              <img
-                src={product.imageUrl as string}
-                alt={product.name}
-                onError={handleImageError}
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                draggable={false}
-              />
-            ) : (
-              <ImagePlaceholder size="sm" />
-            )}
-          </div>
-          <div className="flex-1">
-            <h3 className="text-xl font-semibold text-white mb-2 group-hover:text-blue-400 transition-colors">
-              {product.name}
-            </h3>
-            {priceLine}
-            {product.description && (
-              <p
-                data-testid="product-description"
-                className="text-gray-400 text-sm mb-3 line-clamp-2"
-              >
-                {product.description}
-              </p>
-            )}
-          </div>
-          {showImage && (
-            <div className="flex items-center space-x-2 text-gray-500 opacity-0 group-hover:opacity-100 transition-opacity">
-              <svg
-                className="w-5 h-5"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                aria-hidden="true"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                />
-              </svg>
-              <span className="text-sm">查看大圖</span>
-            </div>
+        <div className="h-20 w-20 shrink-0 overflow-hidden rounded-image bg-white md:h-24 md:w-24">
+          {imageContent}
+        </div>
+        <div className="min-w-0 flex-1">
+          <h3 className="line-clamp-2 text-body font-semibold leading-card text-ink">
+            {product.name}
+          </h3>
+          {brandLine}
+          {tagRow}
+          {product.description && (
+            <p
+              data-testid="product-description"
+              className="mt-1 line-clamp-2 text-label text-ink-muted"
+            >
+              {product.description}
+            </p>
           )}
         </div>
+        <ChevronRightIcon className="h-5 w-5 shrink-0 text-ink-muted" />
       </div>
     );
   }
@@ -121,90 +123,21 @@ const ProductCard = ({ product, variant, onImageClick }: ProductCardProps) => {
   return (
     <div
       {...interactiveProps}
-      className={`group ${showImage ? "cursor-pointer" : "cursor-default"}`}
+      className={`h-full rounded-image bg-surface-raised p-2 shadow-card-sm transition-colors duration-150 hover:ring-2 hover:ring-inset hover:ring-accent active:ring-2 active:ring-inset active:ring-accent md:rounded-card md:p-4 md:shadow-card ${
+        CARD_TILTS[index % CARD_TILTS.length]
+      } ${cursorClass}`}
     >
-      {/* 固定高度的產品卡片 */}
-      <div className="product-card-new h-96 flex flex-col">
-        {/* 價格徽章：只在有價時顯示 */}
-        {hasPrice && <div className="product-badge">{product.priceText}</div>}
-
-        {/* 產品圖片 - 固定高度 */}
-        <div className="product-image-container flex-shrink-0 h-64">
-          {showImage ? (
-            <img
-              src={product.imageUrl as string}
-              alt={product.name}
-              onError={handleImageError}
-              className="product-image"
-              draggable={false}
-            />
-          ) : (
-            <ImagePlaceholder />
-          )}
-
-          {/* 懸停遮罩和放大鏡（缺圖時不顯示） */}
-          {showImage && (
-            <div className="product-overlay">
-              <div className="zoom-icon">
-                <svg
-                  className="w-6 h-6 text-white"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  aria-hidden="true"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7"
-                  />
-                </svg>
-              </div>
-            </div>
-          )}
-        </div>
-
-        {/* 產品信息 - 剩餘空間
-            grid 卡片固定 h-96，縮小資訊區垂直內距、價格間距並把描述縮為一行，
-            避免底部提示列被裁（02-UAT 第 3 項、02-UI-SPEC 縮減方案） */}
-        <div className="product-info py-4 px-5 flex-1 flex flex-col justify-between">
-          <div>
-            <h3 className="product-title text-base leading-tight mb-1 line-clamp-2 min-h-[2.5rem]">
-              {product.name}
-            </h3>
-            {priceLine}
-            {product.description && (
-              <p
-                data-testid="product-description"
-                className="text-gray-400 text-xs line-clamp-1 leading-relaxed"
-              >
-                {product.description}
-              </p>
-            )}
-          </div>
-
-          <div className="flex items-center justify-between mt-auto">
-            <div className="text-xs text-gray-500">
-              {showImage ? "點擊查看大圖" : ""}
-            </div>
-            <svg
-              className="w-4 h-4 text-blue-400 group-hover:translate-x-1 transition-transform flex-shrink-0"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              aria-hidden="true"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M9 5l7 7-7 7"
-              />
-            </svg>
-          </div>
-        </div>
+      {/* 正方形白底圖片容器，載入前後尺寸不變 */}
+      <div className="aspect-square w-full overflow-hidden rounded-image bg-white">
+        {imageContent}
       </div>
+      {product.brand && (
+        <p className="mt-2 text-label text-ink-muted">{product.brand}</p>
+      )}
+      <h3 className="mt-1 line-clamp-2 min-h-[44px] text-body font-semibold leading-card text-ink md:min-h-[48px]">
+        {product.name}
+      </h3>
+      {tagRow}
     </div>
   );
 };
