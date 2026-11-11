@@ -28,15 +28,15 @@
 
 ### 商品詳情頁（PROD）
 
-- [ ] **PROD-08**: 訪客開啟 `/products/:id` 可看到商品主圖、名稱、品牌、型號、分類、說明（純文字保留換行）與保固（保固為 0 或空值時隱藏）
-- [ ] **PROD-09**: 訪客可看到並切換變體（規格屬性、SKU、圖片、是否有現貨），預設選中後端標記的預設變體；沒有變體時顯示單一規格
-- [ ] **PROD-10**: 價格為空時顯示「洽詢」並附聯絡按鈕；有價格時顯示含稅價格
-- [ ] **PROD-11**: 訪客可點詳情頁主圖以燈箱放大
-- [ ] **PROD-12**: 訪客可透過麵包屑回到所屬分類，或返回上一頁；直接開啟網址時也有可用的返回連結
-- [ ] **PROD-13**: 商品不存在或網址無效（後端 404／400）時顯示「找不到商品」；限流與網路錯誤時顯示可重試的錯誤畫面
-- [ ] **PROD-14**: 訪客可一鍵複製「商品名稱＋型號＋網址」的詢價訊息
-- [ ] **PROD-15**: 瀏覽器分頁標題與 description 顯示該商品名稱
-- [ ] **PROD-16**: 任何不存在的網址都顯示 NotFound 頁，不再是空白頁
+- [x] **PROD-08**: 訪客開啟 `/products/:id` 可看到商品主圖、名稱、品牌、型號、分類、說明（純文字保留換行）與保固（保固為 0 或空值時隱藏）
+- [x] **PROD-09**: 訪客可看到並切換變體（規格屬性、SKU、圖片、是否有現貨），預設選中後端標記的預設變體；沒有變體時顯示單一規格
+- [x] **PROD-10**: 價格為空時顯示「洽詢」並附聯絡按鈕；有價格時顯示含稅價格
+- [x] **PROD-11**: 訪客可點詳情頁主圖以燈箱放大
+- [x] **PROD-12**: 訪客可透過麵包屑回到所屬分類，或返回上一頁；直接開啟網址時也有可用的返回連結
+- [x] **PROD-13**: 商品不存在或網址無效（後端 404／400）時顯示「找不到商品」；限流與網路錯誤時顯示可重試的錯誤畫面
+- [x] **PROD-14**: 訪客可一鍵複製「商品名稱＋型號＋網址」的詢價訊息
+- [x] **PROD-15**: 瀏覽器分頁標題與 description 顯示該商品名稱
+- [x] **PROD-16**: 任何不存在的網址都顯示 NotFound 頁，不再是空白頁
 
 ### 連結接線（LINK）
 
@@ -97,15 +97,15 @@ Which phases cover which requirements. Updated during roadmap creation.
 | UX-05 | Phase 8 | Complete |
 | UX-06 | Phase 8 | Complete |
 | UX-07 | Phase 8 | Complete |
-| PROD-08 | Phase 9 | Pending |
-| PROD-09 | Phase 9 | Pending |
-| PROD-10 | Phase 9 | Pending |
-| PROD-11 | Phase 9 | Pending |
-| PROD-12 | Phase 9 | Pending |
-| PROD-13 | Phase 9 | Pending |
-| PROD-14 | Phase 9 | Pending |
-| PROD-15 | Phase 9 | Pending |
-| PROD-16 | Phase 9 | Pending |
+| PROD-08 | Phase 9 | Complete |
+| PROD-09 | Phase 9 | Complete |
+| PROD-10 | Phase 9 | Complete |
+| PROD-11 | Phase 9 | Complete |
+| PROD-12 | Phase 9 | Complete |
+| PROD-13 | Phase 9 | Complete |
+| PROD-14 | Phase 9 | Complete |
+| PROD-15 | Phase 9 | Complete |
+| PROD-16 | Phase 9 | Complete |
 | LINK-01 | Phase 10 | Pending |
 | LINK-02 | Phase 10 | Pending |
 | REL-03 | Phase 11 | Pending |
