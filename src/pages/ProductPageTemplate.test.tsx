@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { MemoryRouter } from "react-router-dom";
+import { MemoryRouter, Route, Routes, useParams } from "react-router-dom";
 import ProductPageTemplate from "./ProductPageTemplate";
 import { fetchProducts } from "../services/products";
 import type { ProductListResult } from "../services/products";
@@ -60,6 +60,27 @@ function renderPage(
   );
 }
 
+/** 詳情頁探針：顯示路由參數，用來斷言導向路徑 */
+const DetailProbe = () => {
+  const { id } = useParams();
+  return <p>詳情頁 {id}</p>;
+};
+
+/** 以分類頁＋詳情探針路由渲染，可斷言點卡片後的路徑 */
+function renderPageWithDetailRoute(initialPath = "/all-products") {
+  return render(
+    <MemoryRouter initialEntries={[initialPath]}>
+      <Routes>
+        <Route
+          path="/all-products"
+          element={<ProductPageTemplate title="測試分類" query={{}} />}
+        />
+        <Route path="/products/:id" element={<DetailProbe />} />
+      </Routes>
+    </MemoryRouter>
+  );
+}
+
 beforeEach(() => {
   vi.resetAllMocks();
 });
@@ -97,39 +118,33 @@ describe("ProductPageTemplate 基本載入與卡片", () => {
     expect(img).toHaveAttribute("src", "https://img.krd.com.tw/x.jpg");
   });
 
-  it("點有圖卡片會開燈箱顯示該圖", async () => {
+  it("點有圖卡片導向 /products/{id}，不出現 dialog", async () => {
     const user = userEvent.setup();
     mockFetch.mockResolvedValue(
       makeResult([
         makeProduct({
+          id: "a",
           name: "甲商品",
           imageUrl: "https://img.krd.com.tw/x.jpg",
         }),
       ])
     );
-    renderPage();
+    renderPageWithDetailRoute();
     await user.click(await screen.findByText("甲商品"));
-    // role=button 內的 img 屬 presentational，改以 alt 文字查詢（卡片與燈箱 alt 不同）
-    const imgs = [
-      ...screen.getAllByAltText("甲商品"),
-      ...screen.getAllByAltText("產品詳細圖片"),
-    ].filter((el) => el.getAttribute("src") === "https://img.krd.com.tw/x.jpg");
-    // 卡片一張、燈箱一張
-    expect(imgs.length).toBeGreaterThanOrEqual(2);
+    expect(await screen.findByText("詳情頁 a")).toBeInTheDocument();
+    expect(screen.queryByRole("dialog")).toBeNull();
   });
 
-  it("缺圖商品顯示「暫無圖片」佔位圖，點擊不開燈箱", async () => {
+  it("缺圖商品顯示「暫無圖片」佔位圖，點擊導向 /products/{id} 且不出現 dialog", async () => {
     const user = userEvent.setup();
     mockFetch.mockResolvedValue(
-      makeResult([makeProduct({ name: "無圖商品", imageUrl: null })])
+      makeResult([makeProduct({ id: "n", name: "無圖商品", imageUrl: null })])
     );
-    renderPage();
+    renderPageWithDetailRoute();
     const placeholder = await screen.findByRole("img", { name: "暫無圖片" });
     await user.click(placeholder);
-    // 燈箱未開：頁面上仍只有佔位圖，沒有任何帶 src 的圖片
-    expect(
-      screen.getAllByRole("img").every((el) => !el.getAttribute("src"))
-    ).toBe(true);
+    expect(await screen.findByText("詳情頁 n")).toBeInTheDocument();
+    expect(screen.queryByRole("dialog")).toBeNull();
   });
 });
 
@@ -277,25 +292,22 @@ describe("ProductPageTemplate 價格、檢視切換與鍵盤", () => {
     expect(screen.getByText("NT$1,200")).toBeInTheDocument();
   });
 
-  it("有圖卡片以 Enter 開啟燈箱", async () => {
+  it("有圖卡片以 Enter 導向 /products/{id}", async () => {
     const user = userEvent.setup();
     mockFetch.mockResolvedValue(
       makeResult([
         makeProduct({
+          id: "a",
           name: "甲商品",
           imageUrl: "https://img.krd.com.tw/x.jpg",
         }),
       ])
     );
-    renderPage();
-    const card = await screen.findByRole("button", { name: /查看 甲商品/ });
+    renderPageWithDetailRoute();
+    const card = await screen.findByRole("link", { name: /甲商品/ });
     card.focus();
     await user.keyboard("{Enter}");
-    // 燈箱開啟後出現該圖片
-    expect(screen.getByAltText("產品詳細圖片")).toHaveAttribute(
-      "src",
-      "https://img.krd.com.tw/x.jpg"
-    );
+    expect(await screen.findByText("詳情頁 a")).toBeInTheDocument();
   });
 });
 

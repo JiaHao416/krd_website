@@ -1,9 +1,39 @@
-import { describe, it, expect, vi } from "vitest";
-import { render, screen, fireEvent } from "@testing-library/react";
+import type { ReactElement } from "react";
+import { describe, it, expect } from "vitest";
+import {
+  render as rtlRender,
+  screen,
+  fireEvent,
+} from "@testing-library/react";
+import type { RenderOptions } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { MemoryRouter, Route, Routes, useParams } from "react-router-dom";
 import ProductCard from "./ProductCard";
 import { formatPriceRange, PRICE_ON_REQUEST } from "../services/format";
 import type { Product } from "../services/transform";
+
+/** 卡片含 Link，需包在 Router 內；rerender 也沿用同一 wrapper */
+function render(ui: ReactElement, options?: RenderOptions) {
+  return rtlRender(ui, { wrapper: MemoryRouter, ...options });
+}
+
+/** 詳情頁探針：顯示路由參數，用來斷言導向路徑 */
+const DetailProbe = () => {
+  const { id } = useParams();
+  return <p>詳情頁 {id}</p>;
+};
+
+/** 以首頁＋詳情探針路由渲染卡片，可斷言點擊後的路徑 */
+function renderWithDetailRoute(ui: ReactElement) {
+  return rtlRender(
+    <MemoryRouter initialEntries={["/"]}>
+      <Routes>
+        <Route path="/" element={ui} />
+        <Route path="/products/:id" element={<DetailProbe />} />
+      </Routes>
+    </MemoryRouter>
+  );
+}
 
 /** 建立測試用完整商品（預設有價） */
 function makeProduct(overrides: Partial<Product> = {}): Product {
@@ -40,7 +70,7 @@ describe("ProductCard 價格顯示", () => {
   it("grid 有價：priceText 只顯示一次，不出現價格洽詢", () => {
     const product = makeProduct();
     render(
-      <ProductCard product={product} variant="grid" onImageClick={vi.fn()} />
+      <ProductCard product={product} variant="grid" />
     );
     expect(screen.getAllByText(product.priceText)).toHaveLength(1);
     expect(screen.queryByText(PRICE_ON_REQUEST)).not.toBeInTheDocument();
@@ -53,7 +83,7 @@ describe("ProductCard 價格顯示", () => {
       priceText: formatPriceRange(120000, 150000),
     });
     render(
-      <ProductCard product={product} variant="grid" onImageClick={vi.fn()} />
+      <ProductCard product={product} variant="grid" />
     );
     expect(screen.getAllByText(formatPriceRange(120000, 150000))).toHaveLength(
       1
@@ -66,7 +96,7 @@ describe("ProductCard 價格顯示", () => {
       priceMax: 150000,
       priceText: formatPriceRange(null, 150000),
     });
-    render(<ProductCard product={product} variant="grid" onImageClick={vi.fn()} />);
+    render(<ProductCard product={product} variant="grid" />);
     expect(screen.getAllByText("NT$1,500")).toHaveLength(1);
   });
 
@@ -75,7 +105,6 @@ describe("ProductCard 價格顯示", () => {
       <ProductCard
         product={makeNoPrice()}
         variant="grid"
-        onImageClick={vi.fn()}
       />
     );
     expect(screen.getByText("價格請來電")).toBeInTheDocument();
@@ -85,7 +114,7 @@ describe("ProductCard 價格顯示", () => {
   it("list 有價：只顯示一次 priceText 且沒有徽章", () => {
     const product = makeProduct();
     const { container } = render(
-      <ProductCard product={product} variant="list" onImageClick={vi.fn()} />
+      <ProductCard product={product} variant="list" />
     );
     expect(screen.getAllByText(product.priceText)).toHaveLength(1);
     expect(container.querySelector(".product-badge")).toBeNull();
@@ -96,7 +125,6 @@ describe("ProductCard 價格顯示", () => {
       <ProductCard
         product={makeNoPrice()}
         variant="list"
-        onImageClick={vi.fn()}
       />
     );
     expect(screen.getByText("價格請來電")).toBeInTheDocument();
@@ -107,7 +135,6 @@ describe("ProductCard 價格顯示", () => {
       <ProductCard
         product={makeNoPrice()}
         variant="grid"
-        onImageClick={vi.fn()}
       />
     );
     const tag = screen.getByText("價格請來電");
@@ -120,107 +147,91 @@ describe("ProductCard 價格顯示", () => {
       <ProductCard
         product={makeNoPrice({ priceText: "" })}
         variant="grid"
-        onImageClick={vi.fn()}
       />
     );
     expect(screen.getByText("價格請來電")).toBeInTheDocument();
   });
 });
 
-describe("ProductCard 圖片與燈箱", () => {
-  it("有圖：img src 為 imageUrl，點擊呼叫 onImageClick 一次", async () => {
-    const onImageClick = vi.fn();
+describe("ProductCard 圖片與連結", () => {
+  it("有圖：img src 為 imageUrl，整張卡為 href=/products/p1 的連結", () => {
     const product = makeProduct();
-    render(
-      <ProductCard
-        product={product}
-        variant="grid"
-        onImageClick={onImageClick}
-      />
-    );
+    render(<ProductCard product={product} variant="grid" />);
     expect(screen.getByAltText(product.name)).toHaveAttribute(
       "src",
       product.imageUrl as string
     );
-    await userEvent.setup().click(screen.getByRole("button", { name: /查看/ }));
-    expect(onImageClick).toHaveBeenCalledTimes(1);
-    expect(onImageClick).toHaveBeenCalledWith(product.imageUrl);
+    expect(screen.getByRole("link")).toHaveAttribute("href", "/products/p1");
   });
 
-  it("鍵盤 Enter 開燈箱", async () => {
-    const onImageClick = vi.fn();
-    render(
-      <ProductCard
-        product={makeProduct()}
-        variant="grid"
-        onImageClick={onImageClick}
-      />
-    );
+  it("鍵盤 Tab 聚焦卡片連結，Enter 導向 /products/p1", async () => {
+    renderWithDetailRoute(<ProductCard product={makeProduct()} variant="grid" />);
     const user = userEvent.setup();
     await user.tab();
-    expect(screen.getByRole("button", { name: /查看/ })).toHaveFocus();
+    expect(screen.getByRole("link")).toHaveFocus();
     await user.keyboard("{Enter}");
-    expect(onImageClick).toHaveBeenCalledTimes(1);
+    expect(screen.getByText("詳情頁 p1")).toBeInTheDocument();
   });
 
-  it("鍵盤 Space 開燈箱", async () => {
-    const onImageClick = vi.fn();
-    render(
-      <ProductCard
-        product={makeProduct()}
-        variant="list"
-        onImageClick={onImageClick}
-      />
-    );
-    const user = userEvent.setup();
-    await user.tab();
-    await user.keyboard(" ");
-    expect(onImageClick).toHaveBeenCalledTimes(1);
+  it("list：卡片為單一連結，沒有 role=button", () => {
+    render(<ProductCard product={makeProduct()} variant="list" />);
+    expect(screen.queryAllByRole("button")).toHaveLength(0);
+    const links = screen.getAllByRole("link");
+    expect(links).toHaveLength(1);
+    expect(links[0]).toHaveAttribute("href", "/products/p1");
   });
 
-  it("缺圖：顯示佔位、無按鈕、無放大提示，點擊不開燈箱", async () => {
-    const onImageClick = vi.fn();
+  it("缺圖：顯示佔位、無 button、無放大提示，卡仍為連到 /products/p1 的連結", () => {
     render(
-      <ProductCard
-        product={makeProduct({ imageUrl: null })}
-        variant="grid"
-        onImageClick={onImageClick}
-      />
+      <ProductCard product={makeProduct({ imageUrl: null })} variant="grid" />
     );
-    const placeholder = screen.getByRole("img", { name: "暫無圖片" });
+    expect(screen.getByRole("img", { name: "暫無圖片" })).toBeInTheDocument();
     expect(screen.queryByRole("button")).not.toBeInTheDocument();
     expect(screen.queryByText("點擊查看大圖")).not.toBeInTheDocument();
-    await userEvent.setup().click(placeholder);
-    expect(onImageClick).not.toHaveBeenCalled();
+    expect(screen.getByRole("link")).toHaveAttribute("href", "/products/p1");
   });
 
-  it("破圖：onError 後顯示佔位且點擊不開燈箱", async () => {
-    const onImageClick = vi.fn();
+  it("破圖：onError 後顯示佔位，卡仍為連到 /products/p1 的連結", () => {
     const product = makeProduct();
-    render(
-      <ProductCard
-        product={product}
-        variant="grid"
-        onImageClick={onImageClick}
-      />
-    );
+    render(<ProductCard product={product} variant="grid" />);
     fireEvent.error(screen.getByAltText(product.name));
-    const placeholder = screen.getByRole("img", { name: "暫無圖片" });
-    await userEvent.setup().click(placeholder);
-    expect(onImageClick).not.toHaveBeenCalled();
+    expect(screen.getByRole("img", { name: "暫無圖片" })).toBeInTheDocument();
+    expect(screen.getByRole("link")).toHaveAttribute("href", "/products/p1");
+  });
+
+  it("grid 與 list 卡內只有一個互動元素：根連結", () => {
+    const { unmount } = render(
+      <ProductCard product={makeProduct()} variant="grid" />
+    );
+    expect(screen.getAllByRole("link")).toHaveLength(1);
+    expect(screen.queryAllByRole("button")).toHaveLength(0);
+    unmount();
+    render(<ProductCard product={makeProduct()} variant="list" />);
+    expect(screen.getAllByRole("link")).toHaveLength(1);
+    expect(screen.queryAllByRole("button")).toHaveLength(0);
+  });
+
+  it("accessible name 由卡內文字組成：含商品名稱與價格文字，不含大圖", () => {
+    render(<ProductCard product={makeProduct()} variant="grid" />);
+    const link = screen.getByRole("link");
+    expect(link).toHaveAccessibleName(/商品一/);
+    expect(link).toHaveAccessibleName(/NT\$1,200/);
+    expect(link).not.toHaveAccessibleName(/大圖/);
+    expect(
+      screen.getByRole("heading", { level: 3, name: "商品一" })
+    ).toBeInTheDocument();
   });
 
   it("破圖後換成新圖片網址會重新顯示 img", () => {
     const product = makeProduct();
     const { rerender } = render(
-      <ProductCard product={product} variant="grid" onImageClick={vi.fn()} />
+      <ProductCard product={product} variant="grid" />
     );
     fireEvent.error(screen.getByAltText(product.name));
     rerender(
       <ProductCard
         product={{ ...product, imageUrl: "https://img.krd.com.tw/b.jpg" }}
         variant="grid"
-        onImageClick={vi.fn()}
       />
     );
     expect(screen.getByAltText(product.name)).toHaveAttribute(
@@ -236,7 +247,6 @@ describe("ProductCard 描述與其他欄位", () => {
       <ProductCard
         product={makeProduct({ description: null })}
         variant="grid"
-        onImageClick={vi.fn()}
       />
     );
     expect(screen.queryByTestId("product-description")).toBeNull();
@@ -245,7 +255,6 @@ describe("ProductCard 描述與其他欄位", () => {
       <ProductCard
         product={makeProduct({ description: null })}
         variant="list"
-        onImageClick={vi.fn()}
       />
     );
     expect(screen.queryByTestId("product-description")).toBeNull();
@@ -256,7 +265,6 @@ describe("ProductCard 描述與其他欄位", () => {
       <ProductCard
         product={makeProduct({ description: "這是描述" })}
         variant="grid"
-        onImageClick={vi.fn()}
       />
     );
     expect(screen.queryByTestId("product-description")).toBeNull();
@@ -268,7 +276,6 @@ describe("ProductCard 描述與其他欄位", () => {
       <ProductCard
         product={makeProduct({ description: "這是描述" })}
         variant="list"
-        onImageClick={vi.fn()}
       />
     );
     const description = screen.getByTestId("product-description");
@@ -281,19 +288,15 @@ describe("ProductCard 描述與其他欄位", () => {
       <ProductCard
         product={makeProduct()}
         variant="grid"
-        onImageClick={vi.fn()}
       />
     );
-    expect(screen.getByRole("button", { name: /查看/ })).toHaveClass(
-      "p-2",
-      "md:p-4"
-    );
+    expect(screen.getByRole("link")).toHaveClass("p-2", "md:p-4");
   });
 
   it("價格行位於標籤列（flex-wrap gap-2）：有價", () => {
     const product = makeProduct();
     const { unmount } = render(
-      <ProductCard product={product} variant="grid" onImageClick={vi.fn()} />
+      <ProductCard product={product} variant="grid" />
     );
     expect(screen.getByText(product.priceText).parentElement).toHaveClass(
       "flex-wrap",
@@ -301,7 +304,7 @@ describe("ProductCard 描述與其他欄位", () => {
     );
     unmount();
     render(
-      <ProductCard product={product} variant="list" onImageClick={vi.fn()} />
+      <ProductCard product={product} variant="list" />
     );
     expect(screen.getByText(product.priceText).parentElement).toHaveClass(
       "flex-wrap",
@@ -314,7 +317,6 @@ describe("ProductCard 描述與其他欄位", () => {
       <ProductCard
         product={makeNoPrice()}
         variant="grid"
-        onImageClick={vi.fn()}
       />
     );
     expect(screen.getByText("價格請來電").parentElement).toHaveClass(
@@ -326,7 +328,6 @@ describe("ProductCard 描述與其他欄位", () => {
       <ProductCard
         product={makeNoPrice()}
         variant="list"
-        onImageClick={vi.fn()}
       />
     );
     expect(screen.getByText("價格請來電").parentElement).toHaveClass(
@@ -341,7 +342,7 @@ describe("ProductCard 描述與其他欄位", () => {
       description: "這是很長的描述".repeat(20),
     });
     const { container } = render(
-      <ProductCard product={product} variant="grid" onImageClick={vi.fn()} />
+      <ProductCard product={product} variant="grid" />
     );
     expect(screen.getByAltText(product.name).parentElement).toHaveClass(
       "aspect-square",
@@ -356,7 +357,6 @@ describe("ProductCard 描述與其他欄位", () => {
       <ProductCard
         product={makeProduct({ description: "這是描述" })}
         variant="list"
-        onImageClick={vi.fn()}
       />
     );
     expect(screen.getByTestId("product-description")).toHaveTextContent(
@@ -372,7 +372,6 @@ describe("ProductCard 描述與其他欄位", () => {
       <ProductCard
         product={makeProduct({ inStock: false })}
         variant="grid"
-        onImageClick={vi.fn()}
       />
     );
     expect(screen.getByText("洽詢交期")).toHaveClass("bg-block-3");
@@ -383,7 +382,6 @@ describe("ProductCard 描述與其他欄位", () => {
       <ProductCard
         product={makeProduct({ inStock: false })}
         variant="list"
-        onImageClick={vi.fn()}
       />
     );
     expect(screen.getByText("洽詢交期")).toBeInTheDocument();
@@ -392,7 +390,7 @@ describe("ProductCard 描述與其他欄位", () => {
   it("img 有 loading=lazy 與 decoding=async", () => {
     const product = makeProduct();
     render(
-      <ProductCard product={product} variant="grid" onImageClick={vi.fn()} />
+      <ProductCard product={product} variant="grid" />
     );
     const img = screen.getByAltText(product.name);
     expect(img).toHaveAttribute("loading", "lazy");

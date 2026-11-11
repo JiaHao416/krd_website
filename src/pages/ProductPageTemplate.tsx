@@ -1,6 +1,5 @@
 import { useState } from "react";
 import Layout from "../components/Layout";
-import ImageModal from "../components/ImageModal";
 import ProductCard from "../components/ProductCard";
 import ProductCardSkeleton from "../components/ProductCardSkeleton";
 import CategoryChips from "../components/CategoryChips";
@@ -89,8 +88,6 @@ const AskUsSection = () => (
 const ProductPageTemplate = ({ title, query }: ProductPageProps) => {
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [sortBy, setSortBy] = useState<ProductSort>("name");
-  const [selectedImage, setSelectedImage] = useState<string>("");
-  const [showImageModal, setShowImageModal] = useState(false);
 
   // 頁面鎖定排序（如 /new-products）時不顯示下拉，也不送使用者排序
   const sortLocked = query.sort !== undefined;
@@ -102,16 +99,6 @@ const ProductPageTemplate = ({ title, query }: ProductPageProps) => {
   // 已有舊列表時重新載入：保留列表並淡化
   const isRefreshing = status === "loading" && items.length > 0;
   const hasItems = status !== "error" && items.length > 0;
-
-  const handleImageClick = (imageUrl: string) => {
-    setSelectedImage(imageUrl);
-    setShowImageModal(true);
-  };
-
-  const handleCloseModal = () => {
-    setShowImageModal(false);
-    setSelectedImage("");
-  };
 
   const listLayoutClass =
     viewMode === "grid"
@@ -152,7 +139,6 @@ const ProductPageTemplate = ({ title, query }: ProductPageProps) => {
             key={product.id}
             product={product}
             variant={viewMode}
-            onImageClick={handleImageClick}
             index={i}
           />
         ))}
@@ -226,13 +212,6 @@ const ProductPageTemplate = ({ title, query }: ProductPageProps) => {
       )}
 
       {hasItems && <AskUsSection />}
-
-      {/* 燈箱：Phase 10 改為只在詳情頁使用 */}
-      <ImageModal
-        show={showImageModal}
-        onHide={handleCloseModal}
-        img={selectedImage}
-      />
     </Layout>
   );
 };

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import type { KeyboardEvent } from "react";
+import { Link } from "react-router-dom";
 import ImagePlaceholder from "./ImagePlaceholder";
 import PriceTag from "./PriceTag";
 import { ChevronRightIcon } from "./icons";
@@ -8,7 +8,6 @@ import type { Product } from "../services/transform";
 interface ProductCardProps {
   product: Product;
   variant: "grid" | "list";
-  onImageClick: (imageUrl: string) => void;
   /** 在列表中的位置，只用來挑 grid 卡的傾斜角度 */
   index?: number;
 }
@@ -25,11 +24,10 @@ const CARD_TILTS = [
 const LEAD_TIME_TAG_CLASS =
   "inline-flex items-center rounded-pill bg-block-3 px-4 py-1 text-label text-ink";
 
-// 商品卡片：grid／list 兩種版型，只依 Product 型別，不含資料抓取
+// 商品卡片：grid／list 兩種版型，整張卡為連到詳情頁的單一連結；只依 Product 型別，不含資料抓取
 const ProductCard = ({
   product,
   variant,
-  onImageClick,
   index = 0,
 }: ProductCardProps) => {
   // 記錄載入失敗的網址；換成新網址時自動重新嘗試
@@ -38,29 +36,7 @@ const ProductCard = ({
   const showImage =
     product.imageUrl !== null && product.imageUrl !== failedImageUrl;
 
-  const handleClick = () => {
-    if (product.imageUrl !== null) onImageClick(product.imageUrl);
-  };
-
-  const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
-    if (event.key === "Enter" || event.key === " ") {
-      event.preventDefault();
-      handleClick();
-    }
-  };
-
   const handleImageError = () => setFailedImageUrl(product.imageUrl);
-
-  // 有圖才可用滑鼠與鍵盤開燈箱
-  const interactiveProps = showImage
-    ? {
-        role: "button" as const,
-        tabIndex: 0,
-        "aria-label": `查看 ${product.name} 大圖`,
-        onClick: handleClick,
-        onKeyDown: handleKeyDown,
-      }
-    : {};
 
   // 圖片區：有圖顯示 img，缺圖或破圖顯示佔位
   const imageContent = showImage ? (
@@ -89,13 +65,13 @@ const ProductCard = ({
     <p className="mt-1 text-label text-ink-muted">{product.brand}</p>
   );
 
-  const cursorClass = showImage ? "cursor-pointer" : "cursor-default";
+  const detailPath = `/products/${product.id}`;
 
   if (variant === "list") {
     return (
-      <div
-        {...interactiveProps}
-        className={`flex items-center gap-4 rounded-card bg-surface-raised p-4 shadow-card transition-colors duration-150 hover:ring-2 hover:ring-inset hover:ring-accent ${cursorClass}`}
+      <Link
+        to={detailPath}
+        className="flex items-center gap-4 rounded-card bg-surface-raised p-4 shadow-card transition-colors duration-150 hover:ring-2 hover:ring-inset hover:ring-accent"
       >
         <div className="h-20 w-20 shrink-0 overflow-hidden rounded-image bg-white md:h-24 md:w-24">
           {imageContent}
@@ -116,16 +92,16 @@ const ProductCard = ({
           )}
         </div>
         <ChevronRightIcon className="h-5 w-5 shrink-0 text-ink-muted" />
-      </div>
+      </Link>
     );
   }
 
   return (
-    <div
-      {...interactiveProps}
-      className={`h-full rounded-image bg-surface-raised p-2 shadow-card-sm transition-colors duration-150 hover:ring-2 hover:ring-inset hover:ring-accent active:ring-2 active:ring-inset active:ring-accent md:rounded-card md:p-4 md:shadow-card ${
+    <Link
+      to={detailPath}
+      className={`block h-full rounded-image bg-surface-raised p-2 shadow-card-sm transition-colors duration-150 hover:ring-2 hover:ring-inset hover:ring-accent active:ring-2 active:ring-inset active:ring-accent md:rounded-card md:p-4 md:shadow-card ${
         CARD_TILTS[index % CARD_TILTS.length]
-      } ${cursorClass}`}
+      }`}
     >
       {/* 正方形白底圖片容器，載入前後尺寸不變 */}
       <div className="aspect-square w-full overflow-hidden rounded-image bg-white">
@@ -138,7 +114,7 @@ const ProductCard = ({
         {product.name}
       </h3>
       {tagRow}
-    </div>
+    </Link>
   );
 };
 
