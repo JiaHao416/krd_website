@@ -166,7 +166,7 @@ Plans:
 | 5. 清理技術債 | v1.0 | 5/5 | Complete | 2026-11-10 |
 | 6. 設計鎖定與測試盤點 | v1.1 | 4/4 | Complete    | 2026-11-11 |
 | 7. 詳情資料層 | v1.1 | 3/3 | Complete    | 2026-11-11 |
-| 8. Tokens、共用骨架與既有頁面改版 | v1.1 | 6/8 | In Progress|  |
+| 8. Tokens、共用骨架與既有頁面改版 | v1.1 | 7/8 | In Progress|  |
 | 9. 商品詳情頁 UI、路由與 NotFound | v1.1 | 0/TBD | Not started | - |
 | 10. 連結接線 | v1.1 | 0/TBD | Not started | - |
 | 11. 收尾驗證與合併上線 | v1.1 | 0/TBD | Not started | - |
