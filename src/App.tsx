@@ -2,6 +2,7 @@ import { Routes, Route } from "react-router-dom";
 import HomePage from "./pages/HomePage";
 import Abouts from "./pages/AboutPage";
 import ProductPageTemplate from "./pages/ProductPageTemplate";
+import NotFoundPage from "./pages/NotFoundPage";
 import { PRODUCT_PAGES } from "./services/catalog";
 import { PRODUCT_PAGE_VIEWS } from "./config/productPageViews";
 
@@ -27,6 +28,8 @@ const App = () => {
           />
         );
       })}
+      {/* 其他任何路徑顯示全域 NotFound；v6 依權重比對，不影響上方明確路由 */}
+      <Route path="*" element={<NotFoundPage />} />
     </Routes>
   );
 };

@@ -90,4 +90,27 @@ describe("App 商品路由", () => {
     const lastParams = mockFetch.mock.calls[mockFetch.mock.calls.length - 1][0];
     expect(lastParams).toMatchObject({ category: "喇叭", sort: "name" });
   });
+
+  it("未知路徑顯示全域 NotFound", async () => {
+    render(
+      <MemoryRouter initialEntries={["/whatever-404"]}>
+        <App />
+      </MemoryRouter>
+    );
+    expect(
+      await screen.findByRole("heading", { level: 1, name: "找不到這一頁" })
+    ).toBeInTheDocument();
+    expect(mockFetch).not.toHaveBeenCalled();
+  });
+
+  it("/products（沒有 id）也顯示全域 NotFound", async () => {
+    render(
+      <MemoryRouter initialEntries={["/products"]}>
+        <App />
+      </MemoryRouter>
+    );
+    expect(
+      await screen.findByRole("heading", { level: 1, name: "找不到這一頁" })
+    ).toBeInTheDocument();
+  });
 });
