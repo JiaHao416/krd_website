@@ -43,7 +43,6 @@
 - react-router-dom ^6.30.1 - 頁面導覽
 
 **Infrastructure:**
-- `@tailwindcss/postcss` ^4.1.7 - 已安裝但未被 `postcss.config.js` 使用（實際用 v3 的 `tailwindcss` plugin），與 tailwindcss ^3.4.0 版本不一致
 - `@types/react-router-dom` ^5.3.3 - 過時型別（router 為 v6，自帶型別）
 
 ## Configuration
