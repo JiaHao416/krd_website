@@ -31,6 +31,8 @@ export default defineConfig(({ mode }) => {
             name: "unit",
             environment: "node",
             include: ["src/**/*.test.ts"],
+            // Vitest 預設把 CSS 模組換成空字串；designTokens.test 需以 ?raw 讀 CSS 原文才能掃描
+            css: { include: [/\.css\?raw$/] },
           },
         },
         {
