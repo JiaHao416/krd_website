@@ -82,7 +82,20 @@ Plans:
   3. 詳情 hook 提供 loading／成功／找不到／錯誤四種狀態，切換商品或卸載時會取消進行中的請求，每次造訪只發出一個請求
   4. 新增測試後測試總數高於 Phase 6 基準，且 `noAirtable.test.ts` 的掃描範圍涵蓋新增檔案
 
-**Plans**: TBD
+**Plans**: 3 plans
+
+Plans:
+**Wave 1**
+
+- [ ] 07-01-PLAN.md — 落檔 API 實測樣本＋TDD 詳情型別與 toProductDetail（TEST-05）
+
+**Wave 2**
+
+- [ ] 07-02-PLAN.md — TDD isUuid、classifyDetailError 與 fetchProductDetail（TEST-05）
+
+**Wave 3**
+
+- [ ] 07-03-PLAN.md — TDD useProductDetail hook＋收尾檢查（總數 > 215、main 同步、不 push）（TEST-05）
 
 ### Phase 8: Tokens、共用骨架與既有頁面改版
 
