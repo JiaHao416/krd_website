@@ -2,6 +2,7 @@ import { useId, useState } from "react";
 import { Link } from "react-router-dom";
 import ImagePlaceholder from "./ImagePlaceholder";
 import PriceTag from "./PriceTag";
+import { hasListedPrice } from "./price";
 import { ChevronRightIcon } from "./icons";
 import type { Product } from "../services/transform";
 
@@ -41,8 +42,10 @@ const ProductCard = ({
   // list 描述改作補充說明（aria-describedby），讀屏仍可取得
   const describedBy =
     variant === "list" && product.description ? descId : undefined;
+  // 無價時不渲染價格元素，aria-labelledby 只指向名稱，避免參照不存在的 id
+  const showPrice = hasListedPrice(product);
   const linkA11yProps = {
-    "aria-labelledby": `${nameId} ${priceId}`,
+    "aria-labelledby": showPrice ? `${nameId} ${priceId}` : nameId,
     "aria-describedby": describedBy,
   };
 
@@ -61,8 +64,8 @@ const ProductCard = ({
     <ImagePlaceholder size={variant === "list" ? "sm" : "lg"} />
   );
 
-  // 標籤列：價格
-  const tagRow = (
+  // 標籤列：價格；無價時整列不渲染（不留空 div）
+  const tagRow = showPrice && (
     <div className="mt-2 flex flex-wrap items-center gap-2">
       <PriceTag product={product} id={priceId} />
     </div>

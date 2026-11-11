@@ -114,7 +114,7 @@ describe("HomePage 熱銷輪播資料來源", () => {
     expect(within(hot).queryByText("熱銷二號")).toBeNull();
   });
 
-  it("便條卡有價顯示 priceText、無價顯示價格請來電，且不出現價格洽詢", async () => {
+  it("便條卡有價顯示 priceText、無價不顯示價格請來電，且不出現價格洽詢", async () => {
     mockFetch.mockResolvedValue(
       makeResult([
         makeProduct({ id: "a", priceMin: 100, priceText: "NT$ 9,999" }),
@@ -124,7 +124,7 @@ describe("HomePage 熱銷輪播資料來源", () => {
     renderPage();
     await screen.findAllByText("商品一");
     expect(screen.getAllByText("NT$ 9,999").length).toBeGreaterThan(0);
-    expect(screen.getAllByText("價格請來電").length).toBeGreaterThan(0);
+    expect(screen.queryByText("價格請來電")).toBeNull();
     expect(screen.queryByText("價格洽詢")).toBeNull();
   });
 

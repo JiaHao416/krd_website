@@ -3,6 +3,7 @@ import { cleanup, fireEvent, render, screen, within } from "@testing-library/rea
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import ProductDetailView from "./ProductDetailView";
+import { CONTACT } from "../config/contact";
 import type { CopyStatus } from "../hooks/useCopyInquiry";
 import type { ProductDetail, ProductVariant } from "../services/transform";
 
@@ -167,7 +168,9 @@ describe("ProductDetailView 變體", () => {
     const { container } = renderView(MULTI);
     expect(screen.getByRole("radiogroup", { name: "選擇規格" })).toBeInTheDocument();
     expect(screen.getAllByRole("radio")[0]).toBeChecked();
-    expect(screen.getByText("價格請來電")).toBeInTheDocument();
+    // 預設變體無價：整個價格區塊不渲染
+    expect(screen.queryByText("含稅")).toBeNull();
+    expect(screen.queryByText(/這個商品沒有標價/)).toBeNull();
     expect(specValue(container, "SKU")).toBe("MG-U200-BK");
   });
 
@@ -205,7 +208,13 @@ describe("ProductDetailView 變體", () => {
   it("沒有變體時視為無價，規格表不含 SKU", () => {
     const { container } = renderView({ ...MULTI, variants: [], defaultVariantId: null });
     expect(screen.queryByRole("radiogroup")).not.toBeInTheDocument();
-    expect(screen.getByText("價格請來電")).toBeInTheDocument();
+    // 無價時不顯示價格區塊，但詢價 CTA 仍在
+    expect(screen.queryByText("含稅")).toBeNull();
+    expect(screen.queryByText(/這個商品沒有標價/)).toBeNull();
+    expect(screen.getByRole("button", { name: "複製詢價訊息" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("link", { name: `打電話問 ${CONTACT.phone}` })
+    ).toBeInTheDocument();
     expect(specTerms(container)).not.toContain("SKU");
   });
 });

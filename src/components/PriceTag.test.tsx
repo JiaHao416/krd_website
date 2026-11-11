@@ -3,9 +3,11 @@ import { render, screen } from "@testing-library/react";
 import PriceTag from "./PriceTag";
 
 describe("PriceTag", () => {
-  it("最低與最高價皆為 null 時顯示「價格請來電」標籤", () => {
-    render(<PriceTag product={{ priceMin: null, priceMax: null, priceText: "價格洽詢" }} />);
-    expect(screen.getByText("價格請來電")).toHaveClass("bg-block-2");
+  it("最低與最高價皆為 null 時不渲染任何元素", () => {
+    const { container } = render(
+      <PriceTag product={{ priceMin: null, priceMax: null, priceText: "價格洽詢" }} />
+    );
+    expect(container).toBeEmptyDOMElement();
   });
 
   it("有最低價時顯示 priceText", () => {

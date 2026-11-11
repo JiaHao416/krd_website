@@ -63,8 +63,8 @@ const NoteCard = ({ product, tilt, isFirst }: NoteCardProps) => {
       </h3>
       <div className="mt-2 flex items-center justify-between gap-2">
         <PriceTag product={product} />
-        {/* 整張卡已是連結，這段只是視覺提示；讀屏以連結名稱為準 */}
-        <span aria-hidden="true" className="text-body font-semibold text-accent">
+        {/* 整張卡已是連結，這段只是視覺提示；讀屏以連結名稱為準。ml-auto 讓無價時仍靠右 */}
+        <span aria-hidden="true" className="ml-auto text-body font-semibold text-accent">
           <span className="hidden md:inline">查看詳情 →</span>
           <span className="md:hidden">詳情 →</span>
         </span>
