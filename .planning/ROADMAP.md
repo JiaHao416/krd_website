@@ -34,7 +34,7 @@
 - [x] **Phase 6: 設計鎖定與測試盤點** - 鎖定視覺方向與 UI-SPEC、盤點 215 項測試、清掉無用依賴（不寫 UI 程式碼） (completed 2026-11-11)
 - [x] **Phase 7: 詳情資料層** - 以 TDD 完成商品詳情的型別、service、transform、hook 與錯誤分類 (completed 2026-11-11)
 - [x] **Phase 8: Tokens、共用骨架與既有頁面改版** - 套用設計 token 與字型，改版為膠囊頂列、分類 chip（取代 SideMenu）、一行頁尾與手機固定撥號列，並改版首頁、分類頁、關於我們（不改連結語意） (completed 2026-11-11)
-- [ ] **Phase 9: 商品詳情頁 UI、路由與 NotFound** - 完成 `/products/:id` 頁面、各種狀態、頁面標題與全域 NotFound
+- [x] **Phase 9: 商品詳情頁 UI、路由與 NotFound** - 完成 `/products/:id` 頁面、各種狀態、頁面標題與全域 NotFound (completed 2026-11-11)
 - [ ] **Phase 10: 連結接線** - 分類頁卡片與熱銷輪播連到詳情頁（唯一改變測試語意的 phase）
 - [ ] **Phase 11: 收尾驗證與合併上線** - 全綠檢查、經使用者確認後合併 `main`，並在 production 實測
 
@@ -167,6 +167,6 @@ Plans:
 | 6. 設計鎖定與測試盤點 | v1.1 | 4/4 | Complete    | 2026-11-11 |
 | 7. 詳情資料層 | v1.1 | 3/3 | Complete    | 2026-11-11 |
 | 8. Tokens、共用骨架與既有頁面改版 | v1.1 | 8/8 | Complete    | 2026-11-11 |
-| 9. 商品詳情頁 UI、路由與 NotFound | v1.1 | 4/5 | In Progress|  |
+| 9. 商品詳情頁 UI、路由與 NotFound | v1.1 | 5/5 | Complete   | 2026-11-11 |
 | 10. 連結接線 | v1.1 | 0/TBD | Not started | - |
 | 11. 收尾驗證與合併上線 | v1.1 | 0/TBD | Not started | - |
