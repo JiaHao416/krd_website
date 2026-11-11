@@ -5,6 +5,8 @@ import userEvent from "@testing-library/user-event";
 import { MemoryRouter, useNavigate } from "react-router-dom";
 import App from "./App";
 import { fetchProducts } from "./services/products";
+import { fetchProductDetail } from "./services/productDetail";
+import type { ProductDetail } from "./services/transform";
 import { PRODUCT_PAGES, buildProductParams } from "./services/catalog";
 import { PRODUCT_PAGE_VIEWS } from "./config/productPageViews";
 
@@ -13,8 +15,31 @@ vi.mock("./components/Layout", () => ({
   default: ({ children }: { children: ReactNode }) => <div>{children}</div>,
 }));
 vi.mock("./services/products");
+// partial mock：只替換 fetchProductDetail，UUID 判斷等用真實實作
+vi.mock("./services/productDetail", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("./services/productDetail")>()),
+  fetchProductDetail: vi.fn(),
+}));
 
 const mockFetch = vi.mocked(fetchProducts);
+const mockDetail = vi.mocked(fetchProductDetail);
+
+const DETAIL_ID = "00000000-0000-4000-8000-000000000001";
+
+/** 詳情路由測試用商品 */
+const DETAIL: ProductDetail = {
+  id: DETAIL_ID,
+  name: "UHF 雙頻無線手持麥克風組",
+  brand: "MICGO",
+  model: "MG-U200",
+  category: "無線麥克風",
+  description: null,
+  imageUrl: null,
+  warrantyMonths: null,
+  inStock: true,
+  defaultVariantId: null,
+  variants: [],
+};
 
 const LEGACY_PATHS = [
   "/all-products",
@@ -112,5 +137,32 @@ describe("App 商品路由", () => {
     expect(
       await screen.findByRole("heading", { level: 1, name: "找不到這一頁" })
     ).toBeInTheDocument();
+  });
+
+  it("/products/:uuid 顯示詳情且不呼叫商品列表 API", async () => {
+    mockDetail.mockResolvedValue(DETAIL);
+    render(
+      <MemoryRouter initialEntries={[`/products/${DETAIL_ID}`]}>
+        <App />
+      </MemoryRouter>
+    );
+    expect(
+      await screen.findByRole("heading", { level: 1, name: DETAIL.name })
+    ).toBeInTheDocument();
+    expect(mockFetch).not.toHaveBeenCalled();
+    expect(mockDetail.mock.calls[0][0]).toBe(DETAIL_ID);
+  });
+
+  it("/products/not-a-uuid 顯示找不到商品且不發詳情請求", async () => {
+    render(
+      <MemoryRouter initialEntries={["/products/not-a-uuid"]}>
+        <App />
+      </MemoryRouter>
+    );
+    expect(
+      await screen.findByRole("heading", { level: 1, name: "找不到這個商品" })
+    ).toBeInTheDocument();
+    expect(mockDetail).not.toHaveBeenCalled();
+    expect(mockFetch).not.toHaveBeenCalled();
   });
 });
