@@ -4,20 +4,48 @@ import ContactBlock from "./ContactBlock";
 import { CONTACT } from "../config/contact";
 
 describe("ContactBlock", () => {
-  it("顯示標題「有空來店裡坐坐」、地址與地圖預留位", () => {
+  it("顯示標題「有空來店裡坐坐」、地址與 Google 地圖嵌入", () => {
     render(<ContactBlock />);
     expect(
       screen.getByRole("heading", { level: 2, name: "有空來店裡坐坐" })
     ).toBeInTheDocument();
     expect(screen.getByText(CONTACT.address)).toBeInTheDocument();
-    expect(
-      screen.getByRole("img", { name: "地圖（待嵌入）" })
-    ).toBeInTheDocument();
+    const map = screen.getByTitle("羽程企業社 Google 地圖");
+    expect(map.tagName).toBe("IFRAME");
+    expect(map).toHaveAttribute("src", CONTACT.mapEmbedUrl);
+    expect(map).toHaveAttribute("loading", "lazy");
+    expect(map).toHaveAttribute("referrerpolicy", "no-referrer-when-downgrade");
+    expect(screen.queryByRole("img", { name: "地圖（待嵌入）" })).toBeNull();
+  });
+
+  it("「在 Google 地圖開啟 →」連結指向 mapUrl，開新分頁並防 tabnabbing", () => {
+    render(<ContactBlock />);
+    const link = screen.getByRole("link", { name: "在 Google 地圖開啟 →" });
+    expect(link).toHaveAttribute("href", CONTACT.mapUrl);
+    expect(link).toHaveAttribute("target", "_blank");
+    expect(link).toHaveAttribute("rel", "noopener noreferrer");
+  });
+
+  it("未設定 mapEmbedUrl 與 mapUrl 時退回地圖預留位，且不渲染 iframe 與開啟連結", () => {
+    const { container } = render(
+      <ContactBlock info={{ ...CONTACT, mapEmbedUrl: undefined, mapUrl: undefined }} />
+    );
+    expect(screen.getByRole("img", { name: "地圖（待嵌入）" })).toBeInTheDocument();
+    expect(container.querySelector("iframe")).toBeNull();
+    expect(screen.queryByRole("link", { name: /在 Google 地圖開啟/ })).toBeNull();
+  });
+
+  it("mapEmbedUrl 為純空白時也退回地圖預留位", () => {
+    const { container } = render(
+      <ContactBlock info={{ ...CONTACT, mapEmbedUrl: "   " }} />
+    );
+    expect(screen.getByRole("img", { name: "地圖（待嵌入）" })).toBeInTheDocument();
+    expect(container.querySelector("iframe")).toBeNull();
   });
 
   it("顯示營業時間與休息備註", () => {
     render(<ContactBlock />);
-    expect(screen.getByText(/週一至週五 09:00 - 17:30/)).toBeInTheDocument();
+    expect(screen.getByText(/週一至週五 09:00 - 18:00/)).toBeInTheDocument();
     expect(screen.getByText(/見紅休（週六、週日及國定假日）/)).toBeInTheDocument();
   });
 

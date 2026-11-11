@@ -17,15 +17,24 @@ export interface ContactInfo {
   lineUrl?: string;
   /** Email（選填，有值才顯示） */
   email?: string;
+  /** Google 地圖嵌入 iframe 網址（選填，免金鑰；有值才嵌入，否則顯示地圖預留位） */
+  mapEmbedUrl?: string;
+  /** 在 Google 地圖開啟店家頁的連結（選填，有值才顯示文字連結） */
+  mapUrl?: string;
 }
 
-/** KRD 聯絡資訊；LINE 與 Email 尚未提供，故不設定（D-15） */
+/**
+ * KRD 聯絡資訊；LINE 與 Email 尚未提供，故不設定（D-15）
+ * 地圖網址也在此單一來源組出（含地址），皆為免金鑰公開網址
+ */
 export const CONTACT: ContactInfo = {
   address: "411 台中市太平區永平路二段320之1號",
   phone: "(04) 2279-8787",
   phoneHref: "04-22798787",
-  businessHours: "週一至週五 09:00 - 17:30",
+  businessHours: "週一至週五 09:00 - 18:00",
   closedNote: "見紅休（週六、週日及國定假日）",
+  mapEmbedUrl: `https://maps.google.com/maps?q=${encodeURIComponent("羽程企業社 台中市太平區永平路二段320之1號")}&z=17&output=embed`,
+  mapUrl: "https://maps.google.com/?cid=17247239004730587373",
 };
 
 /**

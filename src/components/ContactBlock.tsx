@@ -58,13 +58,40 @@ const ContactBlock = ({ info = CONTACT }: ContactBlockProps) => {
         </a>
       </div>
 
-      {/* 地圖素材尚未提供，以預留位正式呈現（D-15） */}
-      <div
-        role="img"
-        aria-label="地圖（待嵌入）"
-        className="flex h-[140px] -rotate-[1.5deg] items-center justify-center rounded-block border-[3px] border-dashed border-dash bg-surface-raised text-label text-ink-muted xl:h-[220px]"
-      >
-        地圖（待嵌入）
+      {/* 外層不傾斜也不 overflow-hidden，避免裁掉地圖框的旋轉角落；開啟連結（文字）不傾斜 */}
+      <div>
+        {hasText(info.mapEmbedUrl) ? (
+          // 使用者核准的免金鑰 Google 地圖嵌入，取代 UI-SPEC 原本「不嵌 iframe」的設定
+          // overflow-hidden 只加在地圖框本身，用來把 iframe 裁成圓角
+          <div className="h-[140px] -rotate-[1.5deg] overflow-hidden rounded-block border-[3px] border-dash bg-surface-raised xl:h-[220px]">
+            <iframe
+              src={info.mapEmbedUrl}
+              title="羽程企業社 Google 地圖"
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+              className="block h-full w-full border-0"
+            />
+          </div>
+        ) : (
+          // 未設定嵌入網址時的預留位（D-15）
+          <div
+            role="img"
+            aria-label="地圖（待嵌入）"
+            className="flex h-[140px] -rotate-[1.5deg] items-center justify-center rounded-block border-[3px] border-dashed border-dash bg-surface-raised text-label text-ink-muted xl:h-[220px]"
+          >
+            地圖（待嵌入）
+          </div>
+        )}
+        {hasText(info.mapUrl) && (
+          <a
+            href={info.mapUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-4 inline-block text-body text-ink underline underline-offset-4"
+          >
+            在 Google 地圖開啟 →
+          </a>
+        )}
       </div>
     </section>
   );
