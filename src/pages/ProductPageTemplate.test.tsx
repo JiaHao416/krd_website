@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { MemoryRouter } from "react-router-dom";
 import ProductPageTemplate from "./ProductPageTemplate";
 import { fetchProducts } from "../services/products";
 import type { ProductListResult } from "../services/products";
@@ -43,14 +44,16 @@ function makeResult(items: Product[], truncated = false): ProductListResult {
   return { items, total: items.length, truncated };
 }
 
-/** 渲染商品頁 */
+/** 渲染商品頁（分類 chip 列需要 Router） */
 function renderPage(query: ProductPageQuery = {}) {
   return render(
-    <ProductPageTemplate
-      title="測試分類"
-      description="測試描述"
-      query={query}
-    />
+    <MemoryRouter initialEntries={["/all-products"]}>
+      <ProductPageTemplate
+        title="測試分類"
+        description="測試描述"
+        query={query}
+      />
+    </MemoryRouter>
   );
 }
 

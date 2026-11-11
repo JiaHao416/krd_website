@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import Layout from "../components/Layout";
 import ImageModal from "../components/ImageModal";
 import ProductCard from "../components/ProductCard";
+import CategoryChips from "../components/CategoryChips";
 import { useProducts } from "../hooks/useProducts";
 import { PRODUCT_LIMIT } from "../services/catalog";
 import type { ProductPageQuery } from "../services/catalog";
@@ -140,6 +141,11 @@ const ProductPageTemplate = ({
               </div>
             </div>
           </div>
+        </div>
+
+        {/* 分類 chip 列（取代舊側邊選單） */}
+        <div className="mt-6">
+          <CategoryChips />
         </div>
 
         {/* 控制欄 */}
