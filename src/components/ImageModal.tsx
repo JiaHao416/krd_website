@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { CloseIcon } from "./icons";
 
 interface ImageModalProps {
@@ -8,6 +8,29 @@ interface ImageModalProps {
 }
 
 const ImageModal = ({ show, onHide, img }: ImageModalProps) => {
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
+
+  // 開啟時把焦點移到關閉鈕並鎖住 Tab，關閉時還原到觸發元素（通常是商品卡）
+  useEffect(() => {
+    if (!show) return;
+    const previous = document.activeElement as HTMLElement | null;
+    closeButtonRef.current?.focus();
+
+    // 燈箱內只有關閉鈕可聚焦，Tab／Shift+Tab 一律留在關閉鈕
+    const handleTab = (e: KeyboardEvent) => {
+      if (e.key === "Tab") {
+        e.preventDefault();
+        closeButtonRef.current?.focus();
+      }
+    };
+
+    document.addEventListener("keydown", handleTab);
+    return () => {
+      document.removeEventListener("keydown", handleTab);
+      previous?.focus();
+    };
+  }, [show]);
+
   // 防止背景滾動和處理 ESC 鍵
   useEffect(() => {
     if (show) {
@@ -56,6 +79,9 @@ const ImageModal = ({ show, onHide, img }: ImageModalProps) => {
 
   return (
     <div
+      role="dialog"
+      aria-modal="true"
+      aria-label="商品大圖"
       className="fixed inset-0 z-50 flex items-center justify-center p-4"
       onClick={handleBackdropClick}
     >
@@ -69,6 +95,7 @@ const ImageModal = ({ show, onHide, img }: ImageModalProps) => {
       >
         {/* 關閉按鈕：右上 44×44 */}
         <button
+          ref={closeButtonRef}
           onClick={handleCloseClick}
           className="absolute -right-4 -top-4 z-20 inline-flex h-11 w-11 items-center justify-center rounded-pill bg-ink text-surface"
           aria-label="關閉圖片"
