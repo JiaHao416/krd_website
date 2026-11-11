@@ -49,8 +49,23 @@ export function useCopyInquiry(
   writeText: WriteText = defaultWriteText
 ): { status: CopyStatus; copy: () => Promise<void> } {
   const [status, setStatus] = useState<CopyStatus>("idle");
+  const [prevText, setPrevText] = useState(text);
   const timerRef = useRef<number | null>(null);
   const mountedRef = useRef(true);
+  // 每次嘗試與每次切換文字都會遞增；請求完成時編號不符就丟棄結果
+  const attemptRef = useRef(0);
+
+  // 文字改變（切換商品）時在 render 階段重置狀態，避免舊商品的結果殘留
+  if (prevText !== text) {
+    setPrevText(text);
+    setStatus("idle");
+  }
+
+  useEffect(() => {
+    // 切換文字時清掉還原計時器，並作廢進行中的寫入
+    attemptRef.current += 1;
+    clearTimer(timerRef);
+  }, [text]);
 
   useEffect(() => {
     // StrictMode 重新掛載時要設回 true
@@ -64,9 +79,13 @@ export function useCopyInquiry(
   const copy = useCallback((): Promise<void> => {
     if (text === null) return Promise.resolve();
     clearTimer(timerRef);
+    attemptRef.current += 1;
+    const attempt = attemptRef.current;
+    // 已卸載或已有更新的嘗試／文字切換時，不套用這次的結果
+    const isCurrent = () => mountedRef.current && attempt === attemptRef.current;
     return writeText(text)
       .then(() => {
-        if (!mountedRef.current) return;
+        if (!isCurrent()) return;
         setStatus("copied");
         timerRef.current = window.setTimeout(() => {
           timerRef.current = null;
@@ -74,7 +93,7 @@ export function useCopyInquiry(
         }, COPIED_DURATION_MS);
       })
       .catch(() => {
-        if (mountedRef.current) setStatus("failed");
+        if (isCurrent()) setStatus("failed");
       });
   }, [text, writeText]);
 

@@ -102,3 +102,61 @@ describe("useCopyInquiry", () => {
     expect(vi.getTimerCount()).toBe(0);
   });
 });
+
+describe("useCopyInquiry 切換文字", () => {
+  const OTHER = "另一組｜https://www.krd.com.tw/products/y";
+
+  it("文字改變時失敗狀態重置為初始", async () => {
+    const writeText = vi.fn().mockRejectedValue(new Error("denied"));
+    const { result, rerender } = renderHook(
+      ({ text }: { text: string | null }) => useCopyInquiry(text, writeText),
+      { initialProps: { text: TEXT as string | null } }
+    );
+    await act(async () => {
+      await result.current.copy();
+    });
+    expect(result.current.status).toBe("failed");
+    rerender({ text: OTHER });
+    expect(result.current.status).toBe("idle");
+  });
+
+  it("切換文字前發出的寫入完成後，不改動新文字的狀態", async () => {
+    let resolveWrite: () => void = () => {};
+    const writeText = vi.fn(
+      () =>
+        new Promise<void>((resolve) => {
+          resolveWrite = resolve;
+        })
+    );
+    const { result, rerender } = renderHook(
+      ({ text }: { text: string | null }) => useCopyInquiry(text, writeText),
+      { initialProps: { text: TEXT as string | null } }
+    );
+    let pending: Promise<void> = Promise.resolve();
+    act(() => {
+      pending = result.current.copy();
+    });
+    rerender({ text: OTHER });
+    await act(async () => {
+      resolveWrite();
+      await pending;
+    });
+    expect(result.current.status).toBe("idle");
+  });
+
+  it("切換文字時清除舊的已複製還原計時器", async () => {
+    vi.useFakeTimers();
+    const writeText = vi.fn().mockResolvedValue(undefined);
+    const { result, rerender } = renderHook(
+      ({ text }: { text: string | null }) => useCopyInquiry(text, writeText),
+      { initialProps: { text: TEXT as string | null } }
+    );
+    await act(async () => {
+      await result.current.copy();
+    });
+    expect(result.current.status).toBe("copied");
+    rerender({ text: OTHER });
+    expect(result.current.status).toBe("idle");
+    expect(vi.getTimerCount()).toBe(0);
+  });
+});
