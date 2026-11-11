@@ -25,9 +25,47 @@ const COLORS = {
 export default {
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
-    // 本階段先用 extend 與舊 class 並存；收尾 plan 改為 theme 覆寫
+    // theme 覆寫（DESIGN-02 第二道防線）：以下鍵直接取代 Tailwind 預設值，
+    // 覆寫後 sm/lg/2xl 斷點、預設色票、預設字級／字重／圓角／陰影都不再產生 CSS
+    screens: { md: "768px", xl: "1280px" },
+    colors: {
+      transparent: "transparent",
+      current: "currentColor",
+      inherit: "inherit",
+      ...COLORS,
+    },
+    // 4 級字級；heading／display 由 index.css 的 CSS 變數依斷點切換
+    fontSize: {
+      label: ["15px", { lineHeight: "1.6" }],
+      body: ["17px", { lineHeight: "1.6" }],
+      heading: ["var(--font-size-heading)", { lineHeight: "1.25" }],
+      display: ["var(--font-size-display)", { lineHeight: "1.15" }],
+    },
+    fontWeight: { normal: "400", semibold: "600" },
+    borderRadius: {
+      none: "0px",
+      pill: "9999px",
+      image: "16px",
+      card: "20px",
+      block: "24px",
+      panel: "32px",
+    },
+    // 實色陰影（無模糊），營造貼紙／便條的立體感
+    boxShadow: {
+      none: "none",
+      card: "0 6px 0 rgba(0,0,0,0.3)",
+      "card-sm": "0 4px 0 rgba(0,0,0,0.3)",
+      "card-lg": "0 8px 0 rgba(0,0,0,0.3)",
+      note: `0 6px 0 ${COLORS.sand}`,
+      "note-sm": `0 4px 0 ${COLORS.sand}`,
+      bar: `0 6px 0 ${COLORS.sand}`,
+      "bar-sm": `0 4px 0 ${COLORS.sand}`,
+      btn: `0 6px 0 ${COLORS["accent-shadow"]}`,
+      "btn-pressed": `0 2px 0 ${COLORS["accent-shadow"]}`,
+      "btn-float": `0 6px 0 ${COLORS["accent-hover"]}`,
+      float: "0 -6px 16px rgba(0,0,0,0.25)",
+    },
     extend: {
-      colors: COLORS,
       // 系統字型堆疊：Mac→蘋方、Windows→微軟正黑體、Android→Noto Sans TC；不載入 webfont
       fontFamily: {
         sans: [
@@ -39,39 +77,15 @@ export default {
           "sans-serif",
         ],
       },
-      // 4 級字級；heading／display 由 index.css 的 CSS 變數依斷點切換
-      fontSize: {
-        label: ["15px", { lineHeight: "1.6" }],
-        body: ["17px", { lineHeight: "1.6" }],
-        heading: ["var(--font-size-heading)", { lineHeight: "1.25" }],
-        display: ["var(--font-size-display)", { lineHeight: "1.15" }],
-      },
       lineHeight: {
         card: "1.35",
       },
-      borderRadius: {
-        pill: "9999px",
-        image: "16px",
-        card: "20px",
-        block: "24px",
-        panel: "32px",
-      },
-      // 實色陰影（無模糊），營造貼紙／便條的立體感
-      boxShadow: {
-        card: "0 6px 0 rgba(0,0,0,0.3)",
-        "card-sm": "0 4px 0 rgba(0,0,0,0.3)",
-        "card-lg": "0 8px 0 rgba(0,0,0,0.3)",
-        note: `0 6px 0 ${COLORS.sand}`,
-        "note-sm": `0 4px 0 ${COLORS.sand}`,
-        bar: `0 6px 0 ${COLORS.sand}`,
-        "bar-sm": `0 4px 0 ${COLORS.sand}`,
-        btn: `0 6px 0 ${COLORS["accent-shadow"]}`,
-        "btn-pressed": `0 2px 0 ${COLORS["accent-shadow"]}`,
-        "btn-float": `0 6px 0 ${COLORS["accent-hover"]}`,
-        float: "0 -6px 16px rgba(0,0,0,0.25)",
-      },
       outlineOffset: {
         3: "3px",
+      },
+      // preflight 預設邊框色原本引用 gray，覆寫色票後改用 dash token
+      borderColor: {
+        DEFAULT: COLORS.dash,
       },
     },
   },
