@@ -46,7 +46,7 @@
 ### 品質與維護（TEST／MAINT）
 
 - [ ] **TEST-05**: 詳情頁資料層（service、transform、hook，含 404／400／429 分類）有單元測試，欄位以真實 API 回應確認
-- [ ] **TEST-06**: 重設計過程中測試總數不減少；行為契約類斷言（role、accessible name、路由、錯誤狀態）不得刪除
+- [x] **TEST-06**: 重設計過程中測試總數不減少；行為契約類斷言（role、accessible name、路由、錯誤狀態）不得刪除
 - [ ] **MAINT-01**: 移除未使用的 `@tailwindcss/postcss` 與 `@types/react-router-dom`（獨立 commit，build 通過）
 
 ### 上線（REL）
@@ -84,7 +84,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | Requirement | Phase | Status |
 |-------------|-------|--------|
 | DESIGN-01 | Phase 6 | Pending |
-| TEST-06 | Phase 6 | Pending |
+| TEST-06 | Phase 6 | Complete |
 | MAINT-01 | Phase 6 | Pending |
 | TEST-05 | Phase 7 | Pending |
 | DESIGN-02 | Phase 8 | Pending |
