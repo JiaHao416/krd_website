@@ -4,13 +4,13 @@
 
 - 基準：215 項／17 個檔（2026-11-11）
 - 來源指令：`npx vitest list`（`it.each` 已逐項展開，每個展開項各佔一列，D-02、D-03）
-- 本文件目前涵蓋資料層 8 個 unit 檔與 5 個低影響 component 檔（共 157 列）；重設計高影響的 4 個檔（SideMenu、NavBar、FeaturedCarousel、ProductCard，共 58 項）與 accessible name 契約清單由 06-04 補上，補完後總列數為 215。
+- 本文件涵蓋全部 17 個檔、215 列：資料層 8 個 unit 檔與 5 個低影響 component 檔（157 列），加重設計高影響的 4 個檔（SideMenu、NavBar、FeaturedCarousel、ProductCard，58 列）；另有 accessible name 契約清單。
 - 名稱比對與列數驗證：
 
 ```bash
 # 列數
 grep -c '^| src/' .planning/phases/06-design-lock/06-TEST-INVENTORY.md
-# 名稱 diff（補完 215 列後；目前須排除 4 個高影響檔）
+# 名稱 diff（須無差異）
 diff <(npx vitest list 2>/dev/null | sed 's/^\[[^]]*\] //' | LC_ALL=C sort) \
      <(grep '^| src/' .planning/phases/06-design-lock/06-TEST-INVENTORY.md | sed -e 's/^| //' -e 's/ | .*$//' | LC_ALL=C sort)
 ```
@@ -51,6 +51,11 @@ diff <(npx vitest list 2>/dev/null | sed 's/^\[[^]]*\] //' | LC_ALL=C sort) \
 | `src/App.test.tsx` | component | 11 | 11 | 0 | 8 |
 | `src/pages/HomePage.test.tsx` | component | 7 | 6 | 1 | 8 |
 | `src/pages/AboutPage.test.tsx` | component | 3 | 3 | 0 | 8 |
+| `src/components/SideMenu.test.tsx` | component | 5 | 3 | 2 | 8 |
+| `src/components/NavBar.test.tsx` | component | 14 | 13 | 1 | 8 |
+| `src/components/FeaturedCarousel.test.tsx` | component | 18 | 18 | 0 | 8、10 |
+| `src/components/ProductCard.test.tsx` | component | 21 | 12 | 9 | 8、10 |
+| **合計** | — | 215 | 201 | 14 | — |
 
 ## 逐條清單：資料層與低影響檔案
 
@@ -275,6 +280,88 @@ diff <(npx vitest list 2>/dev/null | sed 's/^\[[^]]*\] //' | LC_ALL=C sort) \
 | src/pages/AboutPage.test.tsx > AboutPage 服務圖卡 > 首屏同步顯示 6 張圖卡，圖片 src 為 /abouts/*.png 且順序正確 | 契約 | 資料轉換 | 8 | 保留 | ABOUT_SERVICES 內容契約 |
 | src/pages/AboutPage.test.tsx > AboutPage 服務圖卡 > 圖卡標題 h4 依序為 卡拉OK／KTV／酒店／PUB／遊覽車／維修 | 契約 | 資料轉換 | 8 | 保留 | ABOUT_SERVICES 內容契約；heading level 為呈現成分，可隨版面調整（D-09） |
 | src/pages/AboutPage.test.tsx > AboutPage 服務圖卡 > 不再顯示載入骨架 | 契約 | 狀態機／計時 | 8 | 保留 | 不再顯示載入骨架（斷言 className，改版後同步調整） |
+
+## 逐條清單：重設計高影響檔案
+
+### src/components/SideMenu.test.tsx（5 項，component）
+
+| 測試（vitest list 全名） | 分類 | 契約類型 | 影響 phase | 預定處置 | 備註 |
+|---|---|---|---|---|---|
+| src/components/SideMenu.test.tsx > SideMenu > 首屏依序顯示 8 個導覽項目 | 契約 | role、accessible name | 8 | 改寫為新元件同語意測試 | 改為 CategoryChips 同語意測試；role button→link，name 不變；8 項順序不變 |
+| src/components/SideMenu.test.tsx > SideMenu > 目前頁面按鈕有 active 樣式 | 呈現 | — | 8 | 改寫為新元件同語意測試 | 改為 CategoryChips 同語意測試；role button→link，name 不變；僅斷言 className，改以 aria-current="page" 驗證現在位置 |
+| src/components/SideMenu.test.tsx > SideMenu > 其他按鈕沒有 active 樣式 | 呈現 | — | 8 | 改寫為新元件同語意測試 | 改為 CategoryChips 同語意測試；role button→link，name 不變；僅斷言 className，改以非現在位置無 aria-current 驗證 |
+| src/components/SideMenu.test.tsx > SideMenu > 點擊 KRD 後導向 /krd-products | 契約 | 路由／href | 8 | 改寫為新元件同語意測試 | 改為 CategoryChips 同語意測試；role button→link，name 不變；點擊後導向 /krd-products |
+| src/components/SideMenu.test.tsx > SideMenu > 沒有骨架載入元素 | 契約 | 狀態機／計時 | 8 | 改寫為新元件同語意測試 | 改為 CategoryChips 同語意測試；role button→link，name 不變；無骨架載入元素（斷言 .animate-pulse，可隨設計調整） |
+
+### src/components/NavBar.test.tsx（14 項，component）
+
+| 測試（vitest list 全名） | 分類 | 契約類型 | 影響 phase | 預定處置 | 備註 |
+|---|---|---|---|---|---|
+| src/components/NavBar.test.tsx > NavBar Logo > 使用靜態 Logo 路徑與尺寸 | 契約 | accessible name | 8 | 保留 | Logo 兩項保留之一：/brand-logo.png 800×235 |
+| src/components/NavBar.test.tsx > NavBar Logo > 載入失敗後改顯示文字並移除圖片 | 契約 | 狀態機／計時 | 8 | 保留 | Logo 兩項保留之一：失敗後文字備援 KRD MICGO |
+| src/components/NavBar.test.tsx > NavBar Logo > 初次渲染不顯示文字備援 | 契約 | 狀態機／計時 | 8 | 保留 | 初次不顯示文字備援 |
+| src/components/NavBar.test.tsx > NavBar 選單 > 所有商品 在桌機與手機各有一個按鈕 | 契約 | accessible name | 8 | 改寫為新元件同語意測試 | 分類名改在 chip 列驗證；「桌機與手機各一個」為呈現結構，可隨設計調整；role button→link |
+| src/components/NavBar.test.tsx > NavBar 選單 > 最新商品 在桌機與手機各有一個按鈕 | 契約 | accessible name | 8 | 改寫為新元件同語意測試 | 分類名改在 chip 列驗證；「桌機與手機各一個」為呈現結構，可隨設計調整；role button→link |
+| src/components/NavBar.test.tsx > NavBar 選單 > KRD 在桌機與手機各有一個按鈕 | 契約 | accessible name | 8 | 改寫為新元件同語意測試 | 分類名改在 chip 列驗證；「桌機與手機各一個」為呈現結構，可隨設計調整；role button→link |
+| src/components/NavBar.test.tsx > NavBar 選單 > MICGO 在桌機與手機各有一個按鈕 | 契約 | accessible name | 8 | 改寫為新元件同語意測試 | 分類名改在 chip 列驗證；「桌機與手機各一個」為呈現結構，可隨設計調整；role button→link |
+| src/components/NavBar.test.tsx > NavBar 選單 > 無線麥克風 在桌機與手機各有一個按鈕 | 契約 | accessible name | 8 | 改寫為新元件同語意測試 | 分類名改在 chip 列驗證；「桌機與手機各一個」為呈現結構，可隨設計調整；role button→link |
+| src/components/NavBar.test.tsx > NavBar 選單 > 有線麥克風 在桌機與手機各有一個按鈕 | 契約 | accessible name | 8 | 改寫為新元件同語意測試 | 分類名改在 chip 列驗證；「桌機與手機各一個」為呈現結構，可隨設計調整；role button→link |
+| src/components/NavBar.test.tsx > NavBar 選單 > 擴大機 / 喇叭 在桌機與手機各有一個按鈕 | 契約 | accessible name | 8 | 改寫為新元件同語意測試 | 分類名改在 chip 列驗證；「桌機與手機各一個」為呈現結構，可隨設計調整；role button→link |
+| src/components/NavBar.test.tsx > NavBar 選單 > 配件 在桌機與手機各有一個按鈕 | 契約 | accessible name | 8 | 改寫為新元件同語意測試 | 分類名改在 chip 列驗證；「桌機與手機各一個」為呈現結構，可隨設計調整；role button→link |
+| src/components/NavBar.test.tsx > NavBar 選單 > 桌機選單依序為 8 項加商店介紹 | 契約 | role | 8 | 改寫為新元件同語意測試 | 改寫為頂列依序：逛商品、關於我們、打電話問問＋NAV_ITEMS 8 項在 chip 列 |
+| src/components/NavBar.test.tsx > NavBar 選單 > 商店介紹按鈕存在 | 呈現 | — | 8 | 調整斷言 | D-07：UI-SPEC 改字串，新字串「關於我們」 |
+| src/components/NavBar.test.tsx > NavBar 選單 > 點擊無線麥克風後導向 /wireless-micphone | 契約 | 路由／href | 8 | 改寫為新元件同語意測試 | 移到 chip 測試：點擊無線麥克風導向 /wireless-micphone |
+
+Phase 8 需新增「打電話問問 href=tel:…」與「選單鈕 aria-expanded」測試以維持測試總數。
+
+### src/components/FeaturedCarousel.test.tsx（18 項，component）
+
+| 測試（vitest list 全名） | 分類 | 契約類型 | 影響 phase | 預定處置 | 備註 |
+|---|---|---|---|---|---|
+| src/components/FeaturedCarousel.test.tsx > FeaturedCarousel 狀態 > 載入中顯示「載入產品中...」 | 契約 | 狀態機／計時 | 8、10 | 保留 | 載入中文案保留；A2 新字串由 Phase 8 決定 |
+| src/components/FeaturedCarousel.test.tsx > FeaturedCarousel 狀態 > 失敗時只顯示固定中文訊息，並可重新載入 | 契約 | 錯誤狀態 | 8、10 | 調整斷言 | 429 文案新字串「現在逛的人有點多，等幾秒再試一次。」；「不洩漏後端原文」「重新載入」仍為契約 |
+| src/components/FeaturedCarousel.test.tsx > FeaturedCarousel 狀態 > 成功但沒有商品時顯示「目前沒有精選商品」 | 契約 | 狀態機／計時 | 8、10 | 保留 | 空狀態「目前沒有精選商品」 |
+| src/components/FeaturedCarousel.test.tsx > FeaturedCarousel 操控 > 只有一筆時不顯示箭頭與指示點 | 契約 | accessible name | 8、10 | 保留 | 只有一筆不顯示下一張／第 1 張 |
+| src/components/FeaturedCarousel.test.tsx > FeaturedCarousel 操控 > 三筆時有箭頭與指示點，點下一張顯示第二筆 | 契約 | accessible name | 8、10 | 調整斷言 | 改為「視窗第一張變成第二筆」；上一張／下一張／第 N 張 name 保留；Phase 10 新增 link 測試 |
+| src/components/FeaturedCarousel.test.tsx > FeaturedCarousel 圖片載入失敗 > 圖片載入失敗時改顯示佔位圖，不留破圖 | 契約 | role | 8、10 | 調整斷言 | 改為針對視窗內對應卡的佔位圖（暫無圖片 role=img 保留） |
+| src/components/FeaturedCarousel.test.tsx > FeaturedCarousel 自動播放 > 成功且多筆時依 intervalMs 切換下一筆 | 契約 | 狀態機／計時 | 8、10 | 保留 | Phase 8 第一個 commit 先擴充 matchMedia mock 處理 max-width: 767px；商品N 文字斷言若視窗同時顯示多筆須改為視窗第一張 |
+| src/components/FeaturedCarousel.test.tsx > FeaturedCarousel 自動播放 > 載入中推進時間不報錯也不切換 | 契約 | 狀態機／計時 | 8、10 | 保留 | 載入中不切換；Phase 8 第一個 commit 先擴充 matchMedia mock 處理 max-width: 767px |
+| src/components/FeaturedCarousel.test.tsx > FeaturedCarousel 暫停自動播放 > 系統偏好減少動態時不自動切換，手動仍可切換 | 契約 | 狀態機／計時 | 8、10 | 調整斷言 | 減少動態；視窗斷言依 UI-SPEC 調整；Phase 8 第一個 commit 先擴充 matchMedia mock 處理 max-width: 767px |
+| src/components/FeaturedCarousel.test.tsx > FeaturedCarousel 暫停自動播放 > 滑鼠移入時不自動切換，移出後恢復 | 契約 | 狀態機／計時 | 8、10 | 保留 | 指標類型暫停邏輯，狀態機不動；Phase 8 第一個 commit 先擴充 matchMedia mock 處理 max-width: 767px；商品N 文字斷言若視窗同時顯示多筆須改為視窗第一張 |
+| src/components/FeaturedCarousel.test.tsx > FeaturedCarousel 暫停自動播放 > 觸控進入輪播時不暫停，仍會自動切換 | 契約 | 狀態機／計時 | 8、10 | 保留 | 指標類型暫停邏輯，狀態機不動；Phase 8 第一個 commit 先擴充 matchMedia mock 處理 max-width: 767px；商品N 文字斷言若視窗同時顯示多筆須改為視窗第一張 |
+| src/components/FeaturedCarousel.test.tsx > FeaturedCarousel 暫停自動播放 > 焦點在輪播內時不自動切換，焦點離開後恢復 | 契約 | 狀態機／計時 | 8、10 | 保留 | 焦點／指標暫停邏輯，狀態機不動；Phase 8 第一個 commit 先擴充 matchMedia mock 處理 max-width: 767px；商品N 文字斷言若視窗同時顯示多筆須改為視窗第一張 |
+| src/components/FeaturedCarousel.test.tsx > FeaturedCarousel 暫停自動播放 > 用滑鼠點擊按鈕取得焦點時不暫停，仍會自動切換 | 契約 | 狀態機／計時 | 8、10 | 保留 | 焦點／指標暫停邏輯，狀態機不動；Phase 8 第一個 commit 先擴充 matchMedia mock 處理 max-width: 767px；商品N 文字斷言若視窗同時顯示多筆須改為視窗第一張 |
+| src/components/FeaturedCarousel.test.tsx > FeaturedCarousel 暫停自動播放 > 觸控點擊按鈕取得焦點時不暫停，仍會自動切換 | 契約 | 狀態機／計時 | 8、10 | 保留 | 焦點／指標暫停邏輯，狀態機不動；Phase 8 第一個 commit 先擴充 matchMedia mock 處理 max-width: 767px；商品N 文字斷言若視窗同時顯示多筆須改為視窗第一張 |
+| src/components/FeaturedCarousel.test.tsx > FeaturedCarousel 暫停自動播放 > 觸控點擊後再以鍵盤讓焦點進入，仍會暫停 | 契約 | 狀態機／計時 | 8、10 | 保留 | 焦點／指標暫停邏輯，狀態機不動；Phase 8 第一個 commit 先擴充 matchMedia mock 處理 max-width: 767px；商品N 文字斷言若視窗同時顯示多筆須改為視窗第一張 |
+| src/components/FeaturedCarousel.test.tsx > FeaturedCarousel 暫停自動播放 > 觸控被取消（pointercancel）後鍵盤焦點仍會暫停 | 契約 | 狀態機／計時 | 8、10 | 保留 | 焦點／指標暫停邏輯，狀態機不動；Phase 8 第一個 commit 先擴充 matchMedia mock 處理 max-width: 767px；商品N 文字斷言若視窗同時顯示多筆須改為視窗第一張 |
+| src/components/FeaturedCarousel.test.tsx > FeaturedCarousel 暫停自動播放 > 觸控點在非按鈕區域後鍵盤焦點仍會暫停 | 契約 | 狀態機／計時 | 8、10 | 保留 | 焦點／指標暫停邏輯，狀態機不動；Phase 8 第一個 commit 先擴充 matchMedia mock 處理 max-width: 767px；商品N 文字斷言若視窗同時顯示多筆須改為視窗第一張 |
+| src/components/FeaturedCarousel.test.tsx > FeaturedCarousel 暫停自動播放 > 手動切換後重新計時，不會在原排程時間被切走 | 契約 | 狀態機／計時 | 8、10 | 保留 | Phase 8 第一個 commit 先擴充 matchMedia mock 處理 max-width: 767px；商品N 文字斷言若視窗同時顯示多筆須改為視窗第一張 |
+
+### src/components/ProductCard.test.tsx（21 項，component）
+
+| 測試（vitest list 全名） | 分類 | 契約類型 | 影響 phase | 預定處置 | 備註 |
+|---|---|---|---|---|---|
+| src/components/ProductCard.test.tsx > ProductCard 價格顯示 > grid 有價：徽章與價格行各顯示一次 priceText，不出現價格洽詢 | 契約 | 資料轉換 | 8 | 調整斷言 | 徽章與價格行各顯示一次：UI-SPEC 移除價格徽章，改為只顯示一次；「不出現價格洽詢」保留 |
+| src/components/ProductCard.test.tsx > ProductCard 價格顯示 > grid 區間價：價格行為 formatPriceRange 的輸出 | 契約 | 資料轉換 | 8 | 調整斷言 | 價格文字為資料轉換契約；UI-SPEC 移除價格徽章，出現次數 2 改為 1 |
+| src/components/ProductCard.test.tsx > ProductCard 價格顯示 > 只有 priceMax 有值時 grid 仍顯示價格徽章 | 契約 | 資料轉換 | 8 | 調整斷言 | 價格文字為資料轉換契約；UI-SPEC 移除價格徽章，出現次數 2 改為 1 |
+| src/components/ProductCard.test.tsx > ProductCard 價格顯示 > grid 無價：顯示價格洽詢且沒有徽章 | 呈現 | — | 8 | 調整斷言 | D-07：卡片無價顯示 tag「價格請來電」；.product-badge 斷言隨徽章移除 |
+| src/components/ProductCard.test.tsx > ProductCard 價格顯示 > list 有價：只顯示一次 priceText 且沒有徽章 | 契約 | 資料轉換 | 8 | 保留 | list 有價只顯示一次 priceText；.product-badge 斷言為呈現 |
+| src/components/ProductCard.test.tsx > ProductCard 價格顯示 > list 無價：顯示價格洽詢 | 呈現 | — | 8 | 調整斷言 | D-07：新字串「價格請來電」 |
+| src/components/ProductCard.test.tsx > ProductCard 價格顯示 > 價格洽詢使用灰色而非 accent 色 | 呈現 | — | 8 | 調整斷言 | className（text-gray-500）斷言為呈現（D-08）；新字串「價格請來電」 |
+| src/components/ProductCard.test.tsx > ProductCard 圖片與燈箱 > 有圖：img src 為 imageUrl，點擊呼叫 onImageClick 一次 | 契約 | role、accessible name | 10 | 調整斷言 | Phase 10 依 LINK-01 改為整張卡連到 /products/{id}，燈箱移到詳情頁主圖；img alt／src 斷言保留 |
+| src/components/ProductCard.test.tsx > ProductCard 圖片與燈箱 > 鍵盤 Enter 開燈箱 | 契約 | role、accessible name | 10 | 調整斷言 | Phase 10 依 LINK-01 改為整張卡連到 /products/{id}；Enter 啟動 link |
+| src/components/ProductCard.test.tsx > ProductCard 圖片與燈箱 > 鍵盤 Space 開燈箱 | 契約 | role、accessible name | 10 | 調整斷言 | Phase 10 依 LINK-01 移除 role=button／Space 開燈箱（onImageClick 移除） |
+| src/components/ProductCard.test.tsx > ProductCard 圖片與燈箱 > 缺圖：顯示佔位、無按鈕、無放大提示，點擊不開燈箱 | 契約 | role、accessible name | 10 | 調整斷言 | 暫無圖片 role=img 保留；「無按鈕」與「點擊查看大圖」提示隨 LINK-01 與 UI-SPEC 刪除提示調整 |
+| src/components/ProductCard.test.tsx > ProductCard 圖片與燈箱 > 破圖：onError 後顯示佔位且點擊不開燈箱 | 契約 | role、accessible name | 10 | 調整斷言 | 破圖佔位「暫無圖片」保留；點擊不開燈箱依 LINK-01 改寫（Phase 10） |
+| src/components/ProductCard.test.tsx > ProductCard 圖片與燈箱 > 破圖後換成新圖片網址會重新顯示 img | 契約 | 資料轉換 | 8 | 保留 | 破圖後換網址重新顯示 img |
+| src/components/ProductCard.test.tsx > ProductCard 描述與其他欄位 > 描述為 null 時（grid 與 list）都不渲染描述段落 | 契約 | 資料轉換 | 8 | 保留 | 保留（D-08）：data-testid="product-description" 不渲染斷言 |
+| src/components/ProductCard.test.tsx > ProductCard 描述與其他欄位 > grid 描述只顯示一行（line-clamp-1），避免卡片溢出 | 呈現 | — | 8 | 調整斷言 | className（line-clamp-1）斷言為呈現（D-08）；data-testid="product-description" 保留 |
+| src/components/ProductCard.test.tsx > ProductCard 描述與其他欄位 > list 描述維持兩行（line-clamp-2） | 呈現 | — | 8 | 調整斷言 | className（line-clamp-2）斷言為呈現（D-08）；data-testid="product-description" 保留 |
+| src/components/ProductCard.test.tsx > ProductCard 描述與其他欄位 > grid 資訊區使用縮小的內距 py-4 px-5 | 呈現 | — | 8 | 調整斷言 | className（py-4 px-5）斷言為呈現（D-08） |
+| src/components/ProductCard.test.tsx > ProductCard 描述與其他欄位 > grid 價格行間距為 mb-1，list 價格行維持 mb-2（有價） | 呈現 | — | 8 | 調整斷言 | className（mb-1／mb-2）與 .product-badge 斷言為呈現；UI-SPEC 移除價格徽章 |
+| src/components/ProductCard.test.tsx > ProductCard 描述與其他欄位 > grid 價格洽詢行間距為 mb-1，list 為 mb-2 | 呈現 | — | 8 | 調整斷言 | className（mb-1／mb-2）斷言為呈現；新字串「價格請來電」 |
+| src/components/ProductCard.test.tsx > ProductCard 描述與其他欄位 > grid 長名稱＋有價＋長描述：卡片 h-96、圖片 h-64、名稱兩行截斷皆不變，提示仍存在 | 呈現 | — | 8 | 調整斷言 | UI-SPEC 取消固定 h-96，grid 改 aspect-square；「點擊查看大圖」提示刪除；data-testid 保留 |
+| src/components/ProductCard.test.tsx > ProductCard 描述與其他欄位 > 有描述時顯示，且不顯示品牌、型號、現貨 | 契約 | 資料轉換 | 8 | 保留 | 有描述時顯示、不顯示品牌／型號／現貨；data-testid="product-description" 保留（D-08） |
 
 ## 待 Phase 8 決定
 
