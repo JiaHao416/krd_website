@@ -100,6 +100,23 @@ const FeaturedCarousel = ({ result, intervalMs = 5000 }: FeaturedCarouselProps) 
     return () => clearTimeout(timer);
   }, [status, items.length, intervalMs, isPaused, currentSlide]);
 
+  // 上一次 render 是否為 base，用來辨識「由 md+ 切進 base」的那一刻
+  const wasBaseRef = useRef(isBase);
+
+  // 由 md+ 切進 base 時，捲動條是全新掛載（停在第 1 張），需對齊目前指示點；
+  // 只讀 currentSlide、不改狀態機。直接設定 scrollLeft 而非 scrollIntoView，
+  // 輪播不在畫面內時才不會讓整頁垂直跳動
+  useEffect(() => {
+    const isEnteringBase = isBase && !wasBaseRef.current;
+    wasBaseRef.current = isBase;
+    if (!isEnteringBase || items.length === 0) return;
+    const firstCard = cardRefs.current[0];
+    const targetCard = cardRefs.current[currentSlide % items.length];
+    const track = targetCard?.parentElement;
+    if (!firstCard || !targetCard || !track) return;
+    track.scrollLeft = targetCard.offsetLeft - firstCard.offsetLeft;
+  }, [isBase, currentSlide, items.length]);
+
   if (status === "error") {
     return (
       <div role="alert" className="rounded-card bg-surface-raised p-6 text-center">

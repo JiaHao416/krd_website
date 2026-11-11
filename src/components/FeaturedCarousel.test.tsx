@@ -462,4 +462,52 @@ describe("FeaturedCarousel base 寬度", () => {
       "true"
     );
   });
+
+  it("由 md 切到 base 時，捲動條直接對齊目前指示點（不垂直捲動頁面）", () => {
+    // 可切換的 base 斷點：記下 useMediaQuery 註冊的 change 監聽器
+    let isBase = false;
+    const baseListeners: Array<(event: { matches: boolean }) => void> = [];
+    vi.stubGlobal(
+      "matchMedia",
+      vi.fn().mockImplementation((query: string) => ({
+        matches: query === "(max-width: 767px)" ? isBase : false,
+        media: query,
+        onchange: null,
+        addEventListener: (_type: string, cb: (event: { matches: boolean }) => void) => {
+          if (query === "(max-width: 767px)") baseListeners.push(cb);
+        },
+        removeEventListener: vi.fn(),
+        addListener: vi.fn(),
+        removeListener: vi.fn(),
+        dispatchEvent: vi.fn(),
+      }))
+    );
+    // jsdom 沒有版面配置：讓每張卡的 offsetLeft 依位置遞增 276px（卡寬 260 + gap 16）
+    vi.spyOn(HTMLElement.prototype, "offsetLeft", "get").mockImplementation(
+      function (this: HTMLElement) {
+        const siblings = this.parentElement ? Array.from(this.parentElement.children) : [];
+        return Math.max(siblings.indexOf(this), 0) * 276;
+      }
+    );
+    const setScrollLeft = vi.spyOn(Element.prototype, "scrollLeft", "set");
+    const calls = spyScroll();
+
+    renderCarousel(makeResult({ items: makeItems(5) }));
+    const next = screen.getByRole("button", { name: "下一張" });
+    fireEvent.click(next);
+    fireEvent.click(next);
+
+    isBase = true;
+    act(() => {
+      baseListeners.forEach((cb) => cb({ matches: true }));
+    });
+
+    expect(screen.getByRole("button", { name: "第 3 張" })).toHaveAttribute(
+      "aria-current",
+      "true"
+    );
+    expect(setScrollLeft).toHaveBeenCalledWith(552);
+    // 只調整水平捲動，不用 scrollIntoView，避免輪播不在畫面內時整頁跳動
+    expect(calls).toHaveLength(0);
+  });
 });
