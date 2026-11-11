@@ -48,7 +48,13 @@
   2. UI-SPEC 依已定案的「整張卡連到詳情頁、燈箱移到詳情頁主圖」畫出卡片與詳情頁版面，決定熱銷輪播詳情連結的位置；`contact.ts` 欄位定案（地址、電話、營業時間沿用現有資料，LINE／Email 選填，有值才顯示）
   3. 現有 215 項測試已分成「行為契約」與「呈現」兩類清單，契約類（role、accessible name、路由、錯誤狀態）有明確標示不得刪除，並記錄測試總數基準
   4. `@tailwindcss/postcss` 與 `@types/react-router-dom` 已以獨立 commit 移除，`npm run build`、`npm test`、`npm run lint` 皆通過
-**Plans**: TBD
+**Plans**: 4 plans
+
+Plans:
+- [ ] 06-01-PLAN.md — 測試盤點文件：基準、規則與資料層／低影響檔案 157 列（TEST-06）
+- [ ] 06-02-PLAN.md — 確認 DESIGN-01，依 D-13 同步 SHELL-02／ROADMAP／PROJECT 文字
+- [ ] 06-03-PLAN.md — MAINT-01：兩個獨立 commit 移除未使用依賴（含 CSS sha256 比對與文件同步）
+- [ ] 06-04-PLAN.md — 盤點補上高影響 4 檔與 accessible name 清單（總數 215）、STATE 基準、D-17 合併與 phase gate
 **UI hint**: yes
 
 ### Phase 7: 詳情資料層
