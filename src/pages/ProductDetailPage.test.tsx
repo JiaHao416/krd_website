@@ -170,3 +170,25 @@ describe("ProductDetailPage 複製詢價", () => {
     }
   });
 });
+
+describe("ProductDetailPage 重複複製失敗", () => {
+  it("連續兩次失敗時重新插入失敗訊息，讓即時區域再次朗讀", async () => {
+    const user = userEvent.setup();
+    const original = Object.getOwnPropertyDescriptor(navigator, "clipboard");
+    Object.defineProperty(navigator, "clipboard", { value: undefined, configurable: true });
+    try {
+      mockDetail.mockResolvedValue(PRODUCT);
+      renderPage();
+      const barElement = await screen.findByTestId("detail-mobile-bar");
+      const bar = within(barElement);
+      await user.click(bar.getByRole("button", { name: "複製詢價" }));
+      const first = await bar.findByText("複製失敗，請手動選取網址");
+      await user.click(bar.getByRole("button", { name: "複製詢價" }));
+      const second = await bar.findByText("複製失敗，請手動選取網址");
+      expect(first.isConnected).toBe(false);
+      expect(second).not.toBe(first);
+    } finally {
+      if (original) Object.defineProperty(navigator, "clipboard", original);
+    }
+  });
+});

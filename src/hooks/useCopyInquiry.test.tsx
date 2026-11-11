@@ -160,3 +160,53 @@ describe("useCopyInquiry 切換文字", () => {
     expect(vi.getTimerCount()).toBe(0);
   });
 });
+
+describe("useCopyInquiry 重複嘗試", () => {
+  it("連續兩次失敗之間先回到初始，讓即時區域重新朗讀", async () => {
+    const writeText = vi.fn().mockRejectedValue(new Error("denied"));
+    const seen: string[] = [];
+    const { result } = renderHook(() => {
+      const value = useCopyInquiry(TEXT, writeText);
+      seen.push(value.status);
+      return value;
+    });
+    await act(async () => {
+      await result.current.copy();
+    });
+    const afterFirst = seen.length;
+    // 模擬點擊事件：同步階段先提交，寫入結果之後才回來
+    let pending: Promise<void> = Promise.resolve();
+    act(() => {
+      pending = result.current.copy();
+    });
+    await act(async () => {
+      await pending;
+    });
+    expect(seen.slice(afterFirst)).toContain("idle");
+    expect(result.current.status).toBe("failed");
+  });
+
+  it("已複製期間再按一次，先回到初始再顯示已複製", async () => {
+    const writeText = vi.fn().mockResolvedValue(undefined);
+    const seen: string[] = [];
+    const { result } = renderHook(() => {
+      const value = useCopyInquiry(TEXT, writeText);
+      seen.push(value.status);
+      return value;
+    });
+    await act(async () => {
+      await result.current.copy();
+    });
+    const afterFirst = seen.length;
+    // 模擬點擊事件：同步階段先提交，寫入結果之後才回來
+    let pending: Promise<void> = Promise.resolve();
+    act(() => {
+      pending = result.current.copy();
+    });
+    await act(async () => {
+      await pending;
+    });
+    expect(seen.slice(afterFirst)).toContain("idle");
+    expect(result.current.status).toBe("copied");
+  });
+});

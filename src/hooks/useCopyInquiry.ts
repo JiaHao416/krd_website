@@ -83,7 +83,10 @@ export function useCopyInquiry(
     const attempt = attemptRef.current;
     // 已卸載或已有更新的嘗試／文字切換時，不套用這次的結果
     const isCurrent = () => mountedRef.current && attempt === attemptRef.current;
-    return writeText(text)
+    const pending = writeText(text);
+    // 寫入發出後先回到初始：同一狀態連續出現時，即時區域內容仍會變動而重新朗讀
+    setStatus("idle");
+    return pending
       .then(() => {
         if (!isCurrent()) return;
         setStatus("copied");
