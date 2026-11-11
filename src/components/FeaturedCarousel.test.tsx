@@ -59,12 +59,17 @@ afterEach(() => {
   vi.unstubAllGlobals();
 });
 
-/** 模擬 matchMedia；僅 prefers-reduced-motion: reduce 查詢回傳指定值 */
-function mockReducedMotion(matches: boolean) {
+/** 模擬 matchMedia；只回應減少動態與 base 斷點兩個查詢，其餘一律 false（jsdom 視為桌機） */
+function mockMatchMedia({ reducedMotion = false, base = false } = {}) {
   vi.stubGlobal(
     "matchMedia",
     vi.fn().mockImplementation((query: string) => ({
-      matches: query === "(prefers-reduced-motion: reduce)" ? matches : false,
+      matches:
+        query === "(prefers-reduced-motion: reduce)"
+          ? reducedMotion
+          : query === "(max-width: 767px)"
+            ? base
+            : false,
       media: query,
       onchange: null,
       addEventListener: vi.fn(),
@@ -159,7 +164,7 @@ describe("FeaturedCarousel 自動播放", () => {
 
 describe("FeaturedCarousel 暫停自動播放", () => {
   it("系統偏好減少動態時不自動切換，手動仍可切換", () => {
-    mockReducedMotion(true);
+    mockMatchMedia({ reducedMotion: true });
     vi.useFakeTimers();
     renderCarousel(makeResult({ items: makeItems(3) }), 5000);
     act(() => {
