@@ -49,7 +49,9 @@ findings:
   warning: 4
   info: 6
   total: 10
-status: issues_found
+status: warnings_fixed
+fixed_at: 2026-11-11
+warnings_fixed: 4
 ---
 
 # Phase 8: Code Review Report
@@ -78,6 +80,8 @@ status: issues_found
 
 ### WR-01: 「逛商品」在非 `/all-products` 的分類頁也標 `aria-current="page"`，語意錯誤
 
+**Status:** fixed（`2edc317`）。完全符合路徑才標 `page`，屬於區段時標 `true`；NavBar 測試改為 `/all-products`=page、`/trumpet`、`/products/abc`=true。
+
 **File:** `src/components/NavBar.tsx:29-31, 73`
 **Issue:** `isShopActive` 在任一分類頁（例如 `/wired-micphone`）或 `/products/*` 都是 true，結果連往 `/all-products` 的連結被標成 `aria-current="page"`。螢幕閱讀器會念「逛商品，目前頁面」，但這個連結指的並不是目前頁面。同一頁的 CategoryChips 另有一個真正的 `aria-current="page"`（例如「有線麥克風」），於是一頁出現兩個互相矛盾的「目前頁面」。
 **Fix:** 只有完全符合時才用 `"page"`，屬於這個區段時改用 `"true"`：
@@ -90,6 +94,8 @@ const ariaCurrent = (path: string, isActive: boolean) =>
 NavBar 測試要同步改成：`/wired-micphone` 時「逛商品」為 `aria-current="true"`。
 
 ### WR-02: ImageModal 沒有對話框語意，也沒有處理焦點
+
+**Status:** fixed（`af6f6b3`）。補 `role="dialog"`、`aria-modal`、`aria-label="商品大圖"`；開啟時焦點移到關閉鈕、Tab 鎖在關閉鈕、關閉後還原觸發元素。新增 `ImageModal.test.tsx` 4 項。
 
 **File:** `src/components/ImageModal.tsx:57-91`
 **Issue:**
@@ -115,6 +121,8 @@ useEffect(() => {
 
 ### WR-03: 切換 base 與 md 時，捲動位置與指示點不同步
 
+**Status:** fixed（`d07b01d`）。新增只在「由 md+ 進入 base」時作用的 effect（以 ref 記錄前一次 isBase），只讀 `currentSlide`、不改 D-05 狀態機；改用設定捲動條 `scrollLeft` 而非建議的 `scrollIntoView`，避免輪播不在畫面內時整頁垂直跳動。初次以 base 載入不動作。
+
 **File:** `src/components/FeaturedCarousel.tsx:87, 145-152, 230-249`
 **Issue:**
 - 從 md+ 縮到 base 時（例如旋轉平板、拖拉視窗），`currentSlide` 保留原值，例如第 3 張的指示點仍是 `aria-current`。但捲動條是全新掛載的，`scrollLeft=0`，畫面顯示第 1 張。
@@ -133,6 +141,8 @@ useEffect(() => {
 
 ### WR-04: 被截斷時副標仍寫「共 N 項」，數量會誤導
 
+**Status:** fixed（`3a8019a`）。UI-SPEC Copywriting 沒有截斷版文案，所以不採用建議的「先列出 N 項」新字串，只在截斷時省略「共 N 項。」、保留後半句；「僅顯示前 100 項商品」不變（D-02）。
+
 **File:** `src/pages/ProductPageTemplate.tsx:169-173, 220-224`
 **Issue:** `truncated` 為 true 時，`items.length` 就是 `PRODUCT_LIMIT`（100），副標仍顯示「共 100 項」。頁底雖然另有「僅顯示前 100 項商品」，但兩句互相矛盾，而且頁首這句會先被讀到。
 **Fix:**
@@ -147,6 +157,8 @@ useEffect(() => {
 並補一個 `truncated: true` 的測試。
 
 ## Info
+
+Info 項目不在本次修正範圍內，留待後續 phase 處理（IN-02 在 Phase 10 處理）。
 
 ### IN-01: 全域 `[tabindex="-1"]:focus { outline: none }` 的範圍太大
 
