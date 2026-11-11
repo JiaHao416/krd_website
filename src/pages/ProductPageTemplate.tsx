@@ -168,7 +168,9 @@ const ProductPageTemplate = ({ title, query }: ProductPageProps) => {
           <h1 className="text-display font-semibold text-ink">{title}</h1>
           {hasItems && (
             <p className="mt-2 text-body text-ink-muted">
-              共 {items.length} 項。看到喜歡的，直接打電話問最快。
+              {/* 截斷時 items.length 只是上限，不顯示數量以免與頁底截斷提示矛盾 */}
+              {!truncated && `共 ${items.length} 項。`}
+              看到喜歡的，直接打電話問最快。
             </p>
           )}
         </div>

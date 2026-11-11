@@ -313,6 +313,16 @@ describe("ProductPageTemplate 改版版面", () => {
     ).toBeInTheDocument();
   });
 
+  // 截斷時 items.length 只是上限，不是實際總數；不顯示「共 N 項」以免與截斷提示矛盾
+  it("truncated 為 true 時副行不顯示共 N 項，只留 UI-SPEC 後半句", async () => {
+    mockFetch.mockResolvedValue(makeResult([makeProduct()], true));
+    renderPage();
+    expect(
+      await screen.findByText("看到喜歡的，直接打電話問最快。")
+    ).toBeInTheDocument();
+    expect(screen.queryByText(/共 \d+ 項/)).toBeNull();
+  });
+
   it("結尾「找不到想要的？」含電話連結", async () => {
     mockFetch.mockResolvedValue(makeResult([makeProduct()]));
     renderPage();
