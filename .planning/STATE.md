@@ -2,41 +2,39 @@
 gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: UI 重新設計與商品詳情頁
-status: milestone_complete
-stopped_at: Milestone complete (Phase 11 was final phase)
-last_updated: 2026-11-11T05:36:22.584Z
-last_activity: 2026-11-11
+status: Awaiting next milestone
+stopped_at: v1.1 milestone archived
+last_updated: "2026-11-11T05:49:43.487Z"
+last_activity: 2026-11-11 — Milestone v1.1 completed and archived
 progress:
   total_phases: 6
-  completed_phases: 4
-  total_plans: 23
+  completed_phases: 6
+  total_plans: 26
   completed_plans: 26
-  percent: 67
+  percent: 100
 ---
 
 # Project State
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-11-10)
+See: .planning/PROJECT.md (updated 2026-11-11)
 
 **Core value:** 官網顯示的商品必須與家人在 KRD-Inventory App 維護的後端資料一致，且前端程式中不再含任何憑證。
-**Current focus:** Milestone complete
+**Current focus:** v1.1 已上線（2026-11-11），等待開立下一個 milestone
 
 ## Current Position
 
-Phase: 11
-Plan: Not started
-Status: Milestone complete
-Last activity: 2026-11-11
-
-Progress: [██████████] 96%
+Phase: Milestone v1.1 complete
+Plan: —
+Status: Awaiting next milestone
+Last activity: 2026-11-11 — Milestone v1.1 completed and archived
 
 ## Performance Metrics
 
 **Velocity:**
 
-- Total plans completed: 43（v1.0）
+- Total plans completed: 22（v1.0）＋ 26（v1.1）
 - Average duration: -
 - Total execution time: -
 
@@ -79,22 +77,35 @@ Progress: [██████████] 96%
 
 ### Pending Todos
 
-None yet.
+- 使用者自行到 Google 商家把週六改為休息、收工時間設 18:00，與官網一致
+- `redesign` 上 merge 後的文件 commit 尚未進 main（僅 `.planning/` 文件），下次 push 時一併帶上（需使用者同意）
 
 ### Blockers/Concerns
 
-- 每次 commit 到 main 即自動部署 production；`redesign` 分支合併前每個 commit 仍須 `npm run build` 通過
-- 後端 CORS 只允許 www.krd.com.tw / krd.com.tw，`*.pages.dev` 預覽站讀不到商品（可接受，只在 localhost 用 Vite proxy 預覽）
-- 聯絡資料：地址、電話、營業時間沿用現有（Footer／AboutPage），LINE／Email 選填，Owner 日後提供才顯示
-- 已定案：整張卡連到詳情頁、燈箱移到詳情頁；加分功能只做複製詢價訊息；依賴清理併入本輪
-- 待決：`in_stock=false` 商品在列表是否顯示（Phase 6 確認）
+- 每次 commit 到 main 即自動部署 production
+- 後端 CORS 只允許 www.krd.com.tw / krd.com.tw，`*.pages.dev` 預覽站讀不到商品；push 前用 production 模式 bundle + `vite preview` proxy 在本機 preflight
+- 聯絡資料單一來源 `src/config/contact.ts`；LINE／Email 選填，Owner 日後提供才顯示
+
+## Deferred Items
+
+Items acknowledged and deferred at milestone close on 2026-11-11:
+
+| Category | Item | Status |
+|----------|------|--------|
+| uat_gap | Phase 08: 08-UAT.md | passed（audit-open 誤判：狀態字串含附註，0 pending） |
+| uat_gap | Phase 09: 09-UAT.md | passed（audit-open 誤判，0 pending） |
+| uat_gap | Phase 10: 10-UAT.md | passed（audit-open 誤判，0 pending） |
+| uat_gap | Phase 11: 11-UAT.md | passed（audit-open 誤判，0 pending） |
+| verification_gap | Phase 10: 10-VERIFICATION.md | human_needed（實機觸控點卡片、手機返回手勢，交使用者確認） |
+| quick_task | 261111-ibb-remove-price-labels-hours | complete（audit-open 誤判：SUMMARY 檔名含 id 前綴） |
+| quick_task | 261111-k1m-store-map-photos | complete（audit-open 誤判：SUMMARY 檔名含 id 前綴） |
 
 ## Session Continuity
 
 Last session: 2026-11-11T04:07:11.810Z
-Stopped at: Completed 10-02-PLAN.md
+Stopped at: v1.1 milestone archived
 Resume file: None
 
 ## Operator Next Steps
 
-- 核准 roadmap 後執行 /gsd-ui-phase 6 鎖定設計，再 /gsd-plan-phase 6
+- Start the next milestone with /gsd-new-milestone
