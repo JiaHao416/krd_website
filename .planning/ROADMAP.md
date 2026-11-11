@@ -163,7 +163,7 @@ Plans:
 Plans:
 **Wave 1**
 
-- [ ] 11-01-PLAN.md — 合併前檢查（main 同步、全綠、測試數 ≥ 541、dist grep）與本機 production bundle preflight（REL-03）
+- [x] 11-01-PLAN.md — 合併前檢查（main 同步、全綠、測試數 ≥ 541、dist grep）與本機 production bundle preflight（REL-03）
 
 **Wave 2** *(blocked on Wave 1 completion)*
 
@@ -187,4 +187,4 @@ Plans:
 | 8. Tokens、共用骨架與既有頁面改版 | v1.1 | 8/8 | Complete    | 2026-11-11 |
 | 9. 商品詳情頁 UI、路由與 NotFound | v1.1 | 5/5 | Complete    | 2026-11-11 |
 | 10. 連結接線 | v1.1 | 3/3 | Complete    | 2026-11-11 |
-| 11. 收尾驗證與合併上線 | v1.1 | 0/3 | Planned | - |
+| 11. 收尾驗證與合併上線 | v1.1 | 1/3 | In Progress|  |
