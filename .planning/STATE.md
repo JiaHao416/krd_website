@@ -100,6 +100,12 @@ Items acknowledged and deferred at milestone close on 2026-11-11:
 | quick_task | 261111-ibb-remove-price-labels-hours | complete（audit-open 誤判：SUMMARY 檔名含 id 前綴） |
 | quick_task | 261111-k1m-store-map-photos | complete（audit-open 誤判：SUMMARY 檔名含 id 前綴） |
 
+## Quick Tasks Completed
+
+| # | Description | Date | Commit | Directory |
+|---|-------------|------|--------|-----------|
+| 261112-dq1 | 關於我們六張服務圖換成 Gemini 新圖（WebP、深色底、移除白底容器） | 2026-11-12 | aed3a65 | [261112-dq1-about-service-images](./quick/261112-dq1-about-service-images/) |
+
 ## Session Continuity
 
 Last session: 2026-11-11T04:07:11.810Z
