@@ -48,14 +48,14 @@ const Abouts = () => {
                 key={service.name}
                 className="rounded-card bg-surface-raised p-4 shadow-card-sm md:shadow-card"
               >
-                {/* 固定正方形白底，圖片載入前後版面不跳動 */}
-                <div className="aspect-square overflow-hidden rounded-image bg-white">
+                {/* 固定正方形，底色與圖片自帶的 surface 深色底相同，載入前後版面與顏色都不跳動 */}
+                <div className="aspect-square overflow-hidden rounded-image bg-surface">
                   <img
                     src={service.image}
                     alt={service.name}
                     loading="lazy"
                     decoding="async"
-                    className="h-full w-full object-contain"
+                    className="h-full w-full object-cover"
                   />
                 </div>
                 <h3 className="mt-2 text-center text-body font-semibold text-ink">
