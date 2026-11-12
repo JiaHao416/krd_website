@@ -11,12 +11,12 @@ vi.mock("../components/Layout", () => ({
 }));
 
 const EXPECTED = [
-  { name: "卡拉OK", src: "/abouts/karaoke.png" },
-  { name: "KTV", src: "/abouts/ktv.png" },
-  { name: "酒店", src: "/abouts/hotel.png" },
-  { name: "PUB", src: "/abouts/pub.png" },
-  { name: "遊覽車", src: "/abouts/bus.png" },
-  { name: "維修", src: "/abouts/repair.png" },
+  { name: "卡拉OK", src: "/abouts/karaoke.webp" },
+  { name: "KTV", src: "/abouts/ktv.webp" },
+  { name: "酒店", src: "/abouts/hotel.webp" },
+  { name: "PUB", src: "/abouts/pub.webp" },
+  { name: "遊覽車", src: "/abouts/bus.webp" },
+  { name: "維修", src: "/abouts/repair.webp" },
 ];
 
 function renderPage() {
@@ -28,7 +28,7 @@ function renderPage() {
 }
 
 describe("AboutPage 服務圖卡", () => {
-  it("首屏同步顯示 6 張圖卡，圖片 src 為 /abouts/*.png 且順序正確", () => {
+  it("首屏同步顯示 6 張圖卡，圖片 src 為 /abouts/*.webp 且順序正確", () => {
     renderPage();
     const sources = EXPECTED.map(({ name }) =>
       screen.getByAltText(name).getAttribute("src")
@@ -43,6 +43,16 @@ describe("AboutPage 服務圖卡", () => {
       .map((el) => el.textContent)
       .filter((text) => EXPECTED.some(({ name }) => name === text));
     expect(titles).toEqual(EXPECTED.map(({ name }) => name));
+  });
+
+  it("服務圖容器不使用白底，改用與圖片相同的 surface 底色", () => {
+    renderPage();
+    for (const { name } of EXPECTED) {
+      // 用 classList 精確比對，避免 bg-surface-raised 被誤判為 bg-surface
+      const classList = screen.getByAltText(name).parentElement?.classList;
+      expect(classList?.contains("bg-white")).toBe(false);
+      expect(classList?.contains("bg-surface")).toBe(true);
+    }
   });
 
   it("不再顯示載入骨架", () => {
